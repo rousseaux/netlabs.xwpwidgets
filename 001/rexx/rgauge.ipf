@@ -59,6 +59,13 @@ gauge.  To change a color, drop a color over the corresponding area.
 :p.The :hp2.Gauge width:ehp2. area defines the width of the gauge. 
 The gauge is either of a fixed width or resizeable, interactively.
 
+.* V0.5.2 (2001-06-21) [lafaix] 
+:p.The :hp2.OK:ehp2. button saves the changes and closes the dialog. 
+The :hp2.Apply:ehp2. button saves the changes but does not close the
+dialog.  The :hp2.Reset:ehp2. button restores the values to the last
+saved ones.  The :hp2.Cancel:ehp2. button restores the values to what
+they were before the dialog was opened, and close the dialog.
+
 :p.See also:
 :ul compact.
 :li.:link reftype=hd res=10001.More on REXX gauge scripts:elink.

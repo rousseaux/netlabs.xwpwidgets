@@ -11,6 +11,7 @@ BEGIN
         MLE             "", 1003, 6, 131, 130, 25, MLS_IGNORETAB | WS_GROUP
         GROUPBOX        "Icon", 1004, 225, 123, 60, 41
         ICON            1000, 1005, 245, 135, 21, 16, WS_GROUP
+        RTEXT           "", 1009, 186, 112, 99, 8
         LTEXT           "~Script", -1, 6, 112, 26, 8, DT_MNEMONIC
         MLE             "", 1001, 6, 36, 279, 76, MLS_HSCROLL | MLS_VSCROLL |
                         WS_GROUP

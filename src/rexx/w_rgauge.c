@@ -305,6 +305,10 @@ typedef struct _RGAUGESETUP
  *      fnwpRGaugeWidget and stored in XCENTERWIDGET.pUser.
  */
 
+#define USERDATASIZE 100
+        // user data size is now bigger (used to be 8 bytes)
+        // V0.5.2 (2001-07-03) [lafaix]
+
 typedef struct _RGAUGEPRIVATE
 {
     PXCENTERWIDGET pWidget;
@@ -343,7 +347,7 @@ typedef struct _RGAUGEPRIVATE
     LONG           lInstoreSize;
             // timer script precompiled store
 
-    BYTE           abUserData[8];
+    BYTE           abUserData[USERDATASIZE];
             // user data area
     USHORT         usUserDataLength;
             // user data area length
@@ -387,7 +391,7 @@ int iscntrl(int c) { return ((c >= 0) && (c <= 31)); }
 int isxdigit(int c) { return ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')); }
 int isdigit(int c) { return ((c >= '0') && (c <= '9')); }
 
-PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL
 {
     PSZ pszDest = (PSZ) malloc(sizeof(CHAR)*strlen(pszSource)*3+1);
             // in the worst case, the encoded string is 3 time longer
@@ -426,7 +430,7 @@ PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL
  *@@added V0.1.0 (2001-01-27) [lafaix]
  */
 
-PSZ RwgtDecodeString(PSZ pszEncodedSource) // in: pszEncodedSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+PSZ RwgtDecodeString(PSZ pszEncodedSource) // in: pszEncodedSource must not be NULL
 {
     PSZ pszDest = (PSZ) malloc(strlen(pszEncodedSource)+1);
             // decoded string cannot be longer that source
@@ -723,7 +727,7 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PRGAUGESETUP pSetup)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                   PRGAUGESETUP pSetup)
 {
     CHAR    szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
@@ -900,7 +904,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                  MPARAM mp2)
 {
     MRESULT mrc = 0;
-    
+
     typedef struct _STORAGE
     {
         PRGAUGESETUP pSetup;
@@ -923,24 +927,26 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
         {
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
             PSTORAGE pStorage = malloc(sizeof(STORAGE));
-            PRGAUGESETUP pSetup = malloc(sizeof(RGAUGESETUP));
-            PSZ pszInitial = malloc(strlen(pData->pcszSetupString)+1);
+            PRGAUGESETUP pSetup = calloc(1, sizeof(RGAUGESETUP));
 
             WinSetWindowPtr(hwnd, QWL_USER, pData);
             if (    (pSetup)
                  && (pStorage)
-                 && (pszInitial)
                )
             {
-                memset(pSetup, 0, sizeof(*pSetup));
-                memcpy(pszInitial, pData->pcszSetupString, strlen(pData->pcszSetupString)+1);
+                PSZ pszInitial = NULL;
+
+                // pcszSetupString can be null
+                if (pData->pcszSetupString)
+                    pszInitial = strdup(pData->pcszSetupString);
+
                 pStorage->pSetup = pSetup;
                 pStorage->pszInitialSetup = pszInitial;
                 pStorage->pszLastCommitted = 0;
                 pStorage->ulCurrent = 0;
                 pStorage->ulTotal = 0;
                 pStorage->ulColumn = 0;
-                
+
                 // store this in WIDGETSETTINGSDLGDATA
                 pData->pUser = pStorage;
 
@@ -1005,12 +1011,12 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                          * DID_APPLY:
                          *      apply the changes (without closing the dialog)
                          */
-                         
+
                         case DID_APPLY:
                         {
                             XSTRING strSetup;
                             PSTORAGE pStorage = (PSTORAGE)pData->pUser;
-                            
+
                             // saving colors
                             pSetup->lcol1 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
                                                                 PP_BACKGROUNDCOLOR,
@@ -1030,7 +1036,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
 
                             pctrSetSetupString(pData->hSettings,
                                                strSetup.psz);
-                                               
+
                             // update the last committed changes, so that
                             // DID_RESET can revert the new ones
                             if (pStorage->pszLastCommitted)
@@ -1051,15 +1057,15 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                          * DID_RESET:
                          *      reset the uncommitted changes
                          */
-                         
+
                         case DID_RESET:
                         {
                             PSTORAGE pStorage = (PSTORAGE)pData->pUser;
-                            
+
                             if (pSetup)
                             {
                                 RwgtClearSetup(pSetup);
-                                
+
                                 if (pStorage->pszLastCommitted)
                                     RwgtScanSetup(pStorage->pszLastCommitted, pSetup);
                                 else
@@ -1068,7 +1074,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                 Settings2Dlg(hwnd, pSetup);
                             }
                         break;}
-                         
+
                         /*
                          * DID_CANCEL:
                          *      cancel button; must reset the widget's settings
@@ -1280,7 +1286,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                usEF = (SHORT1FROMMP(mp1) == 1)
                                           ? ID_CRDI_RGAUGE_STATUS
                                           : ID_CRDI_RGAUGE_STATUS2;
-                                          
+
                         ULONG ulTotal = (ULONG)WinSendDlgItemMsg(hwnd,
                                                           usMLE,
                                                           MLM_QUERYLINECOUNT,
@@ -1302,7 +1308,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                                         MPFROMLONG(-1L),
                                                         0);
                         CHAR achBuffer[100];
-                        
+
                         if (    (pStorage->ulTotal != ulTotal)
                              || (pStorage->ulCurrent != ulCurrent)
                              || (pStorage->ulColumn != ulColumn)
@@ -1446,13 +1452,13 @@ LONG EXPENTRY RwgtInitializeGaugeStem(LONG exitno,
     // there's either 1 or 4 params
     MAKERXSTRING(block.shvname, "PARM", 4);
     MAKERXSTRING(block.shvvalue, szData, 250-1);
-    
+
     RexxVariablePool(&block);
 
     szData[block.shvvaluelen] = 0;
-    
+
     usKind = atoi(szData);
-    
+
     // we need to query the hwnd handle from the script (arg(1) or arg(4))
     MAKERXSTRING(block.shvname, (usKind == 1) ? "PARM.1" : "PARM.4", 6);
     MAKERXSTRING(block.shvvalue, szData, 250-1);
@@ -1516,13 +1522,13 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
     // there's either 1 or 4 params
     MAKERXSTRING(block.shvname, "PARM", 4);
     MAKERXSTRING(block.shvvalue, szData, 250-1);
-    
+
     RexxVariablePool(&block);
 
     szData[block.shvvaluelen] = 0;
-    
+
     usKind = atoi(szData);
-    
+
     // we need to query the hwnd handle from the script (arg(1))
     MAKERXSTRING(block.shvname, (usKind == 1) ? "PARM.1" : "PARM.4", 6);
     MAKERXSTRING(block.shvvalue, szData, 250-1);
@@ -1561,7 +1567,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->ulVal1 = 0;
-    
+
                     // ulVal2
                     MAKERXSTRING(block.shvname, "GAUGE.2", 7);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
@@ -1573,7 +1579,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->ulVal2 = 0;
-    
+
                     // ulVal3
                     MAKERXSTRING(block.shvname, "GAUGE.3", 7);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
@@ -1585,7 +1591,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->ulVal3 = 0;
-    
+
                     // text
                     MAKERXSTRING(block.shvname, "GAUGE.TEXT", 10);
                     MAKERXSTRING(block.shvvalue, pPrivate->achText, 100-1);
@@ -1594,7 +1600,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                         pPrivate->achText[block.shvvaluelen] = 0;
                     else
                         pPrivate->achText[0] = 0;
-    
+
                     // tooltip
                     MAKERXSTRING(block.shvname, "GAUGE.TOOLTIP", 13);
                     MAKERXSTRING(block.shvvalue, pPrivate->achTooltip, 250-1);
@@ -1603,7 +1609,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                         pPrivate->achTooltip[block.shvvaluelen] = 0;
                     else
                         pPrivate->achTooltip[0] = 0;
-                        
+
                     // colors
                     MAKERXSTRING(block.shvname, "GAUGE.BACKGROUND", 16);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
@@ -1615,7 +1621,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->lcolBackground = -1L;
-    
+
                     MAKERXSTRING(block.shvname, "GAUGE.FOREGROUND", 16);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
                     RexxVariablePool(&block);
@@ -1626,7 +1632,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->lcolForeground = -1L;
-    
+
                     MAKERXSTRING(block.shvname, "GAUGE.COLOR1", 12);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
                     RexxVariablePool(&block);
@@ -1637,7 +1643,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->lcol1 = -1L;
-    
+
                     MAKERXSTRING(block.shvname, "GAUGE.COLOR2", 12);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
                     RexxVariablePool(&block);
@@ -1648,7 +1654,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     }
                     else
                         pPrivate->lcol2 = -1L;
-    
+
                     MAKERXSTRING(block.shvname, "GAUGE.COLOR3", 12);
                     MAKERXSTRING(block.shvvalue, szData, 250-1);
                     RexxVariablePool(&block);
@@ -1665,7 +1671,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                 // for all scripts, we collect the user data area
 
                 MAKERXSTRING(block.shvname, "GAUGE.USER", 10);
-                MAKERXSTRING(block.shvvalue, szData, 8);
+                MAKERXSTRING(block.shvvalue, szData, USERDATASIZE);
                 RexxVariablePool(&block);
                 if (block.shvret == RXSHV_OK)
                 {
@@ -1700,9 +1706,8 @@ MRESULT RwgtCreate(HWND hwnd,
 {
     MRESULT mrc = 0;
     PSZ p;
-    PRGAUGEPRIVATE pPrivate = malloc(sizeof(RGAUGEPRIVATE));
+    PRGAUGEPRIVATE pPrivate = calloc(1, sizeof(RGAUGEPRIVATE));
 
-    memset(pPrivate, 0, sizeof(RGAUGEPRIVATE));
     // link the two together
     pWidget->pUser = pPrivate;
     pPrivate->pWidget = pWidget;
@@ -1720,11 +1725,11 @@ MRESULT RwgtCreate(HWND hwnd,
                         : pcmnQueryDefaultFont());
 
     // ensure instore is really null
-    /* already handled by memset(...) above.  V0.5.2 (2001-06-14) [lafaix]
+    /* already handled by calloc(...) above.  V0.5.2 (2001-06-14) [lafaix]
     pPrivate->pszInstore = NULL;
     pPrivate->lInstoreSize = 0;
     */
-    
+
     // sets resizeable property
     pWidget->fSizeable = pPrivate->Setup.fSizeable;
 
@@ -1741,7 +1746,7 @@ MRESULT RwgtCreate(HWND hwnd,
     pPrivate->lcol1          =
     pPrivate->lcol2          =
     pPrivate->lcol3          = -1L;
-    
+
     // run the script once, so that the display is correct on
     // startup (the timer send ticks _after_ its expiration delay)
     if (RwgtTimer(hwnd))
@@ -1817,7 +1822,7 @@ void RwgtButton1DblClk(HWND hwnd,
                 sprintf(pPrivate->achY, "%d", SHORT2FROMMP(mp1) * 100 / (rclWin.yTop-rclWin.yBottom));
                 sprintf(pPrivate->achModifiers, "%d", SHORT2FROMMP(mp2));
                 sprintf(pPrivate->achHWND, "%lX", (LONG)hwnd);
-            
+
                 MAKERXSTRING(instore[0], pPrivate->Setup.pszDblClkScript, strlen(pPrivate->Setup.pszDblClkScript));
                 MAKERXSTRING(instore[1], NULL, 0);
 
@@ -2114,7 +2119,7 @@ VOID RwgtPaint(HWND hwnd,
                                 : pPrivate->lcol3);
                 rclWin.xLeft = rclWin.xRight;
             }
-                
+
             // the background, if any
             rclWin.xRight = lRight;
             if (rclWin.xLeft != rclWin.xRight)
@@ -2392,7 +2397,7 @@ BOOL RwgtTimer(HWND hwnd)
                               MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
                 G_hwnd = NULLHANDLE;
-                
+
                 bRC = FALSE;
             }
 
@@ -2624,7 +2629,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                               HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
 {
     ULONG   ulrc = 0,
             ul = 0;
@@ -2640,9 +2645,9 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
     // save our module handle
     G_hmodThis = hmodSelf;
-    
+
     DosQueryModuleName(G_hmodThis, CCHMAXPATH, G_szThis);
-    
+
     // resolve imports from XFLDR.DLL (this is basically
     // a copy of the doshResolveImports code, but we can't
     // use that before resolving...)
@@ -2703,7 +2708,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                                 RXEXIT_NONDROP);         // local drop only
 
             _Pmpf(("RexxRegisterExitDll GAUGESTEM returns %d", rc));
-            
+
             // initialize our global REXX exit list structure
             G_exit_list[0].sysexit_name = "GAUGEINIT";
             G_exit_list[0].sysexit_code = RXINI;

@@ -51,6 +51,8 @@
     #define ID_CRDI_SPACER_WIDTH           1005
     #define ID_CRDI_SPACER_HEIGHT          1006
     #define ID_CRDI_SPACER_TRANSPARENT     1007
+    #define DID_APPLY                      1011
+    #define DID_RESET                      1012
 
     #define ID_XSH_WIDGET_SPACER_SETTINGS  1000
     #define ID_XSH_WIDGET_SPACER_MAIN      1001

@@ -35,16 +35,16 @@
  *      with the VAC subsystem library. As a result,
  *      multiple threads are not supported.
  *
- *      This is all new with V0.9.9.
+ *      This is all new with V0.1.0.
  *
- *@@added V0.9.9 (2001-02-01) [lafaix]
+ *@@added V0.1.0 (2001-02-01) [lafaix]
  *@@header "shared\center.h"
  */
 
 /*
  *      Copyright (C) 2000 Ulrich M”ller.
  *      Copyright (C) 2001 Martin Lafaix.
- *      This file is part of the XWorkplace source package.
+ *      This file is part of the XWorkplace Widget Library source package.
  *      XWorkplace is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published
  *      by the Free Software Foundation, in version 2 as it comes in the
@@ -347,7 +347,7 @@ VOID SwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID SwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PSPACERSETUP pSetup)
+                   PSPACERSETUP pSetup)                                       
 {
     CHAR    szTemp[250];
     pxstrInit(pstrSetup, 500);
@@ -420,7 +420,7 @@ VOID Settings2Dlg(HWND hwnd,
  *      returns PSZ of full help library path (in the same directory as
  *      the widget, with an extension of HLP).
  *
- *@@added V0.9.9 (2001-02-04) [lafaix]
+ *@@added V0.1.0 (2001-02-04) [lafaix]
  */
 
 char G_szLibraryName[CCHMAXPATH] = {0};
@@ -446,6 +446,8 @@ const char *SwgtQueryHelpLibrary(VOID)
 /*
  *@@ fnwpSettingsDlg:
  *      dialog proc for the spacer settings dialog.
+ *
+ *@@changed V0.5.2 (2001-06-21) [lafaix]: added Apply and Reset buttons
  */
 
 MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
@@ -454,6 +456,13 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                  MPARAM mp2)
 {
     MRESULT mrc = 0;
+
+    typedef struct _STORAGE
+    {
+        PSPACERSETUP pSetup;
+        PSZ pszInitialSetup;
+        PSZ pszLastCommitted;
+    } STORAGE, *PSTORAGE;
 
     switch (msg)
     {
@@ -466,13 +475,28 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
         case WM_INITDLG:
         {
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
+            PSTORAGE pStorage = malloc(sizeof(STORAGE));
             PSPACERSETUP pSetup = malloc(sizeof(SPACERSETUP));
+
             WinSetWindowPtr(hwnd, QWL_USER, pData);
-            if (pSetup)
+            if (    (pSetup)
+                 && (pStorage)
+               )
             {
+                PSZ pszInitial = NULL;
+
                 memset(pSetup, 0, sizeof(*pSetup));
+                
+                // pcszSetupString can be null
+                if (pData->pcszSetupString)
+                    pszInitial = strdup(pData->pcszSetupString);
+
+                pStorage->pSetup = pSetup;
+                pStorage->pszInitialSetup = pszInitial;
+                pStorage->pszLastCommitted = 0;
+
                 // store this in WIDGETSETTINGSDLGDATA
-                pData->pUser = pSetup;
+                pData->pUser = pStorage;
 
                 SwgtScanSetup(pData->pcszSetupString, pSetup);
 
@@ -491,7 +515,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PSPACERSETUP pSetup = (PSPACERSETUP)pData->pUser;
+                PSPACERSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usCmd = (USHORT)mp1;
@@ -515,6 +539,60 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             WinDismissDlg(hwnd, DID_OK);
                         break; }
 
+                        /*
+                         * DID_APPLY:
+                         *      apply the changes (without closing the dialog)
+                         */
+                         
+                        case DID_APPLY:
+                        {
+                            XSTRING strSetup;
+                            PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                            
+                            SwgtSaveSetup(&strSetup,
+                                          pSetup);
+
+                            pctrSetSetupString(pData->hSettings,
+                                               strSetup.psz);
+                                               
+                            // update the last committed changes, so that
+                            // DID_RESET can revert the new ones
+                            if (pStorage->pszLastCommitted)
+                                free(pStorage->pszLastCommitted);
+
+                            pStorage->pszLastCommitted = malloc(strSetup.ulLength+1);
+                            if (pStorage->pszLastCommitted)
+                            {
+                                memcpy(pStorage->pszLastCommitted,
+                                       strSetup.psz,
+                                       strSetup.ulLength+1);
+                            }
+
+                            pxstrClear(&strSetup);
+                        break;}
+
+                        /*
+                         * DID_RESET:
+                         *      reset the uncommitted changes
+                         */
+                         
+                        case DID_RESET:
+                        {
+                            PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                            
+                            if (pSetup)
+                            {
+                                SwgtClearSetup(pSetup);
+                                
+                                if (pStorage->pszLastCommitted)
+                                    SwgtScanSetup(pStorage->pszLastCommitted, pSetup);
+                                else
+                                    SwgtScanSetup(pData->pcszSetupString, pSetup);
+
+                                Settings2Dlg(hwnd, pSetup);
+                            }
+                        break;}
+                         
                         /*
                          * DID_CANCEL:
                          *      cancel button...
@@ -544,7 +622,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PSPACERSETUP pSetup = (PSPACERSETUP)pData->pUser;
+                PSPACERSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usItemID = SHORT1FROMMP(mp1),
@@ -632,12 +710,22 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PSPACERSETUP pSetup = (PSPACERSETUP)pData->pUser;
-                if (pSetup)
+                PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                if (pStorage)
                 {
-                    SwgtClearSetup(pSetup);
-                    free(pSetup);
-                } // end if (pSetup)
+                    if (pStorage->pSetup)
+                    {
+                        SwgtClearSetup(pStorage->pSetup);
+                        free(pStorage->pSetup);
+                    }
+
+                    if (pStorage->pszInitialSetup)
+                    {
+                        free(pStorage->pszInitialSetup);
+                    }
+
+                    free(pStorage);
+                } // end if (pStorage)
             } // end if (pData)
 
             mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
@@ -747,7 +835,7 @@ MRESULT SwgtCreate(HWND hwnd,
  *      otherwise it will be given some dumb default
  *      size.
  *
- *@@added V0.9.9 (2001-01-22) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
  */
 
 BOOL SwgtControl(HWND hwnd,
@@ -1096,7 +1184,7 @@ ULONG EXPENTRY SwgtInitModule(HAB hab,         // XCenter's anchor block
                               HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                         
 {
     ULONG   ulrc = 0,
             ul = 0;

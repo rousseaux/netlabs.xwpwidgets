@@ -62,6 +62,12 @@
     // current window a message box relates to
     HWND G_hwnd = NULLHANDLE;
 
+    RXSYSEXIT G_exit_list[3];
+                // the REXX exit list is constant across the session and is
+                // used for the two scripts, so it has been made global in
+                // order to save some CPU time.  It is initialized in
+                // RwgtInitModule.
+    
     // NLS strings
     PSZ pszName,
         pszNoDrop,
@@ -72,6 +78,7 @@
         pszAlreadyRunning,
         pszThreadingRequired,
         pszScriptError,
+        pszSettingsStatus,
         pszThreadCreationFailed;
 
     // REXX button settings dialog ids
@@ -84,6 +91,7 @@
     #define ID_CRDI_SCRIPT_CANDROP          1006
     #define DID_APPLY                       1007
     #define DID_RESET                       1008
+    #define ID_CRDI_SCRIPT_STATUS           1009
 
     // REXX button resources ids
     #define ID_RBUTTONICON                  1000
@@ -104,6 +112,7 @@
     #define ID_CRSI_THREADINGREQUIRED       1007
     #define ID_CRSI_SCRIPTERROR             1008
     #define ID_CRSI_THREADCREATIONFAILED    1009
+    #define ID_CRSI_SETTINGSSTATUS          1010
 
     #ifndef DID_HELP
         #define DID_HELP               97

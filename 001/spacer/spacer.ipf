@@ -20,9 +20,18 @@ available space (or, more precisely, the available space is
 evenly distributed between all spacers and widgets that require
 it).
 
+.* V0.5.2 (2001-06-21) [lafaix]
+:p.Spacers can also be transparent to mouse actions.  In this case, 
+all mouse actions (drag and drop gestures, context menu) are passed
+to the containing parent (either an XCenter or a container widget).
+
+.* V0.5.2 (2001-06-21) [lafaix]
 :p.To configure a spacer widget, right click inside the widget and
 select :hp2.Properties:ehp2..  A dialog will pop up that allows you to
-define the widget's width and height.
+define the widget's width and height.  (If the widget is defined as
+being transparent, or if its width is null, you can still access its
+properties by using the XCenter's settings notebook.  Go to the
+:hp2.Widgets:ehp2. page, and right click on the widget in the list.)
 
 :h1 res=1000.XCenter: Spacer Widget Settings
 :lm margin=1.
@@ -40,12 +49,19 @@ to flush a group of widgets to the right of the XCenter, in which case
 a spacer that uses all the available space for its width is
 recommended.
 
+.* V0.5.2 (2001-06-21) [lafaix] 
+:p.The :hp2.OK:ehp2. button saves the changes and closes the dialog. 
+The :hp2.Apply:ehp2. button saves the changes but does not close the
+dialog.  The :hp2.Reset:ehp2. button restores the values to the last
+saved ones.  The :hp2.Cancel:ehp2. button restores the values to what
+they were before the dialog was opened, and close the dialog.
+
 :nt.
 The current XCenter implementation does not allow the definition
 of widgets that require all the available space for their height. 
 The spacer widget fakes it by using a height of five pixels in that 
-case.  Also, for similar reasons, a width of zero cannot be specified. 
-(If you were to specify a width of zero, you wouldn't be able to access 
-the widget's settings dialog any more.)
+case.
+
+:p.
 :ent.
 :euserdoc.

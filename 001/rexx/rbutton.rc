@@ -36,4 +36,5 @@ BEGIN
     ID_CRSI_THREADINGREQUIRED    "This script requires threading support, but your version of XWorkplace does not support it.  Script execution aborted."
     ID_CRSI_SCRIPTERROR          "An interpreter error occured while executing the script.  The error code was %d.  You can find more information on this error in the REXX Information online guide."
     ID_CRSI_THREADCREATIONFAILED "The system failed to create the required thread to run the script in the background.  You may have exceeded the system threads count limit."
+    ID_CRSI_SETTINGSSTATUS       "Line %d of %d  Column %d"
 END

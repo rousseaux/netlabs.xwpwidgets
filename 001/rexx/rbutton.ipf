@@ -61,6 +61,13 @@ you expect your script to take more that 1/10 of a second to execute.
 :p.A REXX button can react to object or file drops.  You specify the
 kind of direct manipulation your button accepts in the list box.
 
+.* V0.5.2 (2001-06-21) [lafaix] 
+:p.The :hp2.OK:ehp2. button saves the changes and closes the dialog. 
+The :hp2.Apply:ehp2. button saves the changes but does not close the
+dialog.  The :hp2.Reset:ehp2. button restores the values to the last
+saved ones.  The :hp2.Cancel:ehp2. button restores the values to what
+they were before the dialog was opened, and close the dialog.
+
 :p.See also:
 :ul compact.
 :li.:link reftype=hd res=10001.More on REXX scripts:elink.
@@ -105,7 +112,7 @@ stem variable is defined.  :hp2.DRAGITEM.0:ehp2. contains the number of
 dropped elements, and :hp2.DRAGITEM.1:ehp2., :hp2.DRAGITEM.2:ehp2. and so
 on contain the fully qualified names of the dropped elements.
 
-.* V0.5.1 (2001-06-07) [lafaix]
+.* V0.5.1 (2001-06-07) [lafaix] 
 :p.Additionally, the script may access the widget's user data area.
 This area contains up to height bytes.  Its use is not constrained in
 any way.  The current user data area is stored in
@@ -122,7 +129,7 @@ values&colon.
 'RRGGBB' form (for example, pure green is 00FF00).
 :dt.:hp2.BUTTON.ICON:ehp2.
 :dd.is the absolute path to the new icon to use.
-:dt.:hp2.BUTTON.TOOLTIP:ehp2.
+:dt.:hp2.BUTTON.TOOLTIP:ehp2.   
 :dd.is the text to use as the tooltip.
 :edl.
 .*
@@ -179,7 +186,7 @@ though.
 :ul compact.
 :li.:link reftype=hd res=10002.More on direct manipulation:elink.
 :eul.
-
+                                         
 :h1 res=10002.More on direct manipulation
 :p.A REXX button handles direct manipulation in one of the following
 ways:
@@ -214,7 +221,7 @@ manipulation operation for files or objects.
 
 :p.If a REXX button refuses drops, the :hp2.DRAGITEM:ehp2. stem
 remains undefined when the script is activated.
-
+                              
 :h1 res=1002.Interpreter error
 .*
 :p.An interpreter error occurred while interpreting the button script.
