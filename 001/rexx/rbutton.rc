@@ -1,0 +1,38 @@
+
+/*
+ * rbutton.rc:
+ *      this is the main resource file for the English RBUTTON DLL.
+ *
+ *      Copyright (C) 2001 Martin Lafaix.
+ *      This file is part of the XWorkplace Widget Library source package.
+ *      XWorkplace is free software; you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published
+ *      by the Free Software Foundation, in version 2 as it comes in the
+ *      "COPYING" file of the XWorkplace main distribution.
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
+ */
+
+#define INCL_PM
+#include <os2.h>
+
+#include "rexx\w_rbutton.h"
+
+rcinclude ".\rbutton.dlg"
+
+POINTER ID_RBUTTONICON default.ico
+
+STRINGTABLE
+BEGIN
+    ID_CRSI_NAME               "REXX Button"
+    ID_CRSI_NODROP             "No drop"
+    ID_CRSI_DROPFILE           "Can drop one file"
+    ID_CRSI_DROPFILES          "Can drop one file or more"
+    ID_CRSI_DROPOBJECT         "Can drop one object"
+    ID_CRSI_DROPOBJECTS        "Can drop one object or more"
+    ID_CRSI_ALREADYRUNNING     "An instance of this script is already running.  Please wait for its completion before running it again."
+    ID_CRSI_THREADINGREQUIRED  "This script requires threading support, but your version of XWorkplace does not support it.  Script execution aborted."
+    ID_CRSI_SCRIPTERROR        "An interpreter error occured while executing the script.  The error code was %d.  You can find more information on this error in the REXX Information online guide."
+END

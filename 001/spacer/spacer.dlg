@@ -1,0 +1,31 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+DLGINCLUDE 1 "F:\work\xworkplace\src\widgets\w_spacer.h"
+
+DLGTEMPLATE ID_CRD_SPACER_SETTINGS LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Spacer - Settings", ID_CRD_SPACER_SETTINGS, 12, 6, 243, 107, ,
+            FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+    BEGIN
+        AUTORADIOBUTTON "Use all width", ID_CRDI_SPACER_GREEDYX, 14, 69, 71,
+                        10, WS_GROUP
+        AUTORADIOBUTTON "Use specified width", ID_CRDI_SPACER_USERX, 14, 59,
+                        99, 10
+        ENTRYFIELD      "", ID_CRDI_SPACER_WIDTH, 123, 60, 32, 8, ES_RIGHT |
+                        ES_MARGIN | WS_GROUP
+        AUTORADIOBUTTON "Use all height", ID_CRDI_SPACER_GREEDYY, 14, 36, 73,
+                        10, WS_GROUP
+        AUTORADIOBUTTON "Use specified height", ID_CRDI_SPACER_USERY, 14, 26,
+                        101, 10
+        ENTRYFIELD      "", ID_CRDI_SPACER_HEIGHT, 123, 27, 32, 8, ES_RIGHT |
+                        ES_MARGIN | WS_GROUP
+        PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14, WS_GROUP
+        PUSHBUTTON      "Cancel", DID_CANCEL, 49, 4, 40, 14
+        PUSHBUTTON      "Help", DID_HELP, 92, 4, 40, 14
+        LTEXT           "Spacer width", -1, 6, 79, 56, 8
+        LTEXT           "Spacer height", -1, 6, 46, 58, 8
+        LTEXT           "pixels", -1, 163, 60, 26, 8
+        LTEXT           "pixels", -1, 163, 27, 26, 8
+    END
+END
