@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.5.1#@ Rexx gauge plugin DLL'
+Description '@#Martin Lafaix:0.5.2#@ Rexx gauge plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

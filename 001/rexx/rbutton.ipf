@@ -114,8 +114,8 @@ on contain the fully qualified names of the dropped elements.
 
 .* V0.5.1 (2001-06-07) [lafaix] 
 :p.Additionally, the script may access the widget's user data area.
-This area contains up to height bytes.  Its use is not constrained in
-any way.  The current user data area is stored in
+This area contains up to one hundred bytes.  Its use is not
+constrained in any way.  The current user data area is stored in
 :hp2.BUTTON.USER:ehp2..  The value of this field is preserved between
 run of the script (but not between sessions).  It initially contains
 an empty string.
@@ -137,7 +137,7 @@ values&colon.
 settings dialog.  If a value is not defined in the script, then
 its default value is used.  Changes are not persistent.
 
-:p.Here are two examples of scripts:
+:p.Here are three examples of scripts:
 
 :p.This first script opens the "Find" dialog:
 
@@ -174,13 +174,37 @@ call RxMessageBox 'x =' x', y =' y', modifiers =' modifiers,
 :exmp.
 .*
 :p.Note that you cannot use the REXX :hp2.SAY:ehp2.
-or :hp2.PULL:ehp2.
-instructions as the script has no standard input and output
-streams that you can see.
+or :hp2.PULL:ehp2. instructions as the script has no standard input
+and output streams that you can see.  Hence the use of RxMessageBox
+to display results.
 
-:p.Also note that only one instance of a given script may be running
-at any time.  More than one script may be running at any given time
-though.
+:p.The third script switches between a primary keyboard layout and a
+secondary layout.  The button's icon is updated to reflect the
+currently active layout.
+
+:xmp.
+/* keyboard layout switcher */
+
+primary = 'fr'
+secondary = 'ux'
+iconspath = 'e&colon.&bsl.local&bsl.icons'
+
+if button.user = '' &splitvbar. button.user = primary then
+  target = secondary
+else
+  target = primary
+
+'keyb' target
+
+button.icon = iconspath'&bsl.'target'.ico'
+button.user = target
+:exmp.
+.*
+:p.Here you see an example of the BUTTON.USER usage.  It is used to 
+store the currently selected layout.
+
+:p.Note that only one instance of a given script may be running at any
+time.  More than one script may be running at any given time though.
 
 :p.See also:
 :ul compact.
@@ -237,14 +261,49 @@ manuals.
 that they cannot use :hp2.SAY:ehp2. instructions.  To interact with
 the user, use for example the RxMessageBox function.
 
+.* V0.5.2 (2001-07-08) [lafaix]
+:p.For example, if you want to catch syntax errors in your script, you
+can add this statement at the begining of the script (but after the
+mandatory initial comment):
+
+:xmp.
+signal on syntax
+:exmp.
+.*
+:p.and add the following method at the end of your script:
+
+:xmp.
+exit /* just in case so that preceding code does not enter
+        the error catching routine */
+syntax:
+  call RxMessageBox 'Error' RC 'on line' SIGL '&colon.' errortext(RC)
+  exit
+:exmp.
+
 .* V0.5.2 (2001-06-13) [lafaix]
 :h1 res=1003.Script already running
 .*
-:p.to be written
+:p.An instance of the button script is already running.  This can 
+happen if the script is defined to be run in a background thread.
+
+:p.As running more than one instance of a script at any given time is 
+not allowed, you may get this message if the previous instance has
+not completed yet.  You will have to wait for its completion before 
+you can start it again.
 
 .* V0.5.2 (2001-06-13) [lafaix]
 :h1 res=1004.Thread creation error
 .*
-:p.to be written
+:p.This is an internal XWorkplace error.  It means that you have 
+exceeded the number of possible threads.  To check that, open the
+:hp2.Scheduler:ehp2. page in the :hp2.OS/2 Kernel:ehp2. object.
+If the current thread count is close to the maximum thread count, then
+you can try increasing it and restarting your system, or you can
+close some applications to release some threads.
+
+:p.If that is not the case, i.e., the maximum thread count is way 
+above the current thread count, then you possibly maybe uncovered a
+bug in XWorkplace or in the XWorkplace widget library.  Please report 
+is with as much details as possible. Thank you.
 
 :euserdoc.

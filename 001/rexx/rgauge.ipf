@@ -108,15 +108,19 @@ gauge.  If no text is defined, no text is painted over the gauge.
 :p.The tooltip is painted the usual way for tooltips.  If no tooltip 
 is defined by the script, the default tooltip (if any) is used.
 
-.* V0.9.13 (2001-06-07) [lafaix]
+.* V0.5.1 (2001-06-07) [lafaix]
 :p.Additionally, the script may access the widget's user data area. 
-This area contains up to height bytes.  Its use is not constrained in
-any way.  The current user data area is stored in
+This area contains up to one hundred bytes.  Its use is not
+constrained in any way.  The current user data area is stored in
 :hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
 run of the script (but not between sessions).  It initially contains
 an empty string.
 
-.* V0.9.13 (2001-06-07) [lafaix]
+:p.Note that the user data area is shared between the gauge script and
+the double click action script.  You can use it to pass informations
+between the two.
+
+.* V0.5.1 (2001-06-07) [lafaix]
 :p.Finally, the script may define any of the following five 
 values&colon.
 :dl compact break=all.
@@ -249,13 +253,18 @@ depressed.
 is the window handle of the widget (in hex).
 :edl.
 .*
-.* V0.9.13 (2001-06-07) [lafaix]
+.* V0.5.1 (2001-06-07) [lafaix]
 :p.Additionally, the script may access the widget's user data area. 
-This area contains up to height bytes.  Its use is not constrained in
-any way.  The current user data area is stored in
+This area contains up to one hundred bytes.  Its use is not
+constrained in any way.  The current user data area is stored in
 :hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
 run of the script (but not between sessions).  It initially contains
 an empty string.
+
+.* V0.5.2 (2001-07-08) [lafaix]
+:p.Note that the user data area is shared between the gauge script and
+the double click action script.  You can use it to pass informations
+between the two.
 
 :p.Here are two examples of scripts:
 
@@ -307,6 +316,11 @@ though.
 .*
 :p.The script to be run on double click is already running.
 
+.* V0.5.2 (2001-07-08) [lafaix]
+:p.This situation normally cannot happen.  If it does, it means there 
+is a bug in the XWorkplace widget library.  Please report it with as
+much details as possible.  Thank you.
+
 :h1 res=1003.Interpreter error
 .*
 :p.An interpreter error occurred while interpreting the double click script.
@@ -320,6 +334,25 @@ SIGNAL ON SYNTAX instructions in the aforementioned manuals.
 :p.REXX scripts can include error checking routines.  But keep in mind
 that they cannot use :hp2.SAY:ehp2. instructions.  To interact with the
 user, use for example the RxMessageBox function.
+
+.* V0.5.2 (2001-07-08) [lafaix]
+:p.For example, if you want to catch errors in your script, you
+can add this statement at the begining of the script (but after the
+mandatory initial comment):
+
+:xmp.
+signal on syntax
+:exmp.
+.*
+:p.and add the following method at the end of your script:
+
+:xmp.
+exit /* just in case so that preceding code does not enter
+        the error catching routine */
+syntax:
+  call RxMessageBox 'Error' RC 'on line' SIGL '&colon.' errortext(RC)
+  exit
+:exmp.
 
 :h1 res=1004.Interpreter error
 .*
@@ -336,5 +369,30 @@ SIGNAL ON SYNTAX instructions in the aforementioned manuals.
 :p.REXX scripts can include error checking routines.  But keep in mind
 that they cannot use :hp2.SAY:ehp2. instructions.  To interact with the
 user, use for example the RxMessageBox function.
+
+.* V0.5.2 (2001-07-08) [lafaix]
+:p.For example, if you want to catch syntax errors in your script, you
+can add this statement at the begining of the script (but after the
+mandatory initial comment):
+
+:xmp.
+signal on syntax
+:exmp.
+.*
+:p.and add the following method at the end of your script:
+
+:xmp.
+exit /* just in case so that preceding code does not enter
+        the error catching routine */
+syntax:
+  call RxMessageBox 'Error' RC 'on line' SIGL '&colon.' errortext(RC)
+  / /* an intentional error again */
+:exmp.
+.*
+:p.Note the last line.  It contains an intentional syntax error.  It 
+is a trick used to stop the gauge script.  If it wasn't there, the
+error message box would pop up again and again, each time the script
+would be run.  It cause an extra error (error #35, "Invalid 
+expression") that you can safely ignore.
 
 :euserdoc.

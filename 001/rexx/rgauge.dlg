@@ -11,11 +11,11 @@ BEGIN
         MLE             "", 1004, 6, 165, 150, 20, MLS_WORDWRAP | WS_GROUP
         RTEXT           "", 1013, 145, 151, 99, 8
         LTEXT           "~Gauge script", -1, 6, 151, 77, 8, DT_MNEMONIC
-        MLE             "", 1001, 6, 92, 238, 58, MLS_WORDWRAP | MLS_HSCROLL |
+        MLE             "", 1001, 6, 92, 238, 58, MLS_HSCROLL |
                         MLS_VSCROLL | WS_GROUP
         RTEXT           "", 1014, 145, 80, 99, 8
         LTEXT           "Double ~click action", -1, 6, 80, 99, 8, DT_MNEMONIC
-        MLE             "", 1002, 6, 39, 238, 40, MLS_WORDWRAP | MLS_HSCROLL |
+        MLE             "", 1002, 6, 39, 238, 40, MLS_HSCROLL |
                         MLS_VSCROLL | WS_GROUP
         CTEXT           "", 1005, 276, 128, 20, 16
                         PRESPARAMS PP_BACKGROUNDCOLOR, 0x0000FF00L

@@ -1428,6 +1428,7 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
  *
  *@@added V0.1.0 (2001-01-25) [lafaix]
  *@@changed V0.3.0 (2001-03-06) [lafaix]: G_hwnd was always garbage
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: dropped element list now cleared in RwgtInitializeStem
  */
 
 void _Optlink fntRunScript(PTHREADINFO pti)
@@ -1503,9 +1504,6 @@ void _Optlink fntRunScript(PTHREADINFO pti)
     // release the returned value if needed
     if (RXSTRPTR(retstr) != achBuffer)
         DosFreeMem(RXSTRPTR(retstr));
-
-    // clear the queue
-    plstClear(pPrivate->pllQueue);
 }
 
 /*
@@ -1520,6 +1518,7 @@ void _Optlink fntRunScript(PTHREADINFO pti)
  *@@added V0.3.0 (2001-02-12) [lafaix]
  *@@changed V0.5.1 (2001-06-06) [lafaix]: added BUTTON.USER
  *@@changed V0.5.2 (2001-06-13) [lafaix]: fixed incorrect DRAGITEM filling
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: clearing dropped elements here now
  */
 
 LONG EXPENTRY RwgtInitializeStem(LONG exitno,
@@ -1595,6 +1594,9 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
                     MAKERXSTRING(block.shvvalue, szStem, strlen(szStem));
 
                     RexxVariablePool(&block);
+
+                    // clear the queue (elements are automatically freed)
+                    plstClear(pPrivate->pllQueue);
                 }
             }
         }

@@ -22,23 +22,23 @@
 
 #ifndef RGAUGE_HEADER_INCLUDED
     #define RGAUGE_HEADER_INCLUDED
-    
+
     #ifndef CENTER_HEADER_INCLUDED
         #error shared\center.h must be included before rexx\w_rgauge.h.
     #endif
-    
+
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
-    BOOL RwgtTimer(HWND hwnd);
-    
+    BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget);
+
     PFNEXCHOOKERROR G_pfnExcHookError;
-    
+
     typedef ULONG _System EXCHANDLERLOUD(PEXCEPTIONREPORTRECORD,
                                          PEXCEPTIONREGISTRATIONRECORD2,
                                          PCONTEXTRECORD,
                                          PVOID);
     typedef EXCHANDLERLOUD *PEXCHANDLERLOUD;
-    
+
     #define CCHMAXTITLE    250
                 // max title length, not counting the null char
     #define CCHMAXSCRIPT  5000
@@ -46,29 +46,29 @@
 
     // this module handle
     HMODULE G_hmodThis = NULLHANDLE;
-    
+
     // this module name
     CHAR G_szThis[CCHMAXPATH] = {0};
-    
+
     // this anchor block handle
     HAB G_habThis = NULLHANDLE;
-    
+
     // current window a message box relates to
     HWND G_hwnd = NULLHANDLE;
-    
+
     RXSYSEXIT G_exit_list[3];
                 // the REXX exit list is constant across the session and is
                 // used for the two scripts, so it has been made global in
                 // order to save some CPU time.  It is initialized in
                 // RwgtInitModule.
-    
+
     // NLS strings
     PSZ pszName,
         pszSettingsStatus,
         pszInterpreterErrorDblClk,
         pszInterpreterErrorTimer,
         pszAlreadyRunning;
-    
+
     // REXX gauge settings dialog ids
     #define ID_CRD_RGAUGE_SETTINGS         1000
     #define ID_CRDI_RGAUGE_SCRIPT          1001
@@ -97,10 +97,10 @@
     #define ID_CRSI_INTERPRETER_TIMER      1002
     #define ID_CRSI_ALREADYRUNNING         1006
     #define ID_CRSI_SETTINGSSTATUS         1007
-                    
+
     #ifndef DID_HELP
         #define DID_HELP               97
     #endif
-      
+
 #endif
 

@@ -128,7 +128,7 @@ static XCENTERWIDGETCLASS G_WidgetClasses[]
         "Spacer",                   // internal widget class name
         NULL,                       // widget class name displayed to user
                                     // is set by SwgtInitModule (NLS)
-        WGTF_TRANSPARENT | WGTF_NONFOCUSTRAVERSABLE,
+        WGTF_TRANSPARENT | WGTF_NONFOCUSTRAVERSABLE | WGTF_TRAYABLE,
                                     // widget class flags
         SwgtShowSettingsDlg         // settings dialog
       };

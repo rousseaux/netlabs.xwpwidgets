@@ -163,7 +163,8 @@ static XCENTERWIDGETCLASS G_WidgetClasses[]
         "RexxGauge",                // internal widget class name
         NULL,                       // widget class name displayed to user;
                                     // is set in RwgtInitModule (NLS)
-        WGTF_TOOLTIP,               // widget class flags
+        WGTF_TOOLTIP | WGTF_TRAYABLE,
+                                    // widget class flags
         RwgtShowSettingsDlg         // settings dialog
       };
 
@@ -283,6 +284,9 @@ typedef struct _RGAUGESETUP
     PSZ         pszScript;
     PSZ         pszTitle;
 
+    ULONG       ulScriptLength;
+            // strlen(pszScript), for speed.  V0.7.0 (2001-07-15) [lafaix]
+
     LONG        lcol1,
                 lcol2,
                 lcol3;
@@ -303,6 +307,8 @@ typedef struct _RGAUGESETUP
  *
  *      An instance of this is created on WM_CREATE in
  *      fnwpRGaugeWidget and stored in XCENTERWIDGET.pUser.
+ *
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: achHWNDxxx unified, made read only
  */
 
 #define USERDATASIZE 100
@@ -323,15 +329,18 @@ typedef struct _RGAUGEPRIVATE
     CHAR           achY[16];
     CHAR           achModifiers[16];
     CHAR           achHWND[16];
-            // placeholders for dblclk script arguments
-
-    CHAR           achHWNDTimer[16];
-            // placeholder for timer script argument
+            // placeholders for scripts arguments
 
     ULONG          ulVal1,
                    ulVal2,
                    ulVal3;
             // the returned values for the gauge
+
+    BOOL           fBusy;
+            // TRUE if a script is currently running, false otherwise
+
+    BOOL           fTooltipShowing;
+            // TRUE when tooltip shown over the gauge
 
     CHAR           achText[100];
             // the text to be used for the gauge
@@ -602,11 +611,15 @@ VOID RwgtScanSetup(const char *pcszSetupString,
         PSZ pszDecoded = RwgtDecodeString(p);
 
         pSetup->pszScript = strdup(pszDecoded);
+        pSetup->ulScriptLength = strlen(pszDecoded);
         pctrFreeSetupValue(p);
         RwgtFree(pszDecoded);
     }
     else
+    {
         pSetup->pszScript = strdup("");
+        pSetup->ulScriptLength = 0;
+    }
 
     // double click script:
     p = pctrScanSetupString(pcszSetupString,
@@ -896,6 +909,7 @@ VOID Settings2Dlg(HWND hwnd,
  *      dialog proc for the rgauge settings dialog.
  *
  *@@changed V0.5.2 (2001-06-18) [lafaix]: added Apply/Reset support
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: reworked MLE handling (no more malloc for each changes)
  */
 
 MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
@@ -983,6 +997,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         case DID_OK:
                         {
                             XSTRING strSetup;
+                            CHAR szTemp[CCHMAXSCRIPT+1];
 
                             // saving colors
                             pSetup->lcol1 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
@@ -997,6 +1012,23 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                                                 PP_BACKGROUNDCOLOR,
                                                                 FALSE,
                                                                 RGB_RED);
+
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszScript)
+                                free(pSetup->pszScript);
+                            pSetup->pszScript = strdup(szTemp);
+                            pSetup->ulScriptLength = strlen(szTemp);
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszDblClkScript)
+                                free(pSetup->pszDblClkScript);
+                            pSetup->pszDblClkScript = strdup(szTemp);
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszTitle)
+                                free(pSetup->pszTitle);
+                            pSetup->pszTitle = strdup(szTemp);
 
                             RwgtSaveSetup(&strSetup,
                                           pSetup);
@@ -1016,6 +1048,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         {
                             XSTRING strSetup;
                             PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                            CHAR szTemp[CCHMAXSCRIPT+1];
 
                             // saving colors
                             pSetup->lcol1 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
@@ -1030,6 +1063,23 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                                                 PP_BACKGROUNDCOLOR,
                                                                 FALSE,
                                                                 RGB_RED);
+
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszScript)
+                                free(pSetup->pszScript);
+                            pSetup->pszScript = strdup(szTemp);
+                            pSetup->ulScriptLength = strlen(szTemp);
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszDblClkScript)
+                                free(pSetup->pszDblClkScript);
+                            pSetup->pszDblClkScript = strdup(szTemp);
+
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, sizeof(szTemp), (PSZ)szTemp);
+                            if (pSetup->pszTitle)
+                                free(pSetup->pszTitle);
+                            pSetup->pszTitle = strdup(szTemp);
 
                             RwgtSaveSetup(&strSetup,
                                           pSetup);
@@ -1124,18 +1174,8 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                            usNotifyCode = SHORT2FROMMP(mp1);
                     switch (usItemID)
                     {
-                        // script:
+                        // scripts: status area handling
                         case ID_CRDI_RGAUGE_SCRIPT:
-                            if (usNotifyCode == MLN_CHANGE)
-                            {
-                                CHAR szTemp[CCHMAXSCRIPT+1];
-
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
-                                if (pSetup->pszScript)
-                                    free(pSetup->pszScript);
-                                pSetup->pszScript = strdup(szTemp);
-                            }
-                            else
                             if (usNotifyCode == MLN_SETFOCUS)
                             {
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
@@ -1151,16 +1191,6 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         break;
 
                         case ID_CRDI_RGAUGE_DBLCLK:
-                            if (usNotifyCode == MLN_CHANGE)
-                            {
-                                CHAR szTemp[CCHMAXSCRIPT+1];
-
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
-                                if (pSetup->pszDblClkScript)
-                                    free(pSetup->pszDblClkScript);
-                                pSetup->pszDblClkScript = strdup(szTemp);
-                            }
-                            else
                             if (usNotifyCode == MLN_SETFOCUS)
                             {
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
@@ -1172,19 +1202,6 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                 WinStopTimer(G_habThis, hwnd, 2);
                                 WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_STATUS2, "");
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
-                            }
-                        break;
-
-                        // gauge title (used by tooltip)
-                        case ID_CRDI_RGAUGE_TITLE:
-                            if (usNotifyCode == MLN_CHANGE)
-                            {
-                                CHAR szTemp[251];
-
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, sizeof(szTemp), (PSZ)szTemp);
-                                if (pSetup->pszTitle)
-                                    free(pSetup->pszTitle);
-                                pSetup->pszTitle = strdup(szTemp);
                             }
                         break;
 
@@ -1747,9 +1764,12 @@ MRESULT RwgtCreate(HWND hwnd,
     pPrivate->lcol2          =
     pPrivate->lcol3          = -1L;
 
+    // computing hex representation for hwnd handle (passed to scripts)
+    sprintf(pPrivate->achHWND, "%08lX", (LONG)hwnd);
+
     // run the script once, so that the display is correct on
     // startup (the timer send ticks _after_ its expiration delay)
-    if (RwgtTimer(hwnd))
+    if (RwgtTimer(hwnd, pWidget))
     {
         // start update timer, as the script looks OK (there is no
         // need starting the timer if the script is invalid)
@@ -1783,8 +1803,9 @@ void RwgtButton1DblClk(HWND hwnd,
         if (pPrivate)
         {
             // our structure is not multiple-instances--aware yet so
-            // we better check it out beforehand
-            if (pPrivate->achHWND[0])
+            // we better check it out beforehand (even if it is for
+            // safety's shake, as this normally cannot happen).
+            if (pPrivate->fBusy)
             {
                 G_hwnd = hwnd;
                 WinMessageBox(HWND_DESKTOP,
@@ -1803,13 +1824,15 @@ void RwgtButton1DblClk(HWND hwnd,
                )
             {
                 // its a REXX script; run it immediately
-                RECTL rclWin;
+                RECTL    rclWin;
                 RXSTRING params[4];
                 RXSTRING instore[2];
                 RXSTRING retstr;
                 SHORT    src;
                 LONG     rc;
                 CHAR     achBuffer[250];
+
+                pPrivate->fBusy = TRUE;
 
                 WinQueryWindowRect(hwnd, &rclWin);
 
@@ -1821,7 +1844,6 @@ void RwgtButton1DblClk(HWND hwnd,
                 sprintf(pPrivate->achX, "%d", SHORT1FROMMP(mp1) * 100 / (rclWin.xRight-rclWin.xLeft));
                 sprintf(pPrivate->achY, "%d", SHORT2FROMMP(mp1) * 100 / (rclWin.yTop-rclWin.yBottom));
                 sprintf(pPrivate->achModifiers, "%d", SHORT2FROMMP(mp2));
-                sprintf(pPrivate->achHWND, "%lX", (LONG)hwnd);
 
                 MAKERXSTRING(instore[0], pPrivate->Setup.pszDblClkScript, strlen(pPrivate->Setup.pszDblClkScript));
                 MAKERXSTRING(instore[1], NULL, 0);
@@ -1829,7 +1851,7 @@ void RwgtButton1DblClk(HWND hwnd,
                 MAKERXSTRING(params[0], pPrivate->achX, strlen(pPrivate->achX));
                 MAKERXSTRING(params[1], pPrivate->achY, strlen(pPrivate->achY));
                 MAKERXSTRING(params[2], pPrivate->achModifiers, strlen(pPrivate->achModifiers));
-                MAKERXSTRING(params[3], pPrivate->achHWND, strlen(pPrivate->achHWND));
+                MAKERXSTRING(params[3], pPrivate->achHWND, 8);
                 MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
 
                 #define excHandlerLoud pexcHandlerLoud
@@ -1852,7 +1874,7 @@ void RwgtButton1DblClk(HWND hwnd,
                 }
                 CATCH(excpt1) {}  END_CATCH();
 
-                pPrivate->achHWND[0] = 0; // not running anymore
+                pPrivate->fBusy = 0; // not running anymore
 
                 if (rc < 0)
                 {
@@ -1869,7 +1891,8 @@ void RwgtButton1DblClk(HWND hwnd,
                                   ID_CRH_RGAUGE_DBLCLKERROR2,
                                   MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
-                    G_hwnd = NULLHANDLE;
+                    if (G_hwnd == hwnd)
+                        G_hwnd = NULLHANDLE;
                 }
 
                 // release the tokenized code
@@ -1895,6 +1918,7 @@ void RwgtButton1DblClk(HWND hwnd,
  *      size.
  *
  *@@added V0.1.0 (2001-01-22) [lafaix]
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: added dynamic tooltip support
  */
 
 BOOL RwgtControl(HWND hwnd,
@@ -1972,7 +1996,7 @@ BOOL RwgtControl(HWND hwnd,
 
                         // re-run gauge script, so that the display
                         // is up to date
-                        if (RwgtTimer(hwnd))
+                        if (RwgtTimer(hwnd, pWidget))
                         {
                             // reinitialize timer if first run is successful
                             pPrivate->ulTimerID = ptmrStartXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
@@ -2006,6 +2030,14 @@ BOOL RwgtControl(HWND hwnd,
 
                             pttt->ulFormat = TTFMT_PSZ;
                         break; }
+
+                        case TTN_SHOW:
+                            pPrivate->fTooltipShowing = TRUE;
+                        break;
+
+                        case TTN_POP:
+                            pPrivate->fTooltipShowing = FALSE;
+                        break;
                     }
                 }
             }
@@ -2309,112 +2341,121 @@ VOID RwgtWindowPosChanged(HWND hwnd, MPARAM mp1, MPARAM mp2)
 /*
  *@@ RwgtTimer:
  *      updates the gauge values by running the script, updates the
- *      the window.
+ *      window.
+ *
+ *      pWidget must not be NULL.
  *
  *      Returns TRUE is the script ran without errors, FALSE otherwise.
  */
 
-BOOL RwgtTimer(HWND hwnd)
+BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
 {
     BOOL bRC = TRUE;
+    PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
 
-    PXCENTERWIDGET pWidget = (PXCENTERWIDGET)WinQueryWindowPtr(hwnd, QWL_USER);
-    if (pWidget)
+    if (    (pPrivate)
+         && (pPrivate->fBusy == 0)           // script not already running
+         && (pPrivate->Setup.pszScript)      // a script exists
+         && (pPrivate->Setup.ulScriptLength > 4)
+         && (pPrivate->Setup.pszScript[0] = '/')
+         && (pPrivate->Setup.pszScript[1] = '*')
+                                             // the script starts with a
+                                             // comment
+       )
     {
-        PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+        // run script
+        RXSTRING params[1],
+                 instore[2],
+                 retstr;
+        SHORT    src;
+        LONG     rc;
+        CHAR     achBuffer[250];
 
-        if (    (pPrivate)
-             && (pPrivate->achHWNDTimer[0] == 0) // script not already running
-             && (pPrivate->Setup.pszScript)      // a script exists
-             && (strlen(pPrivate->Setup.pszScript) > 4)
-             && (pPrivate->Setup.pszScript[0] = '/')
-             && (pPrivate->Setup.pszScript[1] = '*')
-                                                 // the script starts with a
-                                                 // comment
-           )
+        pPrivate->fBusy = TRUE;
+
+        // calling the script with one arg (our hwnd)
+        MAKERXSTRING(params[0], pPrivate->achHWND, 8);
+
+        MAKERXSTRING(instore[0], pPrivate->Setup.pszScript, pPrivate->Setup.ulScriptLength);
+        MAKERXSTRING(instore[1], pPrivate->pszInstore, pPrivate->lInstoreSize);
+
+        MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
+
+        TRY_LOUD(excpt1)
         {
-            // run script
-            RXSTRING params[1],
-                     instore[2],
-                     retstr;
-            SHORT    src;
-            LONG     rc;
-            CHAR     achBuffer[250];
+            rc = RexxStart(1,
+                           &params[0],
+                           "RexxGaugeTimer",
+                           &instore[0],
+                           "CMD",
+                           RXCOMMAND,
+                           G_exit_list,
+                           &src,
+                           &retstr);
 
-            // calling the script with one arg (our hwnd)
-            sprintf(pPrivate->achHWNDTimer, "%lX", (LONG)hwnd);
-            MAKERXSTRING(params[0], pPrivate->achHWNDTimer, strlen(pPrivate->achHWNDTimer));
+            if (rc)
+                _Pmpf(("RexxStart returns %ld", rc));
+        }
+        CATCH(excpt1) {}  END_CATCH();
 
-            MAKERXSTRING(instore[0], pPrivate->Setup.pszScript, strlen(pPrivate->Setup.pszScript));
-            MAKERXSTRING(instore[1], pPrivate->pszInstore, pPrivate->lInstoreSize);
+        // we don't have to care about the previous instore
+        // content in pPrivate; it's either NULL or the
+        // same values
+        pPrivate->pszInstore = RXSTRPTR(instore[1]);
+        pPrivate->lInstoreSize = RXSTRLEN(instore[1]);
 
-            MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
+        if (rc < 0)
+        {
+            // a REXX interpreter error occured; stop the timer
+            // and tell so
 
-            TRY_LOUD(excpt1)
-            {
-                rc = RexxStart(1,
-                               &params[0],
-                               "RexxGaugeTimer",
-                               &instore[0],
-                               "CMD",
-                               RXCOMMAND,
-                               G_exit_list,
-                               &src,
-                               &retstr);
+            // !!! I would like to get the errant line, but I don't
+            // !!! know how to get it.  SIGL returns garbage.
 
-                if (rc)
-                    _Pmpf(("RexxStart returns %ld", rc));
-            }
-            CATCH(excpt1) {}  END_CATCH();
+            CHAR szBuf[500];
 
-            pPrivate->achHWNDTimer[0] = 0; // not running anymore
+            // stop timer
+            if (pPrivate->ulTimerID)
+                ptmrStopXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
+                               hwnd,
+                               pPrivate->ulTimerID);
+            pPrivate->ulTimerID = 0;
 
-            if (rc < 0)
-            {
-                // a REXX interpreter error occured; stop the timer
-                // and tell so
+            sprintf(szBuf, pszInterpreterErrorTimer, -rc);
+            G_hwnd = hwnd;
 
-                // !!! I would like to get the errant line, but I don't
-                // !!! know how to get it.  SIGL returns garbage.
+            WinMessageBox(HWND_DESKTOP,
+                          hwnd,
+                          szBuf,
+                          pPrivate->Setup.pszTitle,
+                          ID_CRH_RGAUGE_TIMERERROR,
+                          MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
-                CHAR szBuf[500];
-
-                // stop timer
-                if (pPrivate->ulTimerID)
-                    ptmrStopXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
-                                   hwnd,
-                                   pPrivate->ulTimerID);
-                pPrivate->ulTimerID = 0;
-
-                sprintf(szBuf, pszInterpreterErrorTimer, -rc);
-                G_hwnd = hwnd;
-
-                WinMessageBox(HWND_DESKTOP,
-                              hwnd,
-                              szBuf,
-                              pPrivate->Setup.pszTitle,
-                              ID_CRH_RGAUGE_TIMERERROR,
-                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
-
+            if (G_hwnd == hwnd)
                 G_hwnd = NULLHANDLE;
 
-                bRC = FALSE;
-            }
+            bRC = FALSE;
+        }
 
-            // we don't have to care about the previous instore
-            // content in pPrivate; it's either NULL or the
-            // same values
-            pPrivate->pszInstore = RXSTRPTR(instore[1]);
-            pPrivate->lInstoreSize = RXSTRLEN(instore[1]);
+        pPrivate->fBusy = 0; // not running anymore
 
-            // release the returned value if needed
-            if (RXSTRPTR(retstr) != achBuffer)
-                DosFreeMem(RXSTRPTR(retstr));
+        // release the returned value if needed
+        if (RXSTRPTR(retstr) != achBuffer)
+            DosFreeMem(RXSTRPTR(retstr));
 
-            // invalidate window, to cause a refresh
-            WinInvalidateRect(hwnd, NULL, FALSE);
-        } // end if (pPrivate)
-    } // end if (pWidget)
+        if (pPrivate->fTooltipShowing)
+            // tooltip currently showing:
+            // refresh its display
+            WinSendMsg(pWidget->pGlobals->hwndTooltip,
+                       TTM_UPDATETIPTEXT,
+                       (pPrivate->achTooltip[0] == 0)
+                           ? (MPARAM)pPrivate->Setup.pszTitle
+                           : (MPARAM)pPrivate->achTooltip,
+                       0);
+
+        // invalidate window, to cause a refresh
+        WinInvalidateRect(hwnd, NULL, FALSE);
+    } // end if (pPrivate)
 
     return (bRC);
 }
@@ -2562,7 +2603,9 @@ MRESULT EXPENTRY fnwpRGaugeWidget(HWND hwnd,
          */
 
         case WM_TIMER:
-            RwgtTimer(hwnd);
+            if (pWidget)
+                // pWidget must not be null for RwgtTimer
+                RwgtTimer(hwnd, pWidget);
         break;
 
         default:
