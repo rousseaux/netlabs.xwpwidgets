@@ -5,7 +5,7 @@
 :lm margin=1.
 :p.The XCenter :hp2.REXX button:ehp2. widget displays a button which
 represents a REXX script.  If you press that button, the script it
-contains will run. 
+contains will run.
 
 :p.On some REXX buttons, you can also drop files or objects.  When
 such an action occurs, the script is run too.
@@ -89,7 +89,7 @@ pointer.
 :dd.
 contains the modifiers in action when the mouse
 button was depressed.  This is a number that combines the status of
-the :hp2.Shift:ehp2., :hp2.Control:ehp2., and :hp2.Alt:ehp2. keys. 
+the :hp2.Shift:ehp2., :hp2.Control:ehp2., and :hp2.Alt:ehp2. keys.
 :hp2.Shift:ehp2. is represented by the number 8, :hp2.Control:ehp2.
 by 16 and :hp2.Alt:ehp2. by 32.  These numbers are added if
 more that one modifier was depressed.  For example, a value of 24
@@ -100,10 +100,35 @@ depressed.
 is the window handle of the widget (in hex).
 :edl.
 .*
-:p.If the script accepts dropped elements, the :hp2.DRAGITEM:ehp2. 
+:p.If the script accepts dropped elements, the :hp2.DRAGITEM:ehp2.
 stem variable is defined.  :hp2.DRAGITEM.0:ehp2. contains the number of
 dropped elements, and :hp2.DRAGITEM.1:ehp2., :hp2.DRAGITEM.2:ehp2. and so
 on contain the fully qualified names of the dropped elements.
+
+.* V0.5.1 (2001-06-07) [lafaix]
+:p.Additionally, the script may access the widget's user data area.
+This area contains up to height bytes.  Its use is not constrained in
+any way.  The current user data area is stored in
+:hp2.BUTTON.USER:ehp2..  The value of this field is preserved between
+run of the script (but not between sessions).  It initially contains
+an empty string.
+
+.* V0.5.1 (2001-06-07) [lafaix]
+:p.Finally, the script may define any of the following three
+values&colon.
+:dl compact break=all.
+:dt.:hp2.BUTTON.BACKGROUND:ehp2.
+:dd.is the button's background color.  Its format is of the
+'RRGGBB' form (for example, pure green is 00FF00).
+:dt.:hp2.BUTTON.ICON:ehp2.
+:dd.is the absolute path to the new icon to use.
+:dt.:hp2.BUTTON.TOOLTIP:ehp2.
+:dd.is the text to use as the tooltip.
+:edl.
+.*
+:p.Defining a value overrides its definition as specified in the
+settings dialog.  If a value is not defined in the script, then
+its default value is used.  Changes are not persistent.
 
 :p.Here are two examples of scripts:
 
@@ -156,24 +181,24 @@ though.
 :eul.
 
 :h1 res=10002.More on direct manipulation
-:p.A REXX button handles direct manipulation in one of the following 
+:p.A REXX button handles direct manipulation in one of the following
 ways:
 
 :ul compact.
 :li.It refuses dropped elements
 :li.It accepts at most one dropped element, which must be a file
-:li.It accepts any number of dropped elements, each of them being a 
+:li.It accepts any number of dropped elements, each of them being a
 file
-:li.It accepts at most one dropped element, which must be an 
+:li.It accepts at most one dropped element, which must be an
 object
-:li.It accepts any number of dropped elements, each of them being an 
+:li.It accepts any number of dropped elements, each of them being an
 object
 :eul.
 .*
 :p.Other forms of direct manipulation (say dynamic data exchange or
 printing) are not handled.
 
-:p.A REXX button that accepts dropped element(s) can still be 
+:p.A REXX button that accepts dropped element(s) can still be
 activated by a simple mouse button 1 click.  In this case, and in this
 case only, :hp2.DRAGITEM.0:ehp2. is equal to 0.
 
@@ -183,12 +208,12 @@ dereferenced.)
 
 :p.When elements are dropped on a REXX button, the initial four
 arguments are passed as usual.  Note that the modifiers can only be a
-possibly null combination of :hp2.Shift:ehp2. and :hp2.Control:ehp2.. 
+possibly null combination of :hp2.Shift:ehp2. and :hp2.Control:ehp2..
 :hp2.Alt:ehp2. is never present, as it corresponds to no valid direct
 manipulation operation for files or objects.
 
-:p.If a REXX button refuses drops, the :hp2.DRAGITEM:ehp2. remains 
-undefined when the script is activated.
+:p.If a REXX button refuses drops, the :hp2.DRAGITEM:ehp2. stem
+remains undefined when the script is activated.
 
 :h1 res=1002.Interpreter error
 .*
@@ -204,5 +229,15 @@ manuals.
 :p.REXX scripts can include error checking routines.  But keep in mind
 that they cannot use :hp2.SAY:ehp2. instructions.  To interact with
 the user, use for example the RxMessageBox function.
+
+.* V0.5.2 (2001-06-13) [lafaix]
+:h1 res=1003.Script already running
+.*
+:p.to be written
+
+.* V0.5.2 (2001-06-13) [lafaix]
+:h1 res=1004.Thread creation error
+.*
+:p.to be written
 
 :euserdoc.

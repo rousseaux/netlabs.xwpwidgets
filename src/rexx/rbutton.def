@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.5.0#@ Rexx button plugin DLL'
+Description '@#Martin Lafaix:0.5.1#@ Rexx button plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
@@ -27,8 +27,9 @@ CODE              LOADONCALL
 EXPORTS
     RwgtInitModule          @1
     RwgtUnInitModule        @2
+    RwgtQueryVersion        @3
 
     RwgtHelpHook            @65
     RwgtInitializeStem      @66
-
+    RwgtExtractStem         @67
 

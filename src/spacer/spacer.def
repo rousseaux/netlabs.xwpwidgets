@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.5.0#@ Spacer plugin DLL'
+Description '@#Martin Lafaix:0.5.1#@ Spacer plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
@@ -27,5 +27,5 @@ CODE              LOADONCALL
 EXPORTS
     SwgtInitModule      @1
     SwgtUnInitModule    @2
-
+    SwgtQueryVersion    @3
 

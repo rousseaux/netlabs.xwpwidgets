@@ -24,10 +24,12 @@
     #define RGAUGE_HEADER_INCLUDED
     
     #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before widgets\w_rgauge.h.
+        #error shared\center.h must be included before rexx\w_rgauge.h.
     #endif
     
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
+
+    BOOL RwgtTimer(HWND hwnd);
     
     PFNEXCHOOKERROR G_pfnExcHookError;
     
@@ -54,23 +56,18 @@
     // current window a message box relates to
     HWND G_hwnd = NULLHANDLE;
     
+    RXSYSEXIT G_exit_list[3];
+                // the REXX exit list is constant across the session and is
+                // used for the two scripts, so it has been made global in
+                // order to save some CPU time.  It is initialized in
+                // RwgtInitModule.
+    
     // NLS strings
     PSZ pszName,
+        pszSettingsStatus,
         pszInterpreterErrorDblClk,
         pszInterpreterErrorTimer,
         pszAlreadyRunning;
-
-    // Declare C runtime prototypes, because there are no headers
-    // for these:
-    
-    // _rmem_init is the subsystem run-time environment initialization function.
-    // It will return 0 to indicate success and -1 to indicate failure.
-    int _rmem_init(void);
-    
-    // _rmem_term is the subsystem run-time environment termination function.
-    // It only needs to be called when the C run-time functions are statically
-    // linked, as is the case with XFolder.
-    void _rmem_term(void);
     
     // REXX gauge settings dialog ids
     #define ID_CRD_RGAUGE_SETTINGS         1000
@@ -84,6 +81,10 @@
     #define ID_CRDI_RGAUGE_RESIZEABLE      1008
     #define ID_CRDI_RGAUGE_FIXEDWIDTH      1009
     #define ID_CRDI_RGAUGE_WIDTH           1010
+    #define DID_APPLY                      1011
+    #define DID_RESET                      1012
+    #define ID_CRDI_RGAUGE_STATUS          1013
+    #define ID_CRDI_RGAUGE_STATUS2         1014
 
     #define ID_CRH_RGAUGE_SETTINGS         1000
     #define ID_CRH_RGAUGE_MAIN             1001
@@ -95,10 +96,11 @@
     #define ID_CRSI_INTERPRETER_DBLCLK     1001
     #define ID_CRSI_INTERPRETER_TIMER      1002
     #define ID_CRSI_ALREADYRUNNING         1006
-
+    #define ID_CRSI_SETTINGSSTATUS         1007
+                    
     #ifndef DID_HELP
         #define DID_HELP               97
     #endif
-
+      
 #endif
 

@@ -75,6 +75,12 @@ MODULESDIR=$(PROJECT_OUTPUT_DIR)\widgets
 # VARIABLES
 # ---------
 
+!ifdef XWP_DEBUG
+PMPRINTF_LIB = $(HELPERS_BASE)\src\helpers\pmprintf.lib
+!else
+PMPRINTF_LIB =
+!endif
+
 # The following macros contains the .OBJ files for the XCenter plugins.
 RBUTTONOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rbutton.obj $(PMPRINTF_LIB)
 RGAUGEOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rgauge.obj $(PMPRINTF_LIB)

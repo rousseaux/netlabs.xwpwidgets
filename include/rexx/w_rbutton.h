@@ -22,26 +22,23 @@
 
 #ifndef RBUTTON_HEADER_INCLUDED
     #define RBUTTON_HEADER_INCLUDED
-    
+
     #ifndef CENTER_HEADER_INCLUDED
         #error shared\center.h must be included before widgets\w_rbutton.h.
     #endif
-    
+
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
-    
+
     PFNWP G_pfnwpOldIconFile;
-    
-    typedef BOOL THRCREATE(PTHREADINFO, PTHREADFUNC, PBOOL, ULONG, ULONG);
-    typedef THRCREATE *PTHRCREATE;
-    
+
     PFNEXCHOOKERROR G_pfnExcHookError;
-    
+
     typedef ULONG _System EXCHANDLERLOUD(PEXCEPTIONREPORTRECORD,
                                          PEXCEPTIONREGISTRATIONRECORD2,
                                          PCONTEXTRECORD,
                                          PVOID);
     typedef EXCHANDLERLOUD *PEXCHANDLERLOUD;
-    
+
     #define CCHMAXTITLE    250
                 // max title length, not counting the null char
     #define CCHMAXSCRIPT  5000
@@ -55,16 +52,16 @@
 
     // this module handle
     HMODULE G_hmodThis = NULLHANDLE;
-    
+
     // this module name
     CHAR G_szThis[CCHMAXPATH] = {0};
-    
+
     // this anchor block handle
     HAB G_habThis = NULLHANDLE;
-    
+
     // current window a message box relates to
     HWND G_hwnd = NULLHANDLE;
-    
+
     // NLS strings
     PSZ pszName,
         pszNoDrop,
@@ -74,20 +71,9 @@
         pszDropObjects,
         pszAlreadyRunning,
         pszThreadingRequired,
-        pszScriptError;
+        pszScriptError,
+        pszThreadCreationFailed;
 
-    // Declare C runtime prototypes, because there are no headers
-    // for these:
-    
-    // _rmem_init is the subsystem run-time environment initialization function.
-    // It will return 0 to indicate success and -1 to indicate failure.
-    int _rmem_init(void);
-    
-    // _rmem_term is the subsystem run-time environment termination function.
-    // It only needs to be called when the C run-time functions are statically
-    // linked, as is the case with XFolder.
-    void _rmem_term(void);
-    
     // REXX button settings dialog ids
     #define ID_CRD_RBUTTONWGT_SETTINGS      1000
     #define ID_CRDI_SCRIPT_TEXT             1001
@@ -96,14 +82,18 @@
     #define ID_CRDI_SCRIPT_ICONFILE         1004
     #define ID_CRDI_SCRIPT_ICON             1005
     #define ID_CRDI_SCRIPT_CANDROP          1006
-    
+    #define DID_APPLY                       1007
+    #define DID_RESET                       1008
+
     // REXX button resources ids
     #define ID_RBUTTONICON                  1000
-    
+
     #define ID_CRH_RBUTTON_SETTINGS         1000
     #define ID_CRH_RBUTTON_MAIN             1001
     #define ID_CRH_RBUTTON_SCRIPTERROR      1002
-    
+    #define ID_CRH_RBUTTON_ALREADYRUNNING   1003
+    #define ID_CRH_RBUTTON_THREADCREATION   1004
+
     #define ID_CRSI_NAME                    1000
     #define ID_CRSI_NODROP                  1001
     #define ID_CRSI_DROPFILE                1002
@@ -113,7 +103,8 @@
     #define ID_CRSI_ALREADYRUNNING          1006
     #define ID_CRSI_THREADINGREQUIRED       1007
     #define ID_CRSI_SCRIPTERROR             1008
-    
+    #define ID_CRSI_THREADCREATIONFAILED    1009
+
     #ifndef DID_HELP
         #define DID_HELP               97
     #endif

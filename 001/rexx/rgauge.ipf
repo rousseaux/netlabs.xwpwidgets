@@ -101,6 +101,30 @@ gauge.  If no text is defined, no text is painted over the gauge.
 :p.The tooltip is painted the usual way for tooltips.  If no tooltip 
 is defined by the script, the default tooltip (if any) is used.
 
+.* V0.9.13 (2001-06-07) [lafaix]
+:p.Additionally, the script may access the widget's user data area. 
+This area contains up to height bytes.  Its use is not constrained in
+any way.  The current user data area is stored in
+:hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
+run of the script (but not between sessions).  It initially contains
+an empty string.
+
+.* V0.9.13 (2001-06-07) [lafaix]
+:p.Finally, the script may define any of the following five 
+values&colon.
+:dl compact break=all.
+:dt.:hp2.GAUGE.BACKGROUND:ehp2.
+:dt.:hp2.GAUGE.FOREGROUND:ehp2.
+:dt.:hp2.GAUGE.COLOR1:ehp2.
+:dt.:hp2.GAUGE.COLOR2:ehp2.
+:dt.:hp2.GAUGE.COLOR3:ehp2.
+:dd.are the colors of the respective elements.  The format is of the 
+'RRGGBB' form (for example, pure blue is 0000FF).
+:edl.
+.*
+:p.If a color is not defined in the script run, then its
+default value is used.  Changes are not persistent.
+
 :p.Here are two examples of scripts:
 
 :p.This first script is a disk free space monitor.  The color changes 
@@ -218,6 +242,14 @@ depressed.
 is the window handle of the widget (in hex).
 :edl.
 .*
+.* V0.9.13 (2001-06-07) [lafaix]
+:p.Additionally, the script may access the widget's user data area. 
+This area contains up to height bytes.  Its use is not constrained in
+any way.  The current user data area is stored in
+:hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
+run of the script (but not between sessions).  It initially contains
+an empty string.
+
 :p.Here are two examples of scripts:
 
 :p.This first script opens the :hp2.Clock:ehp2. settings notebook:

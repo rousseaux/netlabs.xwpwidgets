@@ -18,13 +18,18 @@
  *      -- Ordinal 2 (SwgtUnInitModule): this must
  *         clean up global DLL data.
  *
+ *      -- Ordinal 3 (SwgtQueryVersion): this must
+ *         return the widgets minimal XWorkplace version level
+ *         required.
+ *
  *      A spacer widget recognize the following setup strings:
  *
- *      -- BGNDCOL: the background color (in rrggbb format).
- *      -- HEIGHT:  -1 if the height is greedy, the height in pixels
- *                  otherwise.
- *      -- WIDTH:   -1 if the width is greedy, the width in pixels
- *                  otherwise.
+ *      -- BGNDCOL:     the background color (in rrggbb format).
+ *      -- HEIGHT:      -1 if the height is greedy, the height in pixels
+ *                      otherwise.
+ *      -- WIDTH:       -1 if the width is greedy, the width in pixels
+ *                      otherwise.
+ *      -- TRANSPARENT: 1 if the widget is transparent.
  *
  *      The makefile in src\widgets compiles widgets
  *      with the VAC subsystem library. As a result,
@@ -87,6 +92,9 @@
 #include "helpers\prfh.h"               // INI file helper routines;
                                         // this include is required for some
                                         // of the structures in shared\center.h
+#ifdef WINH_STANDARDWRAPPERS
+    #undef WINH_STANDARDWRAPPERS
+#endif
 #include "helpers\winh.h"               // PM helper routines
 #include "helpers\xstring.h"            // extended string helpers
 
@@ -120,7 +128,8 @@ static XCENTERWIDGETCLASS G_WidgetClasses[]
         "Spacer",                   // internal widget class name
         NULL,                       // widget class name displayed to user
                                     // is set by SwgtInitModule (NLS)
-        0,                          // widget class flags
+        WGTF_TRANSPARENT | WGTF_NONFOCUSTRAVERSABLE,
+                                    // widget class flags
         SwgtShowSettingsDlg         // settings dialog
       };
 
@@ -213,6 +222,8 @@ typedef struct _SPACERSETUP
     ULONG       ulWidth,
                 ulHeight,
                 ulStyle;
+
+    BOOL        bTransparent;
 } SPACERSETUP, *PSPACERSETUP;
 
 /*
@@ -298,12 +309,10 @@ VOID SwgtScanSetup(const char *pcszSetupString,
             pSetup->ulStyle |= SWS_GREEDYX;
         else
             pSetup->ulWidth = width;
-        
-        if (pSetup->ulWidth == 0) pSetup->ulWidth = 5; // KLUDGE to be removed when settings usable from notebook
     }
     else
         pSetup->ulWidth = 5;
-        
+
     // height:
     pSetup->ulStyle &= ~SWS_GREEDYY;
     p = pctrScanSetupString(pcszSetupString,
@@ -315,11 +324,19 @@ VOID SwgtScanSetup(const char *pcszSetupString,
             pSetup->ulStyle |= SWS_GREEDYY;
         else
             pSetup->ulHeight = height;
-        if (pSetup->ulHeight == 0) pSetup->ulHeight = 5; // KLUDGE to be removed when settings usable from notebook
     }
     else
         pSetup->ulHeight = 5;
 
+    // transparency:
+    p = pctrScanSetupString(pcszSetupString,
+                            "TRANSPARENT");
+    if (p)
+    {
+        pSetup->bTransparent = (strcmp(p, "1") == 0);
+    }
+    else
+        pSetup->bTransparent = FALSE;
 }
 
 /*
@@ -330,7 +347,7 @@ VOID SwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID SwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PSPACERSETUP pSetup)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                   PSPACERSETUP pSetup)
 {
     CHAR    szTemp[250];
     pxstrInit(pstrSetup, 500);
@@ -360,6 +377,11 @@ VOID SwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
                 pSetup->ulHeight);
         pxstrcat(pstrSetup, szTemp, 0);
     }
+
+    if (pSetup->bTransparent)
+    {
+       pxstrcat(pstrSetup, "TRANSPARENT=1;", 14);
+    }
 }
 
 /* ******************************************************************
@@ -378,7 +400,7 @@ VOID Settings2Dlg(HWND hwnd,
 {
     BOOL fGreedyX = ((pSetup->ulStyle & SWS_GREEDYX) == SWS_GREEDYX),
          fGreedyY = ((pSetup->ulStyle & SWS_GREEDYY) == SWS_GREEDYY);
-         
+
     WinSetDlgItemShort(hwnd, ID_CRDI_SPACER_WIDTH, pSetup->ulWidth, FALSE);
     WinSetDlgItemShort(hwnd, ID_CRDI_SPACER_HEIGHT, pSetup->ulHeight, FALSE);
 
@@ -390,6 +412,8 @@ VOID Settings2Dlg(HWND hwnd,
 
     WinCheckButton(hwnd, ID_CRDI_SPACER_GREEDYY, fGreedyY);
     WinCheckButton(hwnd, ID_CRDI_SPACER_USERY, !fGreedyY);
+
+    WinCheckButton(hwnd, ID_CRDI_SPACER_TRANSPARENT, pSetup->bTransparent);
 }
 
 /*@@ SwgtQueryHelpLibrary:
@@ -398,17 +422,17 @@ VOID Settings2Dlg(HWND hwnd,
  *
  *@@added V0.9.9 (2001-02-04) [lafaix]
  */
- 
+
 char G_szLibraryName[CCHMAXPATH] = {0};
- 
+
 const char *SwgtQueryHelpLibrary(VOID)
 {
     if (G_szLibraryName[0] == 0)
     {
         ULONG ulLength;
-        
+
         // help library name not already known
-        DosQueryModuleName(G_hmodThis, 
+        DosQueryModuleName(G_hmodThis,
                            CCHMAXPATH,
                            G_szLibraryName);
         ulLength = strlen(G_szLibraryName);
@@ -533,7 +557,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             if (usNotifyCode == BN_CLICKED)
                             {
                                 SHORT sWidth;
-                                
+
                                 // saving width so that it is not zeroed
                                 if (WinQueryDlgItemShort(hwnd, ID_CRDI_SPACER_WIDTH, &sWidth, FALSE))
                                     pSetup->ulWidth = (USHORT)sWidth;
@@ -577,12 +601,20 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             if (usNotifyCode == EN_CHANGE)
                             {
                                 SHORT sValue;
-                                
+
                                 if (WinQueryDlgItemShort(hwnd, usItemID, &sValue, FALSE))
                                     if (usItemID == ID_CRDI_SPACER_WIDTH)
                                         pSetup->ulWidth = (USHORT)sValue;
                                     else
                                         pSetup->ulHeight = (USHORT)sValue;
+                            }
+                        break;
+
+                        // transparency:
+                        case ID_CRDI_SPACER_TRANSPARENT:
+                            if (usNotifyCode == BN_CLICKED)
+                            {
+                                pSetup->bTransparent = WinQueryButtonCheckstate(hwnd, ID_CRDI_SPACER_TRANSPARENT);
                             }
                         break;
                     }
@@ -750,7 +782,7 @@ BOOL SwgtControl(HWND hwnd,
                     case XN_QUERYSIZE:
                     {
                         PSIZEL pszl = (PSIZEL)mp2;
-                        
+
                         pszl->cx = pPrivate->Setup.ulWidth;
                         if (pPrivate->Setup.ulStyle & SWS_GREEDYX)
                             pszl->cx = -1;
@@ -762,6 +794,17 @@ BOOL SwgtControl(HWND hwnd,
 
                         frc = TRUE;
                     break; }
+
+                    /*
+                     * XN_HITTEST:
+                     *      XCenter wants to know whether we are transparent
+                     */
+
+                    case XN_HITTEST:
+                    {
+                        frc = !(pPrivate->Setup.bTransparent);
+                    break;
+                    }
 
                     /*
                      * XN_SETUPCHANGED:
@@ -1050,9 +1093,10 @@ MRESULT EXPENTRY fnwpSpacerWidget(HWND hwnd,
  */
 
 ULONG EXPENTRY SwgtInitModule(HAB hab,         // XCenter's anchor block
+                              HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
 {
     ULONG   ulrc = 0,
             ul = 0;
@@ -1065,6 +1109,9 @@ ULONG EXPENTRY SwgtInitModule(HAB hab,         // XCenter's anchor block
                                                    szBuf)) \
                                     sprintf(szBuf, "SwgtInitModule error: string resource %d not found in module %s", id, G_szThis); \
                                 str = strdup(szBuf)
+
+    // save our module handle
+    G_hmodThis = hmodSelf;
 
     // resolve imports from XFLDR.DLL (this is basically
     // a copy of the doshResolveImports code, but we can't
@@ -1137,36 +1184,20 @@ VOID EXPENTRY SwgtUnInitModule(VOID)
     free(pszName);
 }
 
-/*@@ _DLL_InitTerm: 
- *      defining this is the easiest way to get our module handle.
- *      We need it to load our settings dialog.
- *
- *@@added V0.9.9 (2001-02-04) [lafaix]
+/*
+ *@@ SwgtQueryVersion:
+ *      optional export with ordinal 3, which can requires
+ *      a specific XWorkplace revision level.
  */
 
-unsigned long _System _DLL_InitTerm(unsigned long hModule,
-                                    unsigned long ulFlag)
+VOID EXPENTRY SwgtQueryVersion(PULONG pulMajor,
+                               PULONG pulMinor,
+                               PULONG pulRevision)
 {
-    if (ulFlag == 0) // DLL being loaded
-    {
-        G_hmodThis = hModule;
-
-        DosQueryModuleName(G_hmodThis,
-                           CCHMAXPATH,
-                           G_szThis);
-
-        // now initialize the subsystem environment before we
-        // call any runtime functions
-        if (_rmem_init() == -1)
-           return (0);  // error
-    }
-    else
-    if (ulFlag == 1) // DLL being unloaded
-    {
-        // DLL being freed: cleanup runtime
-        _rmem_term();
-    }
-
-    return (1);
+    if (pulMajor)
+        *pulMajor = 0;
+    if (pulMinor)
+        *pulMinor = 9;
+    if (pulRevision)
+        *pulRevision = 12;
 }
-

@@ -42,34 +42,23 @@
     // NLS strings
     PSZ pszName;
 
-    // Declare C runtime prototypes, because there are no headers
-    // for these:
-
-    // _rmem_init is the subsystem run-time environment initialization function.
-    // It will return 0 to indicate success and -1 to indicate failure.
-    int _rmem_init(void);
-
-    // _rmem_term is the subsystem run-time environment termination function.
-    // It only needs to be called when the C run-time functions are statically
-    // linked, as is the case with XFolder.
-    void _rmem_term(void);
-
     // Spacer settings dialog ids
-    #define ID_CRD_SPACER_SETTINGS  1000
-    #define ID_CRDI_SPACER_GREEDYX  1001
-    #define ID_CRDI_SPACER_GREEDYY  1002
-    #define ID_CRDI_SPACER_USERX    1003
-    #define ID_CRDI_SPACER_USERY    1004
-    #define ID_CRDI_SPACER_WIDTH    1005
-    #define ID_CRDI_SPACER_HEIGHT   1006
+    #define ID_CRD_SPACER_SETTINGS         1000
+    #define ID_CRDI_SPACER_GREEDYX         1001
+    #define ID_CRDI_SPACER_GREEDYY         1002
+    #define ID_CRDI_SPACER_USERX           1003
+    #define ID_CRDI_SPACER_USERY           1004
+    #define ID_CRDI_SPACER_WIDTH           1005
+    #define ID_CRDI_SPACER_HEIGHT          1006
+    #define ID_CRDI_SPACER_TRANSPARENT     1007
 
     #define ID_XSH_WIDGET_SPACER_SETTINGS  1000
     #define ID_XSH_WIDGET_SPACER_MAIN      1001
     
-    #define ID_CRSI_NAME            1000
+    #define ID_CRSI_NAME                   1000
 
     #ifndef DID_HELP
-        #define DID_HELP              97
+        #define DID_HELP                     97
     #endif
 
 #endif

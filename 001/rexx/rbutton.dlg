@@ -7,11 +7,11 @@ BEGIN
     DIALOG  "Rexx button - Properties", 1000, -9, -33, 293, 172, ,
             FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
     BEGIN
-        LTEXT           "Title", -1, 6, 156, 21, 8
+        LTEXT           "~Title", -1, 6, 156, 21, 8, DT_MNEMONIC
         MLE             "", 1003, 6, 131, 130, 25, MLS_IGNORETAB | WS_GROUP
         GROUPBOX        "Icon", 1004, 225, 123, 60, 41
         ICON            1000, 1005, 245, 135, 21, 16, WS_GROUP
-        LTEXT           "Script", -1, 6, 112, 26, 8
+        LTEXT           "~Script", -1, 6, 112, 26, 8, DT_MNEMONIC
         MLE             "", 1001, 6, 36, 279, 76, MLS_HSCROLL | MLS_VSCROLL |
                         WS_GROUP
         AUTOCHECKBOX    "Run in a separate thread", 1002, 6, 23, 118, 10
@@ -19,7 +19,9 @@ BEGIN
                         CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP |
                         WS_VISIBLE
         PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14
-        PUSHBUTTON      "Cancel", DID_CANCEL, 49, 4, 40, 14
-        PUSHBUTTON      "Help", 97, 92, 4, 40, 14
+        PUSHBUTTON      "~Apply", 1007, 49, 4, 40, 14
+        PUSHBUTTON      "~Reset", 1008, 92, 4, 40, 14
+        PUSHBUTTON      "Cancel", DID_CANCEL, 135, 4, 40, 14
+        PUSHBUTTON      "Help", 97, 178, 4, 40, 14
     END
 END

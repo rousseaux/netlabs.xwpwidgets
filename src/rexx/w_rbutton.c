@@ -18,6 +18,10 @@
  *      -- Ordinal 2 (RwgtUnInitModule): this must
  *         clean up global DLL data.
  *
+ *      -- Ordinal 3 (RwgtQueryVersion): this must
+ *         return the widgets minimal XWorkplace version level
+ *         required.
+ *
  *      A Rexx button widget recognize the following setup strings:
  *
  *      -- BGNDCOL:  the background color (in rrggbb format).
@@ -38,7 +42,7 @@
  *
  *      This is all new with V0.9.9.
  *
- *@@added V0.9.9 (2001-01-22) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
  *@@header "shared\center.h"
  */
 
@@ -111,6 +115,9 @@
 #include "helpers\prfh.h"               // INI file helper routines;
                                         // this include is required for some
                                         // of the structures in shared\center.h
+#ifdef WINH_STANDARDWRAPPERS
+    #undef WINH_STANDARDWRAPPERS
+#endif
 #include "helpers\winh.h"               // PM helper routines
 #include "helpers\xstring.h"            // extended string helpers
 #include "helpers\comctl.h"             // common controls (window procs)
@@ -242,7 +249,6 @@ RESOLVEFUNCTION G_aImports[] =
         "xstrClear", (PFN*)&pxstrClear,
         "xstrInit", (PFN*)&pxstrInit,
 
-        // optional imports; may fail
         "thrCreate", (PFN*)&pthrCreate,
         "excHandlerLoud", (PFN*)&pexcHandlerLoud
     };
@@ -313,7 +319,40 @@ typedef struct _RBUTTONPRIVATE
     PLINKLIST      pllQueue;
             // the (possibly empty) list of elements to add to
             // DRAGITEM stem
+
+    BYTE           abUserData[8];
+            // user data area
+    USHORT         usUserDataLength;
+            // user data area length
+
+    HPOINTER       hUserIcon;
+            // currently shown icon (if not null)
+
+    CHAR           achTooltip[250];
+            // the current tooltip for the button (if null, the default
+            // title is used)
+
+    LONG           lcolBackground;
+            // the current background color (if -1, the default color
+            // is used)
+
 } RBUTTONPRIVATE, *PRBUTTONPRIVATE;
+
+/*
+ *@@ STORAGE:
+ *      structure used in the pUser field in WIDGETSETTINGSDLGDATA
+ *
+ */
+typedef struct _STORAGE
+{
+    PRBUTTONSETUP pSetup;
+    PSZ pszInitialSetup;
+    PSZ pszLastCommitted;
+    ULONG ulCurrent;
+    ULONG ulTotal;
+    ULONG ulColumn;
+} STORAGE, *PSTORAGE;
+
 
 /* ******************************************************************
  *
@@ -339,14 +378,14 @@ typedef struct _RBUTTONPRIVATE
  *
  *      Use RwgtFree to release the returned value.
  *
- *@@added V0.9.9 (2001-01-27) [lafaix]
+ *@@added V0.1.0 (2001-01-27) [lafaix]
  */
 
 int iscntrl(int c) { return ((c >= 0) && (c <= 31)); }
 int isxdigit(int c) { return ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')); }
 int isdigit(int c) { return ((c >= '0') && (c <= '9')); }
 
-PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 {
     PSZ pszDest = (PSZ) malloc(sizeof(CHAR)*strlen(pszSource)*3+1);
             // in the worst case, the encoded string is 3 time longer
@@ -382,10 +421,10 @@ PSZ RwgtEncodeString(PSZ pszSource) // in: pszSource must not be NULL
  *
  *      Use RwgtFree to release the returned value.
  *
- *@@added V0.9.9 (2001-01-27) [lafaix]
+ *@@added V0.1.0 (2001-01-27) [lafaix]
  */
 
-PSZ RwgtDecodeString(PSZ pszEncodedSource) // in: pszEncodedSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+PSZ RwgtDecodeString(PSZ pszEncodedSource) // in: pszEncodedSource must not be NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 {
     PSZ pszDest = (PSZ) malloc(strlen(pszEncodedSource)+1);
             // decoded string cannot be longer that source
@@ -452,7 +491,7 @@ PSZ RwgtDecodeString(PSZ pszEncodedSource) // in: pszEncodedSource must not be N
  *      free a string returned by either RwgtEncodeString or
  *      RwgtDecodeString.
  *
- *@@added V0.9.9 (2001-01-27) [lafaix]
+ *@@added V0.1.0 (2001-01-27) [lafaix]
  */
 
 VOID RwgtFree(PSZ psz)
@@ -626,7 +665,7 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PRBUTTONSETUP pSetup)                                                                                                                                                                                                   
+                   PRBUTTONSETUP pSetup)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 {
     CHAR    szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
@@ -720,11 +759,7 @@ VOID Settings2Dlg(HWND hwnd,
     WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_TITLE, pSetup->pszTitle);
     WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_TEXT, pSetup->pszScript);
 
-    // if thread support present, let's set the check box state
-    if (pthrCreate)
-        WinCheckButton(hwnd, ID_CRDI_SCRIPT_SEPARATETHREAD, pSetup->fSeparateThread);
-    else
-        WinEnableControl(hwnd, ID_CRDI_SCRIPT_SEPARATETHREAD, FALSE);
+    WinCheckButton(hwnd, ID_CRDI_SCRIPT_SEPARATETHREAD, pSetup->fSeparateThread);
 
     WinCheckButton(hwnd, ID_CRDI_SCRIPT_CANDROP, pSetup->fCanDrop);
 
@@ -859,7 +894,7 @@ MRESULT EXPENTRY fnwpIconFile(HWND hwnd,
 
                             if (pData)
                             {
-                                PRBUTTONSETUP pSetup = (PRBUTTONSETUP)pData->pUser;
+                                PRBUTTONSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                                 if (pSetup)
                                 {
                                     DrgQueryStrName(dragItem->hstrContainerName, CCHMAXPATH, szTemp);
@@ -916,7 +951,7 @@ MRESULT EXPENTRY fnwpIconFile(HWND hwnd,
  *      returns PSZ of full help library path (in the same directory as
  *      the widget, with an extension of HLP).
  *
- *@@added V0.9.9 (2001-02-04) [lafaix]
+ *@@added V0.1.0 (2001-02-04) [lafaix]
  */
 
 char G_szLibraryName[CCHMAXPATH] = {0};
@@ -942,6 +977,8 @@ const char *RwgtQueryHelpLibrary(VOID)
 /*
  *@@ fnwpSettingsDlg:
  *      dialog proc for the rbutton settings dialog.
+ *
+ *@@changed V0.5.2 (2001-06-19) [lafaix]: added Apply/Reset support
  */
 
 MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
@@ -962,13 +999,27 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
         case WM_INITDLG:
         {
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
+            PSTORAGE pStorage = malloc(sizeof(STORAGE));
             PRBUTTONSETUP pSetup = malloc(sizeof(RBUTTONSETUP));
+            PSZ pszInitial = malloc(strlen(pData->pcszSetupString)+1);
+
             WinSetWindowPtr(hwnd, QWL_USER, pData);
-            if (pSetup)
+            if (    (pSetup)
+                 && (pStorage)
+                 && (pszInitial)
+               )
             {
                 memset(pSetup, 0, sizeof(*pSetup));
+                memcpy(pszInitial, pData->pcszSetupString, strlen(pData->pcszSetupString)+1);
+                pStorage->pSetup = pSetup;
+                pStorage->pszInitialSetup = pszInitial;
+                pStorage->pszLastCommitted = 0;
+                pStorage->ulCurrent = 0;
+                pStorage->ulTotal = 0;
+                pStorage->ulColumn = 0;
+                
                 // store this in WIDGETSETTINGSDLGDATA
-                pData->pUser = pSetup;
+                pData->pUser = pStorage;
 
                 RwgtScanSetup(pData->pcszSetupString, pSetup);
 
@@ -987,7 +1038,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRBUTTONSETUP pSetup = (PRBUTTONSETUP)pData->pUser;
+                PRBUTTONSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usCmd = (USHORT)mp1;
@@ -1012,11 +1063,72 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         break; }
 
                         /*
+                         * DID_APPLY:
+                         *      recompose settings, and apply the changes.
+                         */
+
+                        case DID_APPLY:
+                        {
+                            XSTRING strSetup;
+                            PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+
+                            RwgtSaveSetup(&strSetup,
+                                          pSetup);
+                            pctrSetSetupString(pData->hSettings,
+                                               strSetup.psz);
+                                               
+                            // update the last committed changes, so that
+                            // DID_RESET can revert the new ones
+                            if (pStorage->pszLastCommitted)
+                                free(pStorage->pszLastCommitted);
+
+                            pStorage->pszLastCommitted = malloc(strSetup.ulLength+1);
+                            if (pStorage->pszLastCommitted)
+                            {
+                                memcpy(pStorage->pszLastCommitted,
+                                       strSetup.psz,
+                                       strSetup.ulLength+1);
+                            }
+
+                            pxstrClear(&strSetup);
+                        break; }
+
+                        /*
+                         * DID_RESET:
+                         *       reset the uncommited changes
+                         */
+                         
+                        case DID_RESET:
+                        {
+                            PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                            
+                            if (pSetup)
+                            {
+                                RwgtClearSetup(pSetup);
+                                
+                                if (pStorage->pszLastCommitted)
+                                    RwgtScanSetup(pStorage->pszLastCommitted, pSetup);
+                                else
+                                    RwgtScanSetup(pData->pcszSetupString, pSetup);
+
+                                Settings2Dlg(hwnd, pSetup);
+                            }
+                        break;}
+
+                        /*
                          * DID_CANCEL:
-                         *      cancel button...
+                         *      cancel button; must reset the widget's settings
+                         *      if changes have been applied
                          */
 
                         case DID_CANCEL:
+                            if (((PSTORAGE)pData->pUser)->pszLastCommitted)
+                            {
+                                // changes have been committed, we must revert
+                                // them
+                                pctrSetSetupString(pData->hSettings,
+                                                   ((PSTORAGE)pData->pUser)->pszInitialSetup);
+                            }
                             WinDismissDlg(hwnd, DID_CANCEL);
                         break;
 
@@ -1040,7 +1152,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRBUTTONSETUP pSetup = (PRBUTTONSETUP)pData->pUser;
+                PRBUTTONSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usItemID = SHORT1FROMMP(mp1),
@@ -1102,12 +1214,22 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRBUTTONSETUP pSetup = (PRBUTTONSETUP)pData->pUser;
-                if (pSetup)
+                PSTORAGE pStorage = (PSTORAGE)pData->pUser;
+                if (pStorage)
                 {
-                    RwgtClearSetup(pSetup);
-                    free(pSetup);
-                } // end if (pSetup)
+                    if (pStorage->pSetup)
+                    {
+                        RwgtClearSetup(pStorage->pSetup);
+                        free(pStorage->pSetup);
+                    }
+
+                    if (pStorage->pszInitialSetup)
+                    {
+                        free(pStorage->pszInitialSetup);
+                    }
+
+                    free(pStorage);
+                } // end if (pStorage)
             } // end if (pData)
 
             mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
@@ -1130,7 +1252,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
  *@@ RwgtHelpHook:
  *      this handles the help requests from the message boxes.
  *
- *@@added V0.9.9 (2001-02-18) [lafaix]
+ *@@added V0.3.0 (2001-02-18) [lafaix]
  */
 
 BOOL EXPENTRY RwgtHelpHook(HAB hab,
@@ -1144,6 +1266,8 @@ BOOL EXPENTRY RwgtHelpHook(HAB hab,
     switch ((USHORT)idTopic)
     {
         case ID_CRH_RBUTTON_SCRIPTERROR:
+        case ID_CRH_RBUTTON_ALREADYRUNNING:
+        case ID_CRH_RBUTTON_THREADCREATION:
             // the hook is _global_, so we must process this message
             // only if it comes from one of our windows.  G_hwnd is
             // used for this purpose, as there is no other way to
@@ -1221,8 +1345,8 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
  *
  *      This thread is created with a msg queue.
  *
- *@@added V0.9.9 (2001-01-25) [lafaix]
- *@@changed V0.9.9 (2001-03-06) [lafaix]: G_hwnd was always garbage
+ *@@added V0.1.0 (2001-01-25) [lafaix]
+ *@@changed V0.3.0 (2001-03-06) [lafaix]: G_hwnd was always garbage
  */
 
 void _Optlink fntRunScript(PTHREADINFO pti)
@@ -1234,7 +1358,7 @@ void _Optlink fntRunScript(PTHREADINFO pti)
     SHORT    src;
     LONG     rc;
     CHAR     achBuffer[250];
-    RXSYSEXIT exit_list[2];
+    RXSYSEXIT exit_list[3];
 
     #define excHandlerLoud pexcHandlerLoud
             // TRY_LOUD expects excHandlerLoud, not pexcHandlerLoud
@@ -1249,11 +1373,13 @@ void _Optlink fntRunScript(PTHREADINFO pti)
     MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
     achBuffer[0] = 0;
 
-    exit_list[0].sysexit_name = "INITDRAGITEMSTEM";
+    exit_list[0].sysexit_name = "BUTTONINIT";
     exit_list[0].sysexit_code = RXINI;
-    exit_list[1].sysexit_code = RXENDLST;
+    exit_list[1].sysexit_name = "BUTTONTERM";
+    exit_list[1].sysexit_code = RXTER;
+    exit_list[2].sysexit_code = RXENDLST;
 
-    TRY_LOUD(excpt1)
+    TRY_LOUD(excpt2)
     {
         rc = RexxStart(4,
                        &params[0],
@@ -1261,14 +1387,14 @@ void _Optlink fntRunScript(PTHREADINFO pti)
                        &instore[0],
                        "CMD",
                        RXCOMMAND,
-                       (pPrivate->Setup.fCanDrop) ? exit_list : NULL,
+                       exit_list,
                        &src,
                        &retstr);
 
         if (rc)
             _Pmpf(("RexxStart returns %ld %d {%s}", rc, src, achBuffer));
     }
-    CATCH(excpt1) {}  END_CATCH();
+    CATCH(excpt2) {}  END_CATCH();
 
     if (rc < 0)
     {
@@ -1311,13 +1437,15 @@ void _Optlink fntRunScript(PTHREADINFO pti)
 /*
  *@@ RwgtInitializeStem
  *      initialize the DRAGITEM. stem with the dropped elements
- *      references.
+ *      references and the BUTTON. stem with the user data.
  *
  *      This function is reentrant, and should not allocate heap
  *      memory.  It gets its parameter from the (about to run)
  *      script, using RexxVariablePool.
  *
- *@@added V0.9.9 (2001-02-12) [lafaix]
+ *@@added V0.3.0 (2001-02-12) [lafaix]
+ *@@changed V0.5.1 (2001-06-06) [lafaix]: added BUTTON.USER
+ *@@changed V0.5.2 (2001-06-13) [lafaix]: fixed incorrect DRAGITEM filling
  */
 
 LONG EXPENTRY RwgtInitializeStem(LONG exitno,
@@ -1339,13 +1467,12 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
 
     MAKERXSTRING(block.shvname, "PARM.4", 6);
     MAKERXSTRING(block.shvvalue, szHwnd, 16);
-    block.shvvaluelen = 16;
 
     rc = RexxVariablePool(&block);
     _Pmpf(("RexxVariablePool returns %d", rc));
 
     // sscanf needs a null-terminated string, and we have enough space
-    szHwnd[block.shvvalue.strlength] = 0;
+    szHwnd[block.shvvaluelen] = 0;
 
     sscanf(szHwnd, "%lX", &hwnd);
 
@@ -1359,32 +1486,157 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
 
             if (pPrivate)
             {
-                PLISTNODE pNode = plstQueryFirstNode(pPrivate->pllQueue);
-                USHORT usCount = 0;
-
                 block.shvcode = RXSHV_SET;
 
-                while (pNode)
-                {
-                    PSZ pszElement = (PSZ)pNode->pItemData;
-
-                    _Pmpf(("Adding element %s", pszElement));
-
-                    sprintf(szStem, "DRAGITEM.%d", ++usCount);
-                    MAKERXSTRING(block.shvname, szStem, strlen(szStem));
-                    MAKERXSTRING(block.shvvalue, pszElement, strlen(pszElement));
-
-                    RexxVariablePool(&block);
-
-                    pNode = pNode->pNext;
-                }
-
-                // sets DRAGITEM.0
-                MAKERXSTRING(block.shvname, "DRAGITEM.0", 10);
-                sprintf(szStem, "%d", usCount);
-                MAKERXSTRING(block.shvvalue, szStem, strlen(szStem));
+                // user data
+                MAKERXSTRING(block.shvname, "BUTTON.USER", 11);
+                MAKERXSTRING(block.shvvalue, pPrivate->abUserData, pPrivate->usUserDataLength);
 
                 RexxVariablePool(&block);
+
+                if (pPrivate->Setup.fCanDrop)
+                {
+                    PLISTNODE pNode = plstQueryFirstNode(pPrivate->pllQueue);
+                    USHORT usCount = 0;
+
+                    // dropped elements
+                    while (pNode)
+                    {
+                        PSZ pszElement = (PSZ)pNode->pItemData;
+    
+                        _Pmpf(("Adding element %s", pszElement));
+    
+                        sprintf(szStem, "DRAGITEM.%d", ++usCount);
+                        MAKERXSTRING(block.shvname, szStem, strlen(szStem));
+                        MAKERXSTRING(block.shvvalue, pszElement, strlen(pszElement));
+    
+                        RexxVariablePool(&block);
+    
+                        pNode = pNode->pNext;
+                    }
+    
+                    // sets DRAGITEM.0
+                    MAKERXSTRING(block.shvname, "DRAGITEM.0", 10);
+                    sprintf(szStem, "%d", usCount);
+                    MAKERXSTRING(block.shvvalue, szStem, strlen(szStem));
+    
+                    RexxVariablePool(&block);
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+/*
+ *@@ RwgtExtractStem
+ *      extract the BUTTON.USER element.
+ *
+ *      This function is reentrant, and should not allocate heap
+ *      memory.  It gets its parameter from the (about to run)
+ *      script, using RexxVariablePool.
+ *
+ *@@added V0.5.1 (2001-06-06) [lafaix]
+ */
+
+LONG EXPENTRY RwgtExtractStem(LONG exitno,
+                              LONG subfunc,
+                              PUCHAR parmblock)
+{
+    SHVBLOCK block;
+    CHAR szHwnd[16];
+            // placeholder for our hwnd query
+    CHAR szData[250];
+            // placeholder for our BUTTON. queries
+    HWND hwnd = 0;
+    APIRET rc = 0;
+
+    // we need to query the hwnd handle from the script (arg(4))
+    block.shvnext = 0;
+    block.shvcode = RXSHV_PRIV;
+    block.shvret  = 0;
+
+    MAKERXSTRING(block.shvname, "PARM.4", 6);
+    MAKERXSTRING(block.shvvalue, szHwnd, 16);
+
+    rc = RexxVariablePool(&block);
+    _Pmpf(("RexxVariablePool returns %d", rc));
+
+    // sscanf needs a null-terminated string, and we have enough space
+    szHwnd[block.shvvaluelen] = 0;
+
+    sscanf(szHwnd, "%lX", &hwnd);
+
+    if (hwnd)
+    {
+        PXCENTERWIDGET pWidget = (PXCENTERWIDGET)WinQueryWindowPtr(hwnd, QWL_USER);
+
+        if (pWidget)
+        {
+            PRBUTTONPRIVATE pPrivate = (PRBUTTONPRIVATE)pWidget->pUser;
+
+            if (pPrivate)
+            {
+                block.shvcode = RXSHV_FETCH;
+
+                // user data
+                MAKERXSTRING(block.shvname, "BUTTON.USER", 11);
+                MAKERXSTRING(block.shvvalue, szData, 8);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
+                {
+                    memcpy(pPrivate->abUserData, szData, block.shvvaluelen);
+                    pPrivate->usUserDataLength = block.shvvaluelen;
+                }
+
+                // user icon
+                MAKERXSTRING(block.shvname, "BUTTON.ICON", 11);
+                MAKERXSTRING(block.shvvalue, szData, 250-1);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
+                {
+                    // an icon has been specified (it may be invalid, but
+                    // that's not our problem); so free the previous one
+                    if (pPrivate->hUserIcon)
+                        WinFreeFileIcon(pPrivate->hUserIcon);
+                        
+                    szData[block.shvvaluelen] = 0;
+                    pPrivate->hUserIcon = WinLoadFileIcon(szData, FALSE);
+                }
+                else
+                {
+                    // use the default icon; we must free the previous
+                    // one if appropriate
+                    if (pPrivate->hUserIcon)
+                        WinFreeFileIcon(pPrivate->hUserIcon);
+                        
+                    pPrivate->hUserIcon = NULLHANDLE;
+                }
+
+                // tooltip
+                MAKERXSTRING(block.shvname, "BUTTON.TOOLTIP", 14);
+                MAKERXSTRING(block.shvvalue, pPrivate->achTooltip, 250-1);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
+                    pPrivate->achTooltip[block.shvvaluelen] = 0;
+                else
+                    pPrivate->achTooltip[0] = 0;
+                
+                // color
+                MAKERXSTRING(block.shvname, "BUTTON.BACKGROUND", 17);
+                MAKERXSTRING(block.shvvalue, szData, 250-1);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
+                {
+                    szData[block.shvvaluelen] = 0;
+                    pPrivate->lcolBackground = pctrParseColorString(szData);
+                }
+                else
+                    pPrivate->lcolBackground = -1L;
+                    
+                // things may have changed, update display
+                WinInvalidateRect(pWidget->hwndWidget, NULL, FALSE);
             }
         }
     }
@@ -1441,6 +1693,10 @@ MRESULT RwgtCreate(HWND hwnd,
     // create the (so far empty) list of queued elements
     pPrivate->pllQueue = plstCreate(TRUE);
 
+    // -1L means use the default background color (0 being a valid color,
+    // namely, black)
+    pPrivate->lcolBackground = -1L;
+    
     return (mrc);
 }
 
@@ -1448,7 +1704,8 @@ MRESULT RwgtCreate(HWND hwnd,
  *@@ RwgtButton1Click:
  *      Prepare parameters and run the script.
  *
- *@@added V0.9.9 (2001-01-22) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
+ *@@changed V0.5.2 (2001-06-13) [lafaix]: fixed thrCreate prototype change
  */
 
 void RwgtButton1Click(HWND hwnd,
@@ -1467,12 +1724,20 @@ void RwgtButton1Click(HWND hwnd,
             // our structure is not multiple-instances--aware yet so
             // we better check it out beforehand
             if (pPrivate->achHWND[0])
+            {
+                G_hwnd = hwnd;
+                
                 WinMessageBox(HWND_DESKTOP,
                               hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
-                              0,
-                              MB_OK|MB_INFORMATION|MB_MOVEABLE);
+                              ID_CRH_RBUTTON_ALREADYRUNNING,
+                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+
+                // more than one thread may be running; G_hwnd may have changed
+                if (G_hwnd == hwnd)
+                    G_hwnd = NULLHANDLE;
+            }
             else
             {
                 RECTL rclWin;
@@ -1492,19 +1757,30 @@ void RwgtButton1Click(HWND hwnd,
                 if (pPrivate->Setup.fSeparateThread)
                 {
                     // Run the script in its own thread (with a message queue)
-                    if (pthrCreate)
-                        pthrCreate(NULL,
+                    if (pthrCreate(NULL,
                                    fntRunScript,
                                    NULL, // running flag
+                                   "RexxButtonThread",
                                    THRF_PMMSGQUEUE | THRF_TRANSIENT,
-                                   (ULONG)pPrivate);
-                    else
+                                   (ULONG)pPrivate) == 0)
+                    {
+                        // creation failed, release lock
+                        pPrivate->achHWND[0] = 0;
+
+                        G_hwnd = hwnd;
+                        
                         WinMessageBox(HWND_DESKTOP,
                                       hwnd,
-                                      pszThreadingRequired,
+                                      pszThreadCreationFailed,
                                       pPrivate->Setup.pszTitle,
-                                      0,
-                                      MB_OK|MB_INFORMATION|MB_MOVEABLE);
+                                      ID_CRH_RBUTTON_THREADCREATION,
+                                      MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                                      
+                        // more than one thread may be running; 
+                        // G_hwnd may have changed
+                        if (G_hwnd == hwnd)
+                            G_hwnd = NULLHANDLE;
+                    }
                 }
                 else
                 {
@@ -1530,7 +1806,7 @@ void RwgtButton1Click(HWND hwnd,
  *      otherwise it will be given some dumb default
  *      size.
  *
- *@@added V0.9.9 (2001-01-22) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
  */
 
 BOOL RwgtControl(HWND hwnd,
@@ -1611,7 +1887,10 @@ BOOL RwgtControl(HWND hwnd,
                         {
                             PTOOLTIPTEXT pttt = (PTOOLTIPTEXT)mp2;
 
-                            pttt->pszText = pPrivate->Setup.pszTitle;
+                            if (pPrivate->achTooltip[0])
+                                pttt->pszText = pPrivate->achTooltip;
+                            else
+                                pttt->pszText = pPrivate->Setup.pszTitle;
 
                             pttt->ulFormat = TTFMT_PSZ;
                         break; }
@@ -1695,8 +1974,25 @@ VOID RwgtPaint(HWND hwnd,
 
             WinFillRect(hps,
                         &rclWin,                // exclusive
-                        pPrivate->Setup.lcolBackground);
+                        (pPrivate->lcolBackground == -1L) ? // V0.9.13 (2001-06-07) [lafaix]
+                            pPrivate->Setup.lcolBackground :
+                            pPrivate->lcolBackground);
 
+            // If a user icon exists, use it.  Otherwise, use the
+            // default icon (if any).  V0.9.13 (2001-06-06) [lafaix]
+            if (pPrivate->hUserIcon != NULLHANDLE)
+            {
+                cx = rclWin.xRight - rclWin.xLeft;
+                cy = rclWin.yTop - rclWin.yBottom;
+                GpiIntersectClipRectangle(hps, &rclWin);    // exclusive!
+                WinDrawPointer(hps,
+                               // center this in remaining rectl
+                               rclWin.xLeft + ((cx - cxMiniIcon) / 2) + ulOfs,
+                               rclWin.yBottom + ((cy - cxMiniIcon) / 2) - ulOfs,
+                               pPrivate->hUserIcon, // hptr,
+                               DP_MINI);
+            }
+            else
             if (pPrivate->Setup.hIcon != NULLHANDLE)
             {
                 cx = rclWin.xRight - rclWin.xLeft;
@@ -1844,7 +2140,7 @@ VOID DrawTargetEmphasis(HWND hwnd,
  *@@ RwgtDragOverDrop:
  *      implementation for DM_DRAGOVER and DM_DROP
  *
- *@@added V0.9.9 (2001-02-09) [lafaix]
+ *@@added V0.3.0 (2001-02-09) [lafaix]
  */
 
 MRESULT RwgtDragOverDrop(HWND hwnd,
@@ -1984,7 +2280,7 @@ MRESULT RwgtDragOverDrop(HWND hwnd,
  *@@ RwgtDragLeave:
  *      implementation for DM_DRAGLEAVE
  *
- *@@added V0.9.9 (2001-02-09) [lafaix]
+ *@@added V0.3.0 (2001-02-09) [lafaix]
  */
 
 MRESULT RwgtDragLeave(HWND hwnd,
@@ -2016,7 +2312,10 @@ VOID RwgtDestroy(HWND hwnd,
     {
         RwgtClearSetup(&pPrivate->Setup);
 
-        plstFree(pPrivate->pllQueue);
+        plstFree(&(pPrivate->pllQueue));
+
+        if (pPrivate->hUserIcon)
+            WinFreeFileIcon(pPrivate->hUserIcon);
 
         free(pPrivate);
             // pWidget is cleaned up by DestroyWidgets
@@ -2227,9 +2526,10 @@ MRESULT EXPENTRY fnwpRButtonWidget(HWND hwnd,
  */
 
 ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
+                              HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                                                                                                                             
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                                                                                                                                                                                                                                                                                                                                                                                       
 {
     ULONG   ulrc = 0,
             ul = 0;
@@ -2243,6 +2543,11 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                                     sprintf(szBuf, "RwgtInitModule error: string resource %d not found in module %s", id, G_szThis); \
                                 str = strdup(szBuf)
 
+    // save our module handle
+    G_hmodThis = hmodSelf;
+    
+    DosQueryModuleName(G_hmodThis, CCHMAXPATH, G_szThis);
+    
     // resolve imports from XFLDR.DLL (this is basically
     // a copy of the doshResolveImports code, but we can't
     // use that before resolving...)
@@ -2256,19 +2561,10 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                              G_aImports[ul].ppFuncAddress)
                     != NO_ERROR)
         {
-            if (strcmp(G_aImports[ul].pcszFunctionName, "thrCreate") == 0)
-            {
-                // first optional import not found
-                pthrCreate = NULL;
-                pexcHandlerLoud = NULL;
-            }
-            else
-            {
-                sprintf(pszErrorMsg,
-                        "Import %s failed.",
-                        G_aImports[ul].pcszFunctionName);
-                fImportsFailed = TRUE;
-            }
+            sprintf(pszErrorMsg,
+                    "Import %s failed.",
+                    G_aImports[ul].pcszFunctionName);
+            fImportsFailed = TRUE;
             break;
         }
     }
@@ -2304,13 +2600,23 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             LOADSTRING(ID_CRSI_ALREADYRUNNING, pszAlreadyRunning);
             LOADSTRING(ID_CRSI_THREADINGREQUIRED, pszThreadingRequired);
             LOADSTRING(ID_CRSI_SCRIPTERROR, pszScriptError);
+            LOADSTRING(ID_CRSI_THREADCREATIONFAILED, pszThreadCreationFailed);
 
             G_WidgetClasses[0].pcszClassTitle = pszName;
 
             // register our REXX exit (stem initializer)
-            rc = RexxRegisterExitDll("INITDRAGITEMSTEM", // REXX exit name
+            rc = RexxRegisterExitDll("BUTTONINIT", // REXX exit name
                                 G_szThis,                // module name
                                 "RwgtInitializeStem",    // function name
+                                NULL,                    // No user area
+                                RXEXIT_NONDROP);         // local drop only
+
+            _Pmpf(("RexxRegisterExitDll returns %d", rc));
+
+            // register our REXX exit (stem extracter)
+            rc = RexxRegisterExitDll("BUTTONTERM", // REXX exit name
+                                G_szThis,                // module name
+                                "RwgtExtractStem",       // function name
                                 NULL,                    // No user area
                                 RXEXIT_NONDROP);         // local drop only
 
@@ -2348,7 +2654,9 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
 VOID EXPENTRY RwgtUnInitModule(VOID)
 {
-    RexxDeregisterExit("INITDRAGITEMSTEM", // REXX exit name
+    RexxDeregisterExit("BUTTONINIT",       // REXX exit name
+                       G_szThis);          // module name
+    RexxDeregisterExit("BUTTONTERM",       // REXX exit name
                        G_szThis);          // module name
 
     free(pszName);
@@ -2368,35 +2676,20 @@ VOID EXPENTRY RwgtUnInitModule(VOID)
                    G_hmodThis);
 }
 
-/*@@ _DLL_InitTerm:
- *      defining this is the easiest way to get our module handle.
- *      We need it to load our settings dialog.
- *
- *@@added V0.9.9 (2001-02-04) [lafaix]
+/*
+ *@@ RwgtQueryVersion:
+ *      optional export with ordinal 3, which can requires
+ *      a specific XWorkplace revision level.
  */
 
-unsigned long _System _DLL_InitTerm(unsigned long hModule,
-                                    unsigned long ulFlag)
+VOID EXPENTRY RwgtQueryVersion(PULONG pulMajor,
+                               PULONG pulMinor,
+                               PULONG pulRevision)
 {
-    if (ulFlag == 0) // DLL being loaded
-    {
-        G_hmodThis = hModule;
-
-        DosQueryModuleName(G_hmodThis,
-                           CCHMAXPATH,
-                           G_szThis);
-
-        // now initialize the subsystem environment before we
-        // call any runtime functions
-        if (_rmem_init() == -1)
-           return (0);  // error
-    }
-    else
-    if (ulFlag == 1) // DLL being unloaded
-    {
-        // DLL being freed: cleanup runtime
-        _rmem_term();
-    }
-
-    return (1);
+    if (pulMajor)
+        *pulMajor = 0;
+    if (pulMinor)
+        *pulMinor = 9;
+    if (pulRevision)
+        *pulRevision = 12;
 }

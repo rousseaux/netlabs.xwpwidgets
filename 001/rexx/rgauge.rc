@@ -28,4 +28,5 @@ BEGIN
     ID_CRSI_INTERPRETER_DBLCLK "An interpreter error occured while executing the double click script.  The error code was %d.  You can find more information on this error in the REXX Information online guide."
     ID_CRSI_INTERPRETER_TIMER  "An interpreter error occured while executing the script.  The error code was %d.  You can find more information on this error in the REXX Information online guide.  The gauge is stopped.  To restart it, you must fix the script."
     ID_CRSI_ALREADYRUNNING     "An instance of this script is already running.  Please wait for its completion before running it again."
+    ID_CRSI_SETTINGSSTATUS     "Line %d of %d  Column %d"
 END
