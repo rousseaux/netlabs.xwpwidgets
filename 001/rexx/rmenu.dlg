@@ -1,0 +1,28 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+
+DLGTEMPLATE 1000 LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Rexx menu - Properties", 1000, -11, -62, 293, 196, ,
+            FCF_SYSMENU | FCF_TITLEBAR | FCF_CLOSEBUTTON
+    BEGIN
+        LTEXT           "~Title", -1, 6, 186, 21, 8, DT_MNEMONIC
+        MLE             "", 1003, 6, 161, 130, 25, MLS_WORDWRAP | WS_GROUP
+        GROUPBOX        "Icon", 1004, 225, 153, 60, 41
+        ICON            1000, 1005, 245, 165, 21, 16, WS_GROUP
+        RTEXT           "", 1009, 186, 142, 99, 8
+        LTEXT           "~Menu", -1, 6, 142, 26, 8, DT_MNEMONIC
+        MLE             "", 1001, 6, 93, 279, 49, MLS_HSCROLL | MLS_VSCROLL |
+                        WS_GROUP
+        AUTOCHECKBOX    "Run in a separate thread", 1002, 6, 23, 118, 10
+        PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14
+        PUSHBUTTON      "~Apply", 1007, 49, 4, 40, 14
+        PUSHBUTTON      "~Reset", 1008, 92, 4, 40, 14
+        PUSHBUTTON      "Cancel", DID_CANCEL, 135, 4, 40, 14
+        PUSHBUTTON      "Help", 97, 178, 4, 40, 14
+        MLE             "", 1006, 6, 33, 279, 49, MLS_HSCROLL | MLS_VSCROLL |
+                        WS_GROUP
+        LTEXT           "~Script", 1010, 6, 82, 32, 8, DT_MNEMONIC
+    END
+END

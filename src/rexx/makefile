@@ -57,7 +57,11 @@ OUTPUTDIR = $(BASE_OUTPUTDIR)\widgets
 # If you add a new source, add the corresponding .OBJ file here.
 OBJS = \
     $(OUTPUTDIR)\w_rbutton.obj \
-    $(OUTPUTDIR)\w_rgauge.obj
+    $(OUTPUTDIR)\w_rgauge.obj \
+    $(OUTPUTDIR)\w_rmenu.obj \
+    $(OUTPUTDIR)\rbutton.res \
+    $(OUTPUTDIR)\rgauge.res \
+    $(OUTPUTDIR)\rmenu.res
 
 # The main target:
 # If we're called from the main makefile, MAINMAKERUNNING is defined,
@@ -146,6 +150,15 @@ $(OUTPUTDIR)\w_rgauge.obj: \
     $(INC)\rexx\w_rgauge.h \
     $(@B).c
 
+$(OUTPUTDIR)\w_rmenu.obj: \
+    $(XWPINC)\setup.h \
+    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
+	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
+	$(HLPINC)\timer.h \
+    $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
+    $(INC)\rexx\w_rmenu.h \
+    $(@B).c
+
 $(OUTPUTDIR)\rbutton.res: \
     $(NLS)\rbutton.rc $(NLS)\rbutton.dlg $(NLS)\default.ico \
     $(INC)\rexx\w_rbutton.h \
@@ -160,5 +173,13 @@ $(OUTPUTDIR)\rgauge.res: \
     # RCINCLUDE is stupid in that it requires its arg to be in the current dir
     @cd $(NLS)
     $(RC) -r $(NLS)\rgauge.rc $(OUTPUTDIR)\$(@B).res
+    @cd $(MAKEDIR)
+
+$(OUTPUTDIR)\rmenu.res: \
+    $(NLS)\rmenu.rc $(NLS)\rmenu.dlg \
+    $(INC)\rexx\w_rmenu.h \
+    # RCINCLUDE is stupid in that it requires its arg to be in the current dir
+    @cd $(NLS)
+    $(RC) -r $(NLS)\rmenu.rc $(OUTPUTDIR)\$(@B).res
     @cd $(MAKEDIR)
 

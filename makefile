@@ -85,6 +85,7 @@ PMPRINTF_LIB =
 RBUTTONOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rbutton.obj $(PMPRINTF_LIB)
 RGAUGEOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rgauge.obj $(PMPRINTF_LIB)
 SPACEROBJS = $(XWP_OUTPUT_ROOT)\widgets\w_spacer.obj $(PMPRINTF_LIB)
+RMENUOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rmenu.obj $(PMPRINTF_LIB)
 
 # Define the suffixes for files which NMAKE will work on.
 # .SUFFIXES is a reserved NMAKE keyword ("pseudotarget") for
@@ -140,6 +141,7 @@ widgets:
 link: $(XWPRUNNING)\plugins\xcenter\rbutton.dll \
       $(XWPRUNNING)\plugins\xcenter\rgauge.dll \
       $(XWPRUNNING)\plugins\xcenter\spacer.dll \
+      $(XWPRUNNING)\plugins\xcenter\rmenu.dll \
 
 # Finally, define rules for linking the target DLLs and EXEs
 # This uses the $OBJS and $HLPOBJS macros defined at the top.
@@ -187,6 +189,28 @@ src\rexx\rgauge.def: include\bldlevel.h
 $(MODULESDIR)\rgauge.dll: $(RGAUGEOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RGAUGEOBJS) REXX.LIB
+	@cd $(MODULESDIR)
+   $(RC) $(@B).res $(@B).dll
+	mapsym /n $(@B).map > NUL
+	@cd $(CURRENT_DIR)
+
+#
+# Linking RMENU.DLL
+#
+$(XWPRUNNING)\plugins\xcenter\rmenu.dll: $(MODULESDIR)\$(@B).dll
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+
+# update DEF file if buildlevel has changed
+src\rexx\rmenu.def: include\bldlevel.h
+	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx menu plugin DLL"
+
+$(MODULESDIR)\rmenu.dll: $(RMENUOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
+	@echo $(MAKEDIR)\makefile: Linking $@
+	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RMENUOBJS) REXX.LIB
 	@cd $(MODULESDIR)
    $(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL

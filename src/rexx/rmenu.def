@@ -1,11 +1,11 @@
 
 ;
-; rbutton.def:
-;       module definition file for RBUTTON.DLL, an XCenter
+; rmenu.def:
+;       module definition file for RMENU.DLL, an XCenter
 ;       plug-in widget DLL.
 ;
 ;       Copyright (C) 2001 Martin Lafaix.
-;       This file is part of the XWorkplace source package.
+;       This file is part of the XWorkplace Widget Library source package.
 ;       XWorkplace is free software; you can redistribute it and/or modify
 ;       it under the terms of the GNU General Public License as published
 ;       by the Free Software Foundation, in version 2 as it comes in the
@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx button plugin DLL'
+LIBRARY RMENU INITGLOBAL TERMGLOBAL
+Description '@#Martin Lafaix:0.5.2#@ Rexx menu plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
