@@ -1,0 +1,32 @@
+
+/*
+ * rmonitor.rc:
+ *      this is the main resource file for the English RMONITOR DLL.
+ *
+ *      Copyright (C) 2001 Martin Lafaix.
+ *      This file is part of the XWorkplace Widget Library source package.
+ *      XWorkplace is free software; you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published
+ *      by the Free Software Foundation, in version 2 as it comes in the
+ *      "COPYING" file of the XWorkplace main distribution.
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
+ */
+
+#define INCL_PM
+#include <os2.h>
+
+#include "rexx\w_rmonitor.h"
+
+rcinclude ".\rmonitor.dlg"
+
+STRINGTABLE
+BEGIN
+    ID_CRSI_NAME               "REXX Monitor"
+    ID_CRSI_INTERPRETER_DBLCLK "An interpreter error occured while executing the double click script.  The error code was %d.  You can find more information on this error in the REXX Information online guide."
+    ID_CRSI_INTERPRETER_TIMER  "An interpreter error occured while executing the script.  The error code was %d.  You can find more information on this error in the REXX Information online guide.  The gauge is stopped.  To restart it, you must fix the script."
+    ID_CRSI_ALREADYRUNNING     "An instance of this script is already running.  Please wait for its completion before running it again."
+    ID_CRSI_SETTINGSSTATUS     "Line %d of %d  Column %d"
+END

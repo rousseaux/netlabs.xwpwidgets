@@ -1,10 +1,10 @@
 
 ;
-; rgauge.def:
-;       module definition file for RGAUGE.DLL, an XCenter
+; popper.def:
+;       module definition file for popper.dll, an XCenter
 ;       plug-in widget DLL.
 ;
-;       Copyright (C) 2001 Martin Lafaix.
+;       Copyright (C) 2001 fonz.
 ;       This file is part of the XWorkplace source package.
 ;       XWorkplace is free software; you can redistribute it and/or modify
 ;       it under the terms of the GNU General Public License as published
@@ -16,20 +16,19 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx gauge plugin DLL'
+LIBRARY POPPER INITGLOBAL TERMGLOBAL
+Description '@#Martin Lafaix:0.7.0#@ Popper plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
 
 CODE              LOADONCALL
 
-EXPORTS
-    RwgtInitModule          @1
-    RwgtUnInitModule        @2
-    RwgtQueryVersion        @3
+STACKSIZE         32000
 
-    RwgtHelpHook            @65
-    RwgtExtractGaugeStem    @66
-    RwgtInitializeGaugeStem @67
+EXPORTS
+    WgtInitModule      @1
+    WgtUnInitModule    @2
+    WgtQueryVersion    @3
+
 

@@ -110,6 +110,9 @@
 #include "setup.h"                      // code generation and debugging options
 
 // headers in /helpers
+#ifdef DOSH_STANDARDWRAPPERS
+    #undef DOSH_STANDARDWRAPPERS
+#endif
 #include "helpers\dosh.h"               // Control Program helper routines
 #include "helpers\gpih.h"               // GPI helper routines
 #include "helpers\linklist.h"           // linked list helper routines
@@ -515,11 +518,13 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PRBUTTONSETUP pSetup)
+                   PVOID pvSetup)
 {
     CHAR    szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
     PSZ     psz = 0;
+    PRBUTTONSETUP pSetup = (PRBUTTONSETUP)pvSetup;
+
     pxstrInit(pstrSetup, 500);
 
     sprintf(szTemp, "BGNDCOL=%06lX;",

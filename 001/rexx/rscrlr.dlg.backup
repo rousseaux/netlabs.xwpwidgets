@@ -1,0 +1,44 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+
+DLGTEMPLATE 1000 LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "REXX Scroller - Settings", 1000, -28, -74, 327, 195, , FCF_SYSMENU |
+            FCF_TITLEBAR | FCF_CLOSEBUTTON
+    BEGIN
+        LTEXT           "Default ~title", -1, 6, 186, 65, 8, DT_MNEMONIC
+        MLE             "", 1004, 6, 165, 150, 20, MLS_WORDWRAP | WS_GROUP
+        RTEXT           "", 1013, 145, 151, 99, 8
+        LTEXT           "~Scroller script", -1, 6, 151, 77, 8, DT_MNEMONIC
+        MLE             "", 1001, 6, 92, 238, 58, MLS_HSCROLL |
+                        MLS_VSCROLL | WS_GROUP
+        RTEXT           "", 1014, 145, 80, 99, 8
+        LTEXT           "Double ~click action", -1, 6, 80, 99, 8, DT_MNEMONIC
+        MLE             "", 1002, 6, 39, 238, 40, MLS_HSCROLL |
+                        MLS_VSCROLL | WS_GROUP
+        CTEXT           "", 1005, 276, 128, 20, 16
+                        PRESPARAMS PP_BACKGROUNDCOLOR, 0x0000FF00L
+        CTEXT           "", 1006, 276, 112, 20, 16
+                        PRESPARAMS PP_BACKGROUNDCOLOR, 0x00FFFF00L
+        CTEXT           "", 1007, 276, 96, 20, 16
+                        PRESPARAMS PP_BACKGROUNDCOLOR, 0x00FF0000L
+        LTEXT           "Refresh rate", -1, 253, 186, 58, 8
+        LTEXT           "ms", -1, 297, 175, 13, 8
+        ENTRYFIELD      "", 1003, 260, 175, 32, 8, ES_RIGHT | ES_MARGIN
+        LTEXT           "Scroller colors", -1, 253, 151, 54, 8
+        LTEXT           "1", -1, 258, 132, 14, 8
+        LTEXT           "2", -1, 258, 116, 14, 8
+        LTEXT           "3", -1, 258, 100, 14, 8
+        LTEXT           "Scroller width", -1, 253, 80, 53, 8
+        AUTORADIOBUTTON "Re~sizeable", 1008, 258, 65, 65, 10, WS_TABSTOP
+        AUTORADIOBUTTON "~Fixed", 1009, 258, 53, 37, 10, WS_TABSTOP
+        LTEXT           "pixels", -1, 297, 42, 27, 8
+        ENTRYFIELD      "", 1010, 260, 42, 32, 8, ES_RIGHT | ES_MARGIN
+        PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14
+        PUSHBUTTON      "~Apply", 1011, 49, 4, 40, 14
+        PUSHBUTTON      "~Reset", 1012, 92, 4, 40, 14
+        PUSHBUTTON      "Cancel", DID_CANCEL, 135, 4, 40, 14
+        PUSHBUTTON      "Help", 97, 178, 4, 40, 14
+    END
+END

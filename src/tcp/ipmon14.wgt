@@ -1,0 +1,54 @@
+/*
+ TCPIP Multi-Interface Monitor Rexx Gauge V 1.0
+ Set refresh rate to desired value.
+ Works with up to 4 interfaces (only 3 tested).
+*/
+NUMERIC DIGITS 10
+
+if RxFuncQuery('TcpLoadFuncs') then do
+    call RxFuncAdd 'TcpLoadFuncs','RxTCPMon','TcpLoadFuncs'
+    call TcpLoadFuncs
+end
+ /* Inialize gauge.user with actual base values and exit */
+if gauge.user == '' then do
+    gauge.text= 'Initializing'
+    gauge.user = DosQuerySysInfo(14) getData()
+    exit
+end
+parse var gauge.user time_then last_stats
+time_now = DosQuerySysInfo(14)
+time_since= getDelta(time_now, time_then)
+stats=getData()
+gauge.user = time_now stats
+gaugetext=''
+do i = 1 to (words(interfaces))*3 /* 3 actions per interface */
+    gaugetext=gaugetext || 'i' || word(stats,i)
+    i = i+ 1
+    rate.i = getDelta(x2d(word(stats, i)), x2d(word(last_stats,i)))/(time_since)
+    gaugetext= gaugetext || FORMAT(rate.i ,3,1) || 'K'||D2C(24) || ' '
+    i = i + 1
+    rate.i = getDelta(x2d(word(stats, i)), x2d(word(last_stats,i)))/(time_since)
+    gaugetext = gaugetext || FORMAT(rate.i,3,1) || 'K'||D2C(25) || ' '
+end
+gauge.text = gaugetext
+
+/* Gets data and draws gauge */
+getData:
+    stats = ''
+    j=1
+    interfaces = TcpQueryAvailableInterfaces()
+    ifs = words(interfaces)
+    if ifs > 3 then j=.75
+    do i = 1 to ifs
+        data = TcpQueryInterface(word(interfaces, i))
+        parse var data index . . . . . . out in .
+        stats = index  d2x(in) d2x(out) stats
+        gauge.i = j * 100 * (i/ifs)
+    end /* end do */
+return stats
+
+getDelta:
+    if arg(1) >= arg(2) then
+        return arg(1) - arg(2)
+   else
+        return (4294967296 + arg(1)) - arg(2)

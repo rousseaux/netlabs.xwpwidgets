@@ -84,8 +84,12 @@ PMPRINTF_LIB =
 # The following macros contains the .OBJ files for the XCenter plugins.
 RBUTTONOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rbutton.obj $(PMPRINTF_LIB)
 RGAUGEOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rgauge.obj $(PMPRINTF_LIB)
+RMONITOROBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rmonitor.obj $(PMPRINTF_LIB)
 SPACEROBJS = $(XWP_OUTPUT_ROOT)\widgets\w_spacer.obj $(PMPRINTF_LIB)
 RMENUOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rmenu.obj $(PMPRINTF_LIB)
+IRMONOBJS = $(XWP_OUTPUT_ROOT)\widgets\w_irmon.obj $(PMPRINTF_LIB)
+POPPEROBJS = $(XWP_OUTPUT_ROOT)\widgets\popper.obj $(XWP_OUTPUT_ROOT)\widgets\socket.obj $(PMPRINTF_LIB)
+RSCRLROBJS = $(XWP_OUTPUT_ROOT)\widgets\w_rscrlr.obj $(PMPRINTF_LIB)
 
 # Define the suffixes for files which NMAKE will work on.
 # .SUFFIXES is a reserved NMAKE keyword ("pseudotarget") for
@@ -134,6 +138,14 @@ widgets:
     @cd src\spacer
     @nmake -nologo all "MAINMAKERUNNING=YES" $(SUBMAKE_PASS_STRING)
     @cd ..\..
+    @echo $(MAKEDIR)\makefile: Going for subdir src\irmon
+    @cd src\irmon
+    @nmake -nologo all "MAINMAKERUNNING=YES" $(SUBMAKE_PASS_STRING)
+    @cd ..\..
+    @echo $(MAKEDIR)\makefile: Going for subdir src\popper
+    @cd src\popper
+    @nmake -nologo all "MAINMAKERUNNING=YES" $(SUBMAKE_PASS_STRING)
+    @cd ..\..
 
 # LINKER PSEUDOTARGETS
 # --------------------
@@ -142,6 +154,10 @@ link: $(XWPRUNNING)\plugins\xcenter\rbutton.dll \
       $(XWPRUNNING)\plugins\xcenter\rgauge.dll \
       $(XWPRUNNING)\plugins\xcenter\spacer.dll \
       $(XWPRUNNING)\plugins\xcenter\rmenu.dll \
+      $(XWPRUNNING)\plugins\xcenter\rmonitor.dll \
+      $(XWPRUNNING)\plugins\xcenter\irmon.dll \
+      $(XWPRUNNING)\plugins\xcenter\popper.dll \
+      $(XWPRUNNING)\plugins\xcenter\rscrlr.dll \
 
 # Finally, define rules for linking the target DLLs and EXEs
 # This uses the $OBJS and $HLPOBJS macros defined at the top.
@@ -195,6 +211,28 @@ $(MODULESDIR)\rgauge.dll: $(RGAUGEOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\wi
 	@cd $(CURRENT_DIR)
 
 #
+# Linking RMONITOR.DLL
+#
+$(XWPRUNNING)\plugins\xcenter\rmonitor.dll: $(MODULESDIR)\$(@B).dll
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+
+# update DEF file if buildlevel has changed
+src\rexx\rmonitor.def: include\bldlevel.h
+	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx monitor plugin DLL"
+
+$(MODULESDIR)\rmonitor.dll: $(RMONITOROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
+	@echo $(MAKEDIR)\makefile: Linking $@
+	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RMONITOROBJS) REXX.LIB
+	@cd $(MODULESDIR)
+   $(RC) $(@B).res $(@B).dll
+	mapsym /n $(@B).map > NUL
+	@cd $(CURRENT_DIR)
+
+#
 # Linking RMENU.DLL
 #
 $(XWPRUNNING)\plugins\xcenter\rmenu.dll: $(MODULESDIR)\$(@B).dll
@@ -217,6 +255,28 @@ $(MODULESDIR)\rmenu.dll: $(RMENUOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widg
 	@cd $(CURRENT_DIR)
 
 #
+# Linking RSCRLR.DLL
+#
+$(XWPRUNNING)\plugins\xcenter\rscrlr.dll: $(MODULESDIR)\$(@B).dll
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+
+# update DEF file if buildlevel has changed
+src\rexx\rscrlr.def: include\bldlevel.h
+	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx scroller plugin DLL"
+
+$(MODULESDIR)\rscrlr.dll: $(RSCRLROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
+	@echo $(MAKEDIR)\makefile: Linking $@
+	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RSCRLROBJS) REXX.LIB
+	@cd $(MODULESDIR)
+   $(RC) $(@B).res $(@B).dll
+	mapsym /n $(@B).map > NUL
+	@cd $(CURRENT_DIR)
+
+#
 # Linking SPACER.DLL
 #
 $(XWPRUNNING)\plugins\xcenter\spacer.dll: $(MODULESDIR)\$(@B).dll
@@ -233,6 +293,50 @@ src\spacer\spacer.def: include\bldlevel.h
 $(MODULESDIR)\spacer.dll: $(SPACEROBJS) src\spacer\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\spacer\$(@B).def $(SPACEROBJS)
+	@cd $(MODULESDIR)
+   $(RC) $(@B).res $(@B).dll
+	mapsym /n $(@B).map > NUL
+	@cd $(CURRENT_DIR)
+
+#
+# Linking IRMON.DLL
+#
+$(XWPRUNNING)\plugins\xcenter\irmon.dll: $(MODULESDIR)\$(@B).dll
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+
+# update DEF file if buildlevel has changed
+src\irmon\irmon.def: include\bldlevel.h
+	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "IR Monitor plugin DLL"
+
+$(MODULESDIR)\irmon.dll: $(IRMONOBJS) src\irmon\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
+	@echo $(MAKEDIR)\makefile: Linking $@
+	$(LINK) /OUT:$@ src\irmon\$(@B).def $(IRMONOBJS)
+	@cd $(MODULESDIR)
+   $(RC) $(@B).res $(@B).dll
+	mapsym /n $(@B).map > NUL
+	@cd $(CURRENT_DIR)
+
+#
+# Linking POPPER.DLL
+#
+$(XWPRUNNING)\plugins\xcenter\popper.dll: $(MODULESDIR)\$(@B).dll
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+
+# update DEF file if buildlevel has changed
+src\popper\popper.def: include\bldlevel.h
+	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Popper plugin DLL"
+
+$(MODULESDIR)\popper.dll: $(POPPEROBJS) src\popper\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
+	@echo $(MAKEDIR)\makefile: Linking $@
+	$(LINK) /OUT:$@ src\popper\$(@B).def $(POPPEROBJS) so32dll.lib tcp32dll.lib
 	@cd $(MODULESDIR)
    $(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL

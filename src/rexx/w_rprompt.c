@@ -1,10 +1,10 @@
 
 /*
- *@@sourcefile w_rmenu.c:
- *      XCenter "Rexx menu" widget.
+ *@@sourcefile w_rprompt.c:
+ *      XCenter "Rexx prompt" widget.
  *
  *      This is an example of an XCenter widget plugin.
- *      This widget resides in RMENU.DLL, which (as
+ *      This widget resides in RPROMPT.DLL, which (as
  *      with all widget plugins) must be put into the
  *      plugins/xcenter directory of the XWorkplace
  *      installation directory.
@@ -22,25 +22,26 @@
  *         return the widgets minimal XWorkplace version level
  *         required.
  *
- *      A Rexx menu widget recognize the following setup strings:
+ *      A Rexx prompt widget recognize the following setup strings:
  *
  *      -- BGNDCOL:  the background color (in rrggbb format).
+ *      -- CANDROP:  0 if the script does not support drop, a positive
+ *                   number specifying the kind of allowed drop
+ *                   otherwise (1, 2, 3, or 4 so far).
  *      -- FONT:     the default font to use (in "8.Helv" format).
- *      -- ICONFILE: the path to the menu's icon.
- *      -- MENU:     the encoded menu builder.
- *      -- SCRIPT:   the encoded menu handler.
- *      -- SEPARATE: 1 if SCRIPT is to be run in a separate
+ *      -- SCRIPT:   the encoded script to be run.
+ *      -- SEPARATE: 1 if the script is to be run in a separate
  *                   thread.
  *      -- TEXTCOL:  the foreground color (in rrggbb format).
- *      -- TITLE:    the encoded menu title.
+ *      -- TITLE:    the encoded prompt title.
  *
  *      The makefile in src\widgets compiles widgets
  *      with the VAC subsystem library. As a result,
  *      multiple threads are not supported.
  *
- *      This is all new with V0.7.0.
+ *      This is all new with V0.1.0.
  *
- *@@added V0.7.0 (2001-01-22) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
  *@@header "shared\center.h"
  */
 
@@ -90,7 +91,6 @@
 #define INCL_WINLISTBOXES
 #define INCL_WINHOOKS
 #define INCL_WINTIMER
-#define INCL_WINMENUS
 
 #define INCL_GPIPRIMITIVES
 #define INCL_GPILOGCOLORTABLE
@@ -106,13 +106,9 @@
 #include <assert.h>             // needed for except.h
 
 // generic headers
-#define DONT_REPLACE_FOR_DBCS           // do not replace strchr with DBCS version
 #include "setup.h"                      // code generation and debugging options
 
 // headers in /helpers
-#ifdef DOSH_STANDARDWRAPPERS
-    #undef DOSH_STANDARDWRAPPERS
-#endif
 #include "helpers\dosh.h"               // Control Program helper routines
 #include "helpers\gpih.h"               // GPI helper routines
 #include "helpers\linklist.h"           // linked list helper routines
@@ -132,7 +128,7 @@
 #include "shared\center.h"              // public XCenter interfaces
 #include "shared\common.h"              // the majestic XWorkplace include file
 
-#include "rexx\w_rmenu.h"               // private rmenu definitions
+#include "rexx\w_rprompt.h"             // private rprompt definitions
 
 #include "rexx\common.h"                // common stuff for REXX widgets
 
@@ -151,13 +147,13 @@
  *      class(es) in this DLL.
  */
 
-#define WNDCLASS_WIDGET_RMENU "XWPCenterRexxMenuWidget"
+#define WNDCLASS_WIDGET_RPROMPT "XWPCenterRexxPromptWidget"
 
 static XCENTERWIDGETCLASS G_WidgetClasses[]
     = {
-        WNDCLASS_WIDGET_RMENU,      // PM window class name
+        WNDCLASS_WIDGET_RPROMPT,    // PM window class name
         0,                          // additional flag, not used here
-        "RexxMenu",                 // internal widget class name
+        "RexxPrompt",               // internal widget class name
         NULL,                       // widget class name displayed to user
                                     // is set by RwgtInitModule (NLS)
         WGTF_TOOLTIP | WGTF_TRAYABLE,
@@ -199,7 +195,6 @@ PCTRFREESETUPVALUE pctrFreeSetupValue = NULL;
 PCTRPARSECOLORSTRING pctrParseColorString = NULL;
 PCTRSCANSETUPSTRING pctrScanSetupString = NULL;
 PCTRSETSETUPSTRING pctrSetSetupString = NULL;
-PCTRPLACEANDPOPUPMENU pctrPlaceAndPopupMenu = NULL;
 
 PGPIHDRAW3DFRAME pgpihDraw3DFrame = NULL;
 PGPIHSWITCHTORGB pgpihSwitchToRGB = NULL;
@@ -235,7 +230,6 @@ RESOLVEFUNCTION G_aImports[] =
         "ctrParseColorString", (PFN*)&pctrParseColorString,
         "ctrScanSetupString", (PFN*)&pctrScanSetupString,
         "ctrSetSetupString", (PFN*)&pctrSetSetupString,
-        "ctrPlaceAndPopupMenu", (PFN*)&pctrPlaceAndPopupMenu,
 
         "gpihDraw3DFrame", (PFN*)&pgpihDraw3DFrame,
         "gpihSwitchToRGB", (PFN*)&pgpihSwitchToRGB,
@@ -268,12 +262,10 @@ RESOLVEFUNCTION G_aImports[] =
  *
  ********************************************************************/
 
-USHORT G_usModifiers = 0;
-
 /*
- *@@ RMENUSETUP:
+ *@@ RPROMPTSETUP:
  *      instance data to which setup strings correspond.
- *      This is also a member of RMENUPRIVATE.
+ *      This is also a member of RPROMPTPRIVATE.
  *
  *      Putting these settings into a separate structure
  *      is no requirement, but comes in handy if you
@@ -281,7 +273,7 @@ USHORT G_usModifiers = 0;
  *      both the open widget window and a settings dialog.
  */
 
-typedef struct _RMENUSETUP
+typedef struct _RPROMPTSETUP
 {
     LONG        lcolBackground,         // background color
                 lcolForeground;         // foreground color (for text)
@@ -296,40 +288,40 @@ typedef struct _RMENUSETUP
             // here and in this order if we want to use the common
             // icon static control code
 
-    PSZ         pszMenu;
     PSZ         pszScript;
     BOOL        fSeparateThread;
+    USHORT      fCanDrop;
 
     PSZ         pszTitle;
-} RMENUSETUP, *PRMENUSETUP;
+} RPROMPTSETUP, *PRPROMPRSETUP;
 
 /*
- *@@ RMENUPRIVATE:
+ *@@ RPROMPTPRIVATE:
  *      more window data for the widget.
  *
  *      An instance of this is created on WM_CREATE in
- *      fnwpRMenuWidget and stored in XCENTERWIDGET.pUser.
+ *      fnwpRPromptWidget and stored in XCENTERWIDGET.pUser.
  */
 
-typedef struct _RMENUPRIVATE
+typedef struct _RPROMPTPRIVATE
 {
     PXCENTERWIDGET pWidget;
             // reverse ptr to general widget data ptr; we need
             // that all the time and don't want to pass it on
             // the stack with each function call
 
-    RMENUSETUP   Setup;
+    RPROMPTSETUP   Setup;
             // widget settings that correspond to a setup string
-
-    BOOL           fMenuSunk;
-            // is menu depressed ?
 
     CHAR           achX[16];
     CHAR           achY[16];
     CHAR           achModifiers[16];
     CHAR           achHWND[16];
-    CHAR           achCommand[100];
             // placeholders for running script arguments
+
+    PLINKLIST      pllQueue;
+            // the (possibly empty) list of elements to add to
+            // DRAGITEM stem
 
     BYTE           abUserData[USERDATASIZE];
             // user data area
@@ -340,21 +332,14 @@ typedef struct _RMENUPRIVATE
             // currently shown icon (if not null)
 
     CHAR           achTooltip[250];
-            // the current tooltip for the menu (if null, the default
+            // the current tooltip for the prompt (if null, the default
             // title is used)
 
     LONG           lcolBackground;
             // the current background color (if -1, the default color
             // is used)
 
-    HWND           hwndMenu;
-            // the current popup menu (if not null)
-
-    PLINKLIST      pllQueue;
-            // the possibly empty list of commands (the position
-            // of the command in the list is given by the menu
-            // items ids)
-} RMENUPRIVATE, *PRMENUPRIVATE;
+} RPROMPTPRIVATE, *PRPROMPTPRIVATE;
 
 
 /* ******************************************************************
@@ -379,10 +364,8 @@ typedef struct _RMENUPRIVATE
  *      itself.
  */
 
-VOID RwgtClearSetup(PVOID pvSetup)
+VOID RwgtClearSetup(PRPROMPTSETUP pSetup)
 {
-    PRMENUSETUP pSetup = (PRMENUSETUP)pvSetup;
-
     if (pSetup)
     {
         free(pSetup->pszFont);
@@ -391,20 +374,8 @@ VOID RwgtClearSetup(PVOID pvSetup)
         free(pSetup->pszScript);
         pSetup->pszScript = NULL;
 
-        free(pSetup->pszMenu);
-        pSetup->pszMenu = NULL;
-
         free(pSetup->pszTitle);
         pSetup->pszTitle = NULL;
-
-        free(pSetup->pszIconFile);
-        pSetup->pszIconFile = NULL;
-
-        if (pSetup->hIcon)
-        {
-            WinFreeFileIcon(pSetup->hIcon);
-            pSetup->hIcon = NULLHANDLE;
-        }
     }
 }
 
@@ -419,7 +390,7 @@ VOID RwgtClearSetup(PVOID pvSetup)
  */
 
 VOID RwgtScanSetup(const char *pcszSetupString,
-                   PRMENUSETUP pSetup)
+                   PRPROMPTSETUP pSetup)
 {
     PSZ p;
 
@@ -457,21 +428,6 @@ VOID RwgtScanSetup(const char *pcszSetupString,
         pctrFreeSetupValue(p);
     }
     // else: leave this field null
-
-    // menu:
-    p = pctrScanSetupString(pcszSetupString,
-                            "MENU");
-    if (p)
-    {
-        // p is an encoded string;  we must decode it
-        PSZ pszDecoded = RwgtDecodeString(p);
-
-        pSetup->pszMenu = strdup(pszDecoded);
-        pctrFreeSetupValue(p);
-        RwgtFree(pszDecoded);
-    }
-    else
-        pSetup->pszMenu = strdup("");
 
     // script:
     p = pctrScanSetupString(pcszSetupString,
@@ -525,6 +481,17 @@ VOID RwgtScanSetup(const char *pcszSetupString,
     }
     else
         pSetup->fSeparateThread = 0;
+
+    // drop support:
+    p = pctrScanSetupString(pcszSetupString,
+                            "CANDROP");
+    if (p)
+    {
+        pSetup->fCanDrop = atoi(p);
+        pctrFreeSetupValue(p);
+    }
+    else
+        pSetup->fCanDrop = 0;
 }
 
 /*
@@ -535,13 +502,11 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PVOID pvSetup)
+                   PRPROMPTSETUP pSetup)
 {
-    CHAR        szTemp[CCHMAXSCRIPT*3+8];
+    CHAR    szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
-    PSZ         psz = 0;
-    PRMENUSETUP pSetup = (PRMENUSETUP)pvSetup;
-
+    PSZ     psz = 0;
     pxstrInit(pstrSetup, 500);
 
     sprintf(szTemp, "BGNDCOL=%06lX;",
@@ -558,20 +523,6 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
         sprintf(szTemp, "FONT=%s;",
                 pSetup->pszFont);
         pxstrcat(pstrSetup, szTemp, 0);
-    }
-
-    if (pSetup->pszMenu)
-    {
-        if (strcmp(pSetup->pszMenu, "") != 0)
-        {
-            // pszMenu has to be encoded for safety
-            PSZ pszEncoded = RwgtEncodeString(pSetup->pszMenu);
-
-            sprintf(szTemp, "MENU=%s;",
-                    pszEncoded);
-            pxstrcat(pstrSetup, szTemp, 0);
-            RwgtFree(pszEncoded);
-        }
     }
 
     if (pSetup->pszScript)
@@ -616,6 +567,13 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
     {
         pxstrcat(pstrSetup, "SEPARATE=1;", 0);
     }
+
+    if (pSetup->fCanDrop)
+    {
+        sprintf(szTemp, "CANDROP=%d;",
+                pSetup->fCanDrop);
+        pxstrcat(pstrSetup, szTemp, 0);
+    }
 }
 
 /* ******************************************************************
@@ -630,23 +588,34 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
  */
 
 VOID Settings2Dlg(HWND hwnd,
-                  PRMENUSETUP pSetup)
+                  PRPROMPTSETUP pSetup)
 {
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RMENU_ICON, SM_SETHANDLE, (MPARAM)(pSetup->hIcon), (MPARAM)0);
-    WinSetDlgItemText(hwnd, ID_CRDI_RMENU_TITLE, pSetup->pszTitle);
-    WinSetDlgItemText(hwnd, ID_CRDI_RMENU_TEXT, pSetup->pszScript);
-    WinSetDlgItemText(hwnd, ID_CRDI_RMENU_MENU, pSetup->pszMenu);
+    HWND hwndDrop = WinWindowFromID(hwnd, ID_CRDI_SCRIPT_CANDROP);
 
-    WinCheckButton(hwnd, ID_CRDI_RMENU_SEPARATETHREAD, pSetup->fSeparateThread);
+    WinSendDlgItemMsg(hwnd, ID_CRDI_SCRIPT_ICON, SM_SETHANDLE, (MPARAM)(pSetup->hIcon), (MPARAM)0);
+    WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_TITLE, pSetup->pszTitle);
+    WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_TEXT, pSetup->pszScript);
 
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RMENU_TITLE, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXTITLE), (MPARAM)0);
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RMENU_TEXT, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RMENU_MENU, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
+    WinCheckButton(hwnd, ID_CRDI_SCRIPT_SEPARATETHREAD, pSetup->fSeparateThread);
+
+    WinCheckButton(hwnd, ID_CRDI_SCRIPT_CANDROP, pSetup->fCanDrop);
+
+    WinSendDlgItemMsg(hwnd, ID_CRDI_SCRIPT_TITLE, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXTITLE), (MPARAM)0);
+    WinSendDlgItemMsg(hwnd, ID_CRDI_SCRIPT_TEXT, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
+
+    WinInsertLboxItem(hwndDrop, LIT_END, pszNoDrop);
+    WinInsertLboxItem(hwndDrop, LIT_END, pszDropFile);
+    WinInsertLboxItem(hwndDrop, LIT_END, pszDropFiles);
+    WinInsertLboxItem(hwndDrop, LIT_END, pszDropObject);
+    WinInsertLboxItem(hwndDrop, LIT_END, pszDropObjects);
+    WinSendMsg(hwndDrop, LM_SELECTITEM,
+                         MPFROMSHORT(pSetup->fCanDrop),
+                         MPFROMSHORT(TRUE));
 }
 
 /*
  *@@ fnwpSettingsDlg:
- *      dialog proc for the rmenu settings dialog.
+ *      dialog proc for the rprompt settings dialog.
  *
  *@@changed V0.5.2 (2001-06-19) [lafaix]: added Apply/Reset support
  */
@@ -670,7 +639,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
         {
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
             PSTORAGE pStorage = calloc(1, sizeof(STORAGE));
-            PRMENUSETUP pSetup = calloc(1, sizeof(RMENUSETUP));
+            PRPROMPTSETUP pSetup = calloc(1, sizeof(RPROMPTSETUP));
 
             WinSetWindowPtr(hwnd, QWL_USER, pData);
             if (    (pSetup)
@@ -703,7 +672,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRMENUSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
+                PRPROMPTSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usCmd = (USHORT)mp1;
@@ -799,7 +768,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         case DID_HELP:
                             pctrDisplayHelp(pData->pGlobals,
                                             RwgtQueryHelpLibrary(),
-                                            ID_CRH_RMENU_SETTINGS);
+                                            ID_CRH_RPROMPT_SETTINGS);
                         break;
                     } // end switch (usCmd)
                 } // end if (pSetup)
@@ -816,22 +785,22 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRMENUSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
+                PRPROMPTSETUP pSetup = ((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usItemID = SHORT1FROMMP(mp1),
                            usNotifyCode = SHORT2FROMMP(mp1);
                     switch (usItemID)
                     {
-                        // menu script:
-                        case ID_CRDI_RMENU_MENU:
+                        // script:
+                        case ID_CRDI_SCRIPT_TEXT:
                             if (usNotifyCode == MLN_CHANGE)
                             {
                                 CHAR szTemp[CCHMAXSCRIPT+1];
 
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RMENU_MENU, sizeof(szTemp), (PSZ)szTemp);
-                                free(pSetup->pszMenu);
-                                pSetup->pszMenu = strdup(szTemp);
+                                WinQueryDlgItemText(hwnd, ID_CRDI_SCRIPT_TEXT, sizeof(szTemp), (PSZ)szTemp);
+                                free(pSetup->pszScript);
+                                pSetup->pszScript = strdup(szTemp);
                             }
                             else
                             if (usNotifyCode == MLN_SETFOCUS)
@@ -843,52 +812,36 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             if (usNotifyCode == MLN_KILLFOCUS)
                             {
                                 WinStopTimer(G_habThis, hwnd, 1);
-                                WinSetDlgItemText(hwnd, ID_CRDI_RMENU_STATUS, "");
+                                WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_STATUS, "");
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
                             }
                         break;
 
-                        // command script:
-                        case ID_CRDI_RMENU_TEXT:
-                            if (usNotifyCode == MLN_CHANGE)
-                            {
-                                CHAR szTemp[CCHMAXSCRIPT+1];
-
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RMENU_TEXT, sizeof(szTemp), (PSZ)szTemp);
-                                free(pSetup->pszScript);
-                                pSetup->pszScript = strdup(szTemp);
-                            }
-                            else
-                            if (usNotifyCode == MLN_SETFOCUS)
-                            {
-                                ((PSTORAGE)pData->pUser)->ulCurrent = 0;
-                                WinStartTimer(G_habThis, hwnd, 2, 100);
-                            }
-                            else
-                            if (usNotifyCode == MLN_KILLFOCUS)
-                            {
-                                WinStopTimer(G_habThis, hwnd, 2);
-                                WinSetDlgItemText(hwnd, ID_CRDI_RMENU_STATUS2, "");
-                                ((PSTORAGE)pData->pUser)->ulCurrent = 0;
-                            }
-                        break;
-
-                        // menu title (used by tooltip)
-                        case ID_CRDI_RMENU_TITLE:
+                        // prompt title (used by tooltip)
+                        case ID_CRDI_SCRIPT_TITLE:
                             if (usNotifyCode == MLN_CHANGE)
                             {
                                 CHAR szTemp[251];
 
-                                WinQueryDlgItemText(hwnd, ID_CRDI_RMENU_TITLE, sizeof(szTemp), (PSZ)szTemp);
+                                WinQueryDlgItemText(hwnd, ID_CRDI_SCRIPT_TITLE, sizeof(szTemp), (PSZ)szTemp);
                                 free(pSetup->pszTitle);
                                 pSetup->pszTitle = strdup(szTemp);
                             }
                         break;
 
                         // separate thread support:
-                        case ID_CRDI_RMENU_SEPARATETHREAD:
+                        case ID_CRDI_SCRIPT_SEPARATETHREAD:
                             if (usNotifyCode == BN_CLICKED)
-                                pSetup->fSeparateThread = WinQueryButtonCheckstate(hwnd, ID_CRDI_RMENU_SEPARATETHREAD);
+                                pSetup->fSeparateThread = WinQueryButtonCheckstate(hwnd, ID_CRDI_SCRIPT_SEPARATETHREAD);
+                        break;
+
+                        // drop type supported:
+                        case ID_CRDI_SCRIPT_CANDROP:
+                            if (usNotifyCode == LN_SELECT)
+                                pSetup->fCanDrop = SHORT1FROMMR(WinSendMsg((HWND)mp2,
+                                                              LM_QUERYSELECTION,
+                                                              MPFROMSHORT(LIT_FIRST),
+                                                              (MPARAM)0));
                         break;
                     }
                 }
@@ -932,9 +885,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
          */
 
         case WM_TIMER:
-            if (    (SHORT1FROMMP(mp1) == 1)
-                 || (SHORT1FROMMP(mp1) == 2)
-               )
+            if (SHORT1FROMMP(mp1) == 1)
             {
                 PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
                 if (pData)
@@ -942,30 +893,23 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                     PSTORAGE pStorage = (PSTORAGE)pData->pUser;
                     if (pStorage)
                     {
-                        USHORT usMLE = (SHORT1FROMMP(mp1) == 1)
-                                           ? ID_CRDI_RMENU_MENU
-                                           : ID_CRDI_RMENU_TEXT,
-                               usEF = (SHORT1FROMMP(mp1) == 1)
-                                          ? ID_CRDI_RMENU_STATUS
-                                          : ID_CRDI_RMENU_STATUS2;
-
                         ULONG ulTotal = (ULONG)WinSendDlgItemMsg(hwnd,
-                                                          usMLE,
+                                                          ID_CRDI_SCRIPT_TEXT,
                                                           MLM_QUERYLINECOUNT,
                                                           0,
                                                           0);
                         ULONG ulCurrent = 1 + (ULONG)WinSendDlgItemMsg(hwnd,
-                                                            usMLE,
+                                                            ID_CRDI_SCRIPT_TEXT,
                                                             MLM_LINEFROMCHAR,
                                                             MPFROMLONG(-1L),
                                                             0);
                         ULONG ulColumn = 1 + (ULONG)WinSendDlgItemMsg(hwnd,
-                                                        usMLE,
+                                                        ID_CRDI_SCRIPT_TEXT,
                                                         MLM_QUERYSEL,
                                                         MPFROMSHORT(MLFQS_CURSORSEL),
                                                         0)
                                        - (ULONG)WinSendDlgItemMsg(hwnd,
-                                                        usMLE,
+                                                        ID_CRDI_SCRIPT_TEXT,
                                                         MLM_CHARFROMLINE,
                                                         MPFROMLONG(-1L),
                                                         0);
@@ -983,7 +927,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             pStorage->ulTotal = ulTotal;
                             pStorage->ulCurrent = ulCurrent;
                             pStorage->ulColumn = ulColumn;
-                            WinSetDlgItemText(hwnd, usEF, achBuffer);
+                            WinSetDlgItemText(hwnd, ID_CRDI_SCRIPT_STATUS, achBuffer);
                         }
                     }
                 }
@@ -1022,9 +966,9 @@ BOOL EXPENTRY RwgtHelpHook(HAB hab,
 
     switch ((USHORT)idTopic)
     {
-        case ID_CRH_RMENU_SCRIPTERROR:
-        case ID_CRH_RMENU_ALREADYRUNNING:
-        case ID_CRH_RMENU_THREADCREATION:
+        case ID_CRH_RPROMPT_SCRIPTERROR:
+        case ID_CRH_RPROMPT_ALREADYRUNNING:
+        case ID_CRH_RPROMPT_THREADCREATION:
             // the hook is _global_, so we must process this message
             // only if it comes from one of our windows.  G_hwnd is
             // used for this purpose, as there is no other way to
@@ -1048,7 +992,7 @@ BOOL EXPENTRY RwgtHelpHook(HAB hab,
 
 /*
  *@@ RwgtShowSettingsDlg:
- *      this displays the rmenu widget's settings
+ *      this displays the rprompt widget's settings
  *      dialog.
  *
  *      This procedure's address is stored in
@@ -1068,13 +1012,13 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
                            pData->hwndOwner,
                            fnwpSettingsDlg,
                            G_hmodThis,
-                           ID_CRD_RMENUWGT_SETTINGS,
+                           ID_CRD_RPROMPTWGT_SETTINGS,
                            // pass original setup string with WM_INITDLG
                            (PVOID)pData);
     if (hwnd)
     {
         // subclass the static control to handle icon drop
-        HWND hwndIcon = WinWindowFromID(hwnd, ID_CRDI_RMENU_ICONFILE);
+        HWND hwndIcon = WinWindowFromID(hwnd, ID_CRDI_SCRIPT_ICONFILE);
         G_pfnwpOldIconFile = WinSubclassWindow(hwndIcon, fnwpIconFile);
 
         pcmnSetControlsFont(hwnd,
@@ -1091,8 +1035,8 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
 }
 
 /*
- *@@ fntRunCommandScript:
- *      transient thread started by RwgtDoCommand
+ *@@ fntRunScript:
+ *      transient thread started by RwgtButton1Click
  *      to run the script possibly in its own thread.
  *
  *      As this module is linked with the VAC subsystem
@@ -1102,13 +1046,15 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
  *
  *      This thread is created with a msg queue.
  *
- *@@added V0.7.0 (2001-07-24) [lafaix]
+ *@@added V0.1.0 (2001-01-25) [lafaix]
+ *@@changed V0.3.0 (2001-03-06) [lafaix]: G_hwnd was always garbage
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: dropped element list now cleared in RwgtInitializeStem
  */
 
-void _Optlink fntRunCommandScript(PTHREADINFO pti)
+void _Optlink fntRunScript(PTHREADINFO pti)
 {
-    PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)(pti->ulData);
-    RXSTRING params[3];
+    PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)(pti->ulData);
+    RXSTRING params[4];
     RXSTRING instore[2];
     RXSTRING retstr;
     SHORT    src;
@@ -1121,17 +1067,18 @@ void _Optlink fntRunCommandScript(PTHREADINFO pti)
     MAKERXSTRING(instore[0], pPrivate->Setup.pszScript, strlen(pPrivate->Setup.pszScript));
     MAKERXSTRING(instore[1], NULL, 0);
 
-    MAKERXSTRING(params[0], pPrivate->achCommand, strlen(pPrivate->achCommand));
-    MAKERXSTRING(params[1], pPrivate->achModifiers, strlen(pPrivate->achModifiers));
-    MAKERXSTRING(params[2], pPrivate->achHWND, strlen(pPrivate->achHWND));
+    MAKERXSTRING(params[0], pPrivate->achX, strlen(pPrivate->achX));
+    MAKERXSTRING(params[1], pPrivate->achY, strlen(pPrivate->achY));
+    MAKERXSTRING(params[2], pPrivate->achModifiers, strlen(pPrivate->achModifiers));
+    MAKERXSTRING(params[3], pPrivate->achHWND, strlen(pPrivate->achHWND));
     MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
     achBuffer[0] = 0;
 
     TRY_LOUD(excpt2)
     {
-        rc = RexxStart(3,
+        rc = RexxStart(4,
                        &params[0],
-                       "RexxMenuCommand",
+                       "RexxPrompt",
                        &instore[0],
                        "CMD",
                        RXCOMMAND,
@@ -1159,7 +1106,7 @@ void _Optlink fntRunCommandScript(PTHREADINFO pti)
                       NULLHANDLE,
                       szBuf,
                       pPrivate->Setup.pszTitle,
-                      ID_CRH_RMENU_SCRIPTERROR,
+                      ID_CRH_RPROMPT_SCRIPTERROR,
                       MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
         // more than one thread may be running; G_hwnd may have changed
@@ -1181,13 +1128,17 @@ void _Optlink fntRunCommandScript(PTHREADINFO pti)
 
 /*
  *@@ RwgtInitializeStem
- *      Initialize the MENU.USER stem value.
+ *      initialize the DRAGITEM. stem with the dropped elements
+ *      references and the PROMPT. stem with the user data.
  *
  *      This function is reentrant, and should not allocate heap
  *      memory.  It gets its parameter from the (about to run)
  *      script, using RexxVariablePool.
  *
- *@@added V0.7.0 (2001-07-12) [lafaix]
+ *@@added V0.3.0 (2001-02-12) [lafaix]
+ *@@changed V0.5.1 (2001-06-06) [lafaix]: added BUTTON.USER
+ *@@changed V0.5.2 (2001-06-13) [lafaix]: fixed incorrect DRAGITEM filling
+ *@@changed V0.7.0 (2001-07-16) [lafaix]: clearing dropped elements here now
  */
 
 LONG EXPENTRY RwgtInitializeStem(LONG exitno,
@@ -1195,32 +1146,28 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
                                  PUCHAR parmblock)
 {
     SHVBLOCK block;
-    CHAR     szData[250];
+    CHAR szHwnd[16];
             // placeholder for our hwnd query
-    HWND     hwnd = 0;
-    USHORT   usKind;
+    CHAR szStem[16];
+            // placeholder for stem name (DRAGITEM.x)
+    HWND hwnd = 0;
+    APIRET rc = 0;
 
-    // we need to query the hwnd handle from the script (arg(3) or arg(4))
+    // we need to query the hwnd handle from the script (arg(4))
     block.shvnext = 0;
     block.shvcode = RXSHV_PRIV;
     block.shvret  = 0;
 
-    // there's either 3 or 4 params
-    MAKERXSTRING(block.shvname, "PARM", 4);
-    MAKERXSTRING(block.shvvalue, szData, 250-1);
+    MAKERXSTRING(block.shvname, "PARM.4", 6);
+    MAKERXSTRING(block.shvvalue, szHwnd, 16);
 
-    RexxVariablePool(&block);
-
-    szData[block.shvvaluelen] = 0;
-    usKind = atoi(szData);
-
-    MAKERXSTRING(block.shvname, (usKind == 3) ? "PARM.3" : "PARM.4", 6);
-
-    RexxVariablePool(&block);
+    rc = RexxVariablePool(&block);
+    _Pmpf(("RexxVariablePool returns %d", rc));
 
     // sscanf needs a null-terminated string, and we have enough space
-    szData[block.shvvaluelen] = 0;
-    sscanf(szData, "%lX", &hwnd);
+    szHwnd[block.shvvaluelen] = 0;
+
+    sscanf(szHwnd, "%lX", &hwnd);
 
     if (hwnd)
     {
@@ -1228,17 +1175,49 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
 
         if (pWidget)
         {
-            PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+            PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
 
             if (pPrivate)
             {
                 block.shvcode = RXSHV_SET;
 
                 // user data
-                MAKERXSTRING(block.shvname, "MENU.USER", 9);
+                MAKERXSTRING(block.shvname, "PROMPT.USER", 11);
                 MAKERXSTRING(block.shvvalue, pPrivate->abUserData, pPrivate->usUserDataLength);
 
                 RexxVariablePool(&block);
+
+                if (pPrivate->Setup.fCanDrop)
+                {
+                    PLISTNODE pNode = plstQueryFirstNode(pPrivate->pllQueue);
+                    USHORT usCount = 0;
+
+                    // dropped elements
+                    while (pNode)
+                    {
+                        PSZ pszElement = (PSZ)pNode->pItemData;
+
+                        _Pmpf(("Adding element %s", pszElement));
+
+                        sprintf(szStem, "DRAGITEM.%d", ++usCount);
+                        MAKERXSTRING(block.shvname, szStem, strlen(szStem));
+                        MAKERXSTRING(block.shvvalue, pszElement, strlen(pszElement));
+
+                        RexxVariablePool(&block);
+
+                        pNode = pNode->pNext;
+                    }
+
+                    // sets DRAGITEM.0
+                    MAKERXSTRING(block.shvname, "DRAGITEM.0", 10);
+                    sprintf(szStem, "%d", usCount);
+                    MAKERXSTRING(block.shvvalue, szStem, strlen(szStem));
+
+                    RexxVariablePool(&block);
+
+                    // clear the queue (elements are automatically freed)
+                    plstClear(pPrivate->pllQueue);
+                }
             }
         }
     }
@@ -1247,136 +1226,14 @@ LONG EXPENTRY RwgtInitializeStem(LONG exitno,
 }
 
 /*
- *@@ RwgtPrepareMenu
- *      create a menu from stem.
- *
- *@@added V0.7.0 (2001-07-23) [lafaix]
- */
-
-VOID RwgtPrepareMenu(PSZ pszStem, HWND hwndMenu, PLINKLIST pll, PULONG pul)
-{
-    // this is the menu building script; pszStem.0 will
-    // tell us the number of items to look at.
-
-    SHVBLOCK block;
-    USHORT   usItems = 0,
-             usCurrent;
-    CHAR     achStemName[16];
-    CHAR     szData[250];
-    MENUITEM mi;
-
-    block.shvnext = 0;
-    block.shvcode = RXSHV_SYFET;
-    block.shvret  = 0;
-
-    // the temporary storage area is used for our stem queries
-    MAKERXSTRING(block.shvvalue, szData, 250-1);
-
-    strcpy(achStemName, pszStem);
-    strcat(achStemName, ".0");
-
-    // top level item count
-    MAKERXSTRING(block.shvname, achStemName, strlen(achStemName));
-    RexxVariablePool(&block);
-    if (block.shvret == RXSHV_OK)
-    {
-        szData[block.shvvaluelen] = 0;
-        usItems = atoi(szData);
-    }
-
-    for (usCurrent = 0; usCurrent < usItems; usCurrent++)
-    {
-        sprintf(achStemName, "%s.%d", pszStem, usCurrent+1);
-        MAKERXSTRING(block.shvname, achStemName, strlen(achStemName));
-        RexxVariablePool(&block);
-        if (block.shvret == RXSHV_OK)
-        {
-            szData[block.shvvaluelen] = 0;
-
-            // create menu item
-
-            if (strcmp(szData, "-") == 0)
-            {
-                // insert menu separator
-                mi.iPosition = MIT_END;
-                mi.afStyle = MIS_SEPARATOR;             // append separator
-                mi.afAttribute = 0;
-                mi.id = -1;
-                mi.hwndSubMenu = 0;
-                mi.hItem = 0;
-
-                WinSendMsg(hwndMenu,
-                           MM_INSERTITEM,
-                           (MPARAM)&mi,
-                           NULL);
-            }
-            else
-            {
-                // a simple menu item (so far)
-                PSZ pszText;
-                PSZ pszCmd;
-
-                mi.iPosition = MIT_END;
-                mi.afStyle = MIS_TEXT;
-                mi.afAttribute = 0;
-                mi.id = (*pul)++;
-                mi.hwndSubMenu = 0;
-                mi.hItem = 0;
-
-                if (szData[0] == '!')
-                    mi.afAttribute = MIA_CHECKED;
-                else
-                if (szData[0] == '*')
-                    mi.afAttribute = MIA_DISABLED;
-
-                if (    (szData[0] == '*')
-                     || (szData[0] == '!')
-                     || (szData[0] == '?')
-                   )
-                    pszCmd = szData + 1;
-                else
-                    pszCmd = szData;
-
-                // must split szData at '='
-                pszText = strchr(szData, '=');
-
-                if (pszText)
-                {
-                    *pszText++ = 0;
-
-                    if (pszCmd[0] == '@')
-                    {
-                        HWND hwndSubMenu = WinCreateMenu(hwndMenu, NULL);
-
-                        (*pul)--;
-                        RwgtPrepareMenu(pszCmd+1, hwndSubMenu, pll, pul);
-
-                        mi.hwndSubMenu = hwndSubMenu;
-                        mi.afStyle |= MIS_SUBMENU;
-                    }
-                    else
-                        plstAppendItem(pll, plstStrDup(pszCmd));
-
-                    WinSendMsg(hwndMenu,
-                               MM_INSERTITEM,
-                               (MPARAM)&mi,
-                               (MPARAM)pszText);
-                }
-            }
-        }
-    }
-}
-
-/*
  *@@ RwgtExtractStem
- *      extract the MENU.USER element, as well as the MENU.* stems for
- *      the menu script.
+ *      extract the PROMPT.USER element.
  *
  *      This function is reentrant, and should not allocate heap
- *      memory.  It gets its parameter from the (about to exit)
+ *      memory.  It gets its parameter from the (about to run)
  *      script, using RexxVariablePool.
  *
- *@@added V0.7.0 (2001-07-12) [lafaix]
+ *@@added V0.5.1 (2001-06-06) [lafaix]
  */
 
 LONG EXPENTRY RwgtExtractStem(LONG exitno,
@@ -1384,33 +1241,28 @@ LONG EXPENTRY RwgtExtractStem(LONG exitno,
                               PUCHAR parmblock)
 {
     SHVBLOCK block;
-    CHAR     szData[250];
-            // placeholder for our MENU. queries
-    HWND     hwnd = 0;
-    USHORT   usKind;
+    CHAR szHwnd[16];
+            // placeholder for our hwnd query
+    CHAR szData[250];
+            // placeholder for our PROMPT. queries
+    HWND hwnd = 0;
+    APIRET rc = 0;
 
-    // we need to query the hwnd handle from the script (arg(3) or arg(4))
+    // we need to query the hwnd handle from the script (arg(4))
     block.shvnext = 0;
     block.shvcode = RXSHV_PRIV;
     block.shvret  = 0;
 
-    // the temporary storage area is used for most of our stem queries
-    MAKERXSTRING(block.shvvalue, szData, 250-1);
+    MAKERXSTRING(block.shvname, "PARM.4", 6);
+    MAKERXSTRING(block.shvvalue, szHwnd, 16);
 
-    // there's either 3 or 4 params; we must check here
-    MAKERXSTRING(block.shvname, "PARM", 4);
-    RexxVariablePool(&block);
-
-    szData[block.shvvaluelen] = 0;
-    usKind = atoi(szData);
-
-    MAKERXSTRING(block.shvname, (usKind == 3) ? "PARM.3" : "PARM.4", 6);
-
-    RexxVariablePool(&block);
+    rc = RexxVariablePool(&block);
+    _Pmpf(("RexxVariablePool returns %d", rc));
 
     // sscanf needs a null-terminated string, and we have enough space
-    szData[block.shvvaluelen] = 0;
-    sscanf(szData, "%lX", &hwnd);
+    szHwnd[block.shvvaluelen] = 0;
+
+    sscanf(szHwnd, "%lX", &hwnd);
 
     if (hwnd)
     {
@@ -1418,14 +1270,15 @@ LONG EXPENTRY RwgtExtractStem(LONG exitno,
 
         if (pWidget)
         {
-            PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+            PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
 
             if (pPrivate)
             {
                 block.shvcode = RXSHV_FETCH;
 
                 // user data
-                MAKERXSTRING(block.shvname, "MENU.USER", 9);
+                MAKERXSTRING(block.shvname, "PROMPT.USER", 11);
+                MAKERXSTRING(block.shvvalue, szData, USERDATASIZE);
                 RexxVariablePool(&block);
                 if (block.shvret == RXSHV_OK)
                 {
@@ -1433,80 +1286,29 @@ LONG EXPENTRY RwgtExtractStem(LONG exitno,
                     pPrivate->usUserDataLength = block.shvvaluelen;
                 }
 
-                if (usKind == 3)
+                // tooltip
+                MAKERXSTRING(block.shvname, "PROMPT.TOOLTIP", 14);
+                MAKERXSTRING(block.shvvalue, pPrivate->achTooltip, 250-1);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
+                    pPrivate->achTooltip[block.shvvaluelen] = 0;
+                else
+                    pPrivate->achTooltip[0] = 0;
+
+                // color
+                MAKERXSTRING(block.shvname, "PROMPT.BACKGROUND", 17);
+                MAKERXSTRING(block.shvvalue, szData, 250-1);
+                RexxVariablePool(&block);
+                if (block.shvret == RXSHV_OK)
                 {
-                    // this is the menu handling script; it may modify
-                    // the appearence of the widget.
-
-                    // user icon
-                    MAKERXSTRING(block.shvname, "MENU.ICON", 9);
-                    RexxVariablePool(&block);
-                    if (block.shvret == RXSHV_OK)
-                    {
-                        // an icon has been specified (it may be invalid, but
-                        // that's not our problem); so free the previous one
-                        if (pPrivate->hUserIcon)
-                            WinFreeFileIcon(pPrivate->hUserIcon);
-
-                        szData[block.shvvaluelen] = 0;
-                        pPrivate->hUserIcon = WinLoadFileIcon(szData, FALSE);
-                    }
-                    else
-                    {
-                        // use the default icon; we must free the previous
-                        // one if appropriate
-                        if (pPrivate->hUserIcon)
-                            WinFreeFileIcon(pPrivate->hUserIcon);
-
-                        pPrivate->hUserIcon = NULLHANDLE;
-                    }
-
-                    // color
-                    MAKERXSTRING(block.shvname, "MENU.BACKGROUND", 15);
-                    RexxVariablePool(&block);
-                    if (block.shvret == RXSHV_OK)
-                    {
-                        szData[block.shvvaluelen] = 0;
-                        pPrivate->lcolBackground = pctrParseColorString(szData);
-                    }
-                    else
-                        pPrivate->lcolBackground = -1L;
-
-                    // tooltip
-                    MAKERXSTRING(block.shvname, "MENU.TOOLTIP", 12);
-                    MAKERXSTRING(block.shvvalue, pPrivate->achTooltip, 250-1);
-                    RexxVariablePool(&block);
-                    if (block.shvret == RXSHV_OK)
-                        pPrivate->achTooltip[block.shvvaluelen] = 0;
-                    else
-                        pPrivate->achTooltip[0] = 0;
-
-                    // things may have changed, update display
-                    WinInvalidateRect(pWidget->hwndWidget, NULL, FALSE);
+                    szData[block.shvvaluelen] = 0;
+                    pPrivate->lcolBackground = pctrParseColorString(szData);
                 }
                 else
-                {
-                    SWP    swpButton;
-                    POINTL ptlMenu;
-                    ULONG  ulStart = 0;
+                    pPrivate->lcolBackground = -1L;
 
-                    if (pPrivate->hwndMenu)
-                        WinDestroyWindow(pPrivate->hwndMenu);
-
-                    pPrivate->hwndMenu = WinCreateMenu(HWND_DESKTOP, NULL);
-
-                    plstClear(pPrivate->pllQueue);
-
-                    RwgtPrepareMenu("MENU",
-                                    pPrivate->hwndMenu,
-                                    pPrivate->pllQueue,
-                                    &ulStart);
-
-                    // now show the menu on top of the button
-                    pctrPlaceAndPopupMenu(pWidget->hwndWidget,
-                                          pPrivate->hwndMenu,
-                                          pWidget->pGlobals->ulPosition == XCENTER_BOTTOM);
-                }
+                // things may have changed, update display
+                WinInvalidateRect(pWidget->hwndWidget, NULL, FALSE);
             }
         }
     }
@@ -1535,7 +1337,7 @@ MRESULT RwgtCreate(HWND hwnd,
 {
     MRESULT mrc = 0;
     PSZ p;
-    PRMENUPRIVATE pPrivate = calloc(1, sizeof(RMENUPRIVATE));
+    PRPROMPTPRIVATE pPrivate = calloc(1, sizeof(RPROMPTPRIVATE));
 
     // link the two together
     pWidget->pUser = pPrivate;
@@ -1558,14 +1360,14 @@ MRESULT RwgtCreate(HWND hwnd,
     // left NULL, the "Help" context menu item is disabled
 
     pWidget->pcszHelpLibrary = RwgtQueryHelpLibrary();
-    pWidget->ulHelpPanelID = ID_CRH_RMENU_MAIN;
+    pWidget->ulHelpPanelID = ID_CRH_RPROMPT_MAIN;
+
+    // create the (so far empty) list of queued elements
+    pPrivate->pllQueue = plstCreate(TRUE);
 
     // -1L means use the default background color (0 being a valid color,
     // namely, black)
     pPrivate->lcolBackground = -1L;
-
-    // create the (so far empty) list of commands
-    pPrivate->pllQueue = plstCreate(TRUE);
 
     return (mrc);
 }
@@ -1574,7 +1376,8 @@ MRESULT RwgtCreate(HWND hwnd,
  *@@ RwgtButton1Click:
  *      Prepare parameters and run the script.
  *
- *@@added V0.7.0 (2001-07-24) [lafaix]
+ *@@added V0.1.0 (2001-01-22) [lafaix]
+ *@@changed V0.5.2 (2001-06-13) [lafaix]: fixed thrCreate prototype change
  */
 
 void RwgtButton1Click(HWND hwnd,
@@ -1586,7 +1389,7 @@ void RwgtButton1Click(HWND hwnd,
 
     if (pWidget)
     {
-        PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+        PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
 
         if (pPrivate)
         {
@@ -1600,7 +1403,7 @@ void RwgtButton1Click(HWND hwnd,
                               hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
-                              ID_CRH_RMENU_ALREADYRUNNING,
+                              ID_CRH_RPROMPT_ALREADYRUNNING,
                               MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
                 // more than one thread may be running; G_hwnd may have changed
@@ -1610,12 +1413,6 @@ void RwgtButton1Click(HWND hwnd,
             else
             {
                 RECTL rclWin;
-                RXSTRING params[4];
-                RXSTRING instore[2];
-                RXSTRING retstr;
-                SHORT    src;
-                LONG     rc;
-                CHAR     achBuffer[250];
 
                 WinQueryWindowRect(hwnd, &rclWin);
 
@@ -1629,129 +1426,13 @@ void RwgtButton1Click(HWND hwnd,
                 sprintf(pPrivate->achModifiers, "%d", SHORT2FROMMP(mp2));
                 sprintf(pPrivate->achHWND, "%lX", (LONG)hwnd);
 
-                #define excHandlerLoud pexcHandlerLoud
-                        // TRY_LOUD expects excHandlerLoud, not pexcHandlerLoud
-
-                MAKERXSTRING(instore[0], pPrivate->Setup.pszMenu, strlen(pPrivate->Setup.pszMenu));
-                MAKERXSTRING(instore[1], NULL, 0);
-
-                MAKERXSTRING(params[0], pPrivate->achX, strlen(pPrivate->achX));
-                MAKERXSTRING(params[1], pPrivate->achY, strlen(pPrivate->achY));
-                MAKERXSTRING(params[2], pPrivate->achModifiers, strlen(pPrivate->achModifiers));
-                MAKERXSTRING(params[3], pPrivate->achHWND, strlen(pPrivate->achHWND));
-                MAKERXSTRING(retstr, achBuffer, sizeof(achBuffer));
-                achBuffer[0] = 0;
-
-                TRY_LOUD(excpt2)
-                {
-                    rc = RexxStart(4,
-                                   &params[0],
-                                   "RexxMenu",
-                                   &instore[0],
-                                   "CMD",
-                                   RXCOMMAND,
-                                   G_exit_list,
-                                   &src,
-                                   &retstr);
-
-                    if (rc)
-                        _Pmpf(("RexxStart returns %ld %d {%s}", rc, src, achBuffer));
-                }
-                CATCH(excpt2) {}  END_CATCH();
-
-                if (rc < 0)
-                {
-                    // a REXX interpreter error occured; tell so
-                    CHAR szBuf[500];
-
-                    G_hwnd = hwnd;
-
-                    WinMessageBox(HWND_DESKTOP,
-                                  NULLHANDLE,
-                                  szBuf,
-                                  pPrivate->Setup.pszTitle,
-                                  ID_CRH_RMENU_SCRIPTERROR,
-                                  MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
-
-                    // more than one thread may be running; G_hwnd may have changed
-                    if (G_hwnd == hwnd)
-                        G_hwnd = NULLHANDLE;
-                }
-
-                // not running anymore
-                pPrivate->achHWND[0] = 0;
-
-                // release the tokenized code
-                if (RXSTRPTR(instore[1]))
-                    DosFreeMem(RXSTRPTR(instore[1]));
-
-                // release the returned value if needed
-                if (RXSTRPTR(retstr) != achBuffer)
-                    DosFreeMem(RXSTRPTR(retstr));
-            } // end if (pPrivate->achHWND[0])
-        } // end if (pPrivate)
-    } // end if (pWidget)
-}
-
-/*
- *@@ RwgtDoCommand:
- *      Prepare parameters and run the script.
- *
- *@@added V0.7.0 (2001-07-24) [lafaix]
- */
-
-void RwgtDoCommand(HWND hwnd,
-                   MPARAM mp1,
-                   MPARAM mp2,
-                   PSZ pszCmd)
-{
-    // get widget data from QWL_USER (stored there by WM_CREATE)
-    PXCENTERWIDGET pWidget = (PXCENTERWIDGET)WinQueryWindowPtr(hwnd, QWL_USER);
-
-    if (pWidget)
-    {
-        PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
-
-        if (pPrivate)
-        {
-            // our structure is not multiple-instances--aware yet so
-            // we better check it out beforehand
-            if (pPrivate->achHWND[0])
-            {
-                G_hwnd = hwnd;
-
-                WinMessageBox(HWND_DESKTOP,
-                              hwnd,
-                              pszAlreadyRunning,
-                              pPrivate->Setup.pszTitle,
-                              ID_CRH_RMENU_ALREADYRUNNING,
-                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
-
-                // more than one thread may be running; G_hwnd may have changed
-                if (G_hwnd == hwnd)
-                    G_hwnd = NULLHANDLE;
-            }
-            else
-            {
-                RECTL rclWin;
-
-                WinQueryWindowRect(hwnd, &rclWin);
-
-                // Calling the script with 3 args:
-                // 1- command (up to 100 chars)
-                // 2- modifiers
-                // 3- hwnd (in hex)
-                sprintf(pPrivate->achCommand, "%s", pszCmd);
-                sprintf(pPrivate->achModifiers, "%d", G_usModifiers);
-                sprintf(pPrivate->achHWND, "%lX", (LONG)hwnd);
-
                 if (pPrivate->Setup.fSeparateThread)
                 {
                     // Run the script in its own thread (with a message queue)
                     if (pthrCreate(NULL,
-                                   fntRunCommandScript,
+                                   fntRunScript,
                                    NULL, // running flag
-                                   "RexxMenuThread",
+                                   "RexxPromptThread",
                                    THRF_PMMSGQUEUE | THRF_TRANSIENT,
                                    (ULONG)pPrivate) == 0)
                     {
@@ -1764,7 +1445,7 @@ void RwgtDoCommand(HWND hwnd,
                                       hwnd,
                                       pszThreadCreationFailed,
                                       pPrivate->Setup.pszTitle,
-                                      ID_CRH_RMENU_THREADCREATION,
+                                      ID_CRH_RPROMPT_THREADCREATION,
                                       MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
                         // more than one thread may be running;
@@ -1780,7 +1461,7 @@ void RwgtDoCommand(HWND hwnd,
 
                     ti.ulData = (ULONG)pPrivate;
 
-                    fntRunCommandScript(&ti);
+                    fntRunScript(&ti);
                 }
             } // end if (pPrivate->achHWND[0])
         } // end if (pPrivate)
@@ -1811,7 +1492,7 @@ BOOL RwgtControl(HWND hwnd,
     if (pWidget)
     {
         // get private data from that widget data
-        PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+        PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
         if (pPrivate)
         {
             USHORT  usID = SHORT1FROMMP(mp1),
@@ -1908,7 +1589,7 @@ VOID RwgtPaint(HWND hwnd,
     HPS hps = WinBeginPaint(hwnd, NULLHANDLE, NULL);
     if (hps)
     {
-        PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+        PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
         if (pPrivate)
         {
             RECTL       rclWin;
@@ -1927,25 +1608,12 @@ VOID RwgtPaint(HWND hwnd,
             WinQueryWindowRect(hwnd, &rclWin);        // exclusive
             pgpihSwitchToRGB(hps);
 
-            if (pPrivate->fMenuSunk)
-            {
-                // paint button "down":
-                lLeft = pWidget->pGlobals->lcol3DDark;
-                lRight = pWidget->pGlobals->lcol3DLight;
-                // add offset for icon painting at the bottom
-                ulOfs += 1;
-                if (ulBorder == 0)
-                    ulBorder = 1;
-            }
-            else
-            {
-                lLeft = pWidget->pGlobals->lcol3DLight;
-                lRight = pWidget->pGlobals->lcol3DDark;
-            }
+            lLeft = pWidget->pGlobals->lcol3DLight;
+            lRight = pWidget->pGlobals->lcol3DDark;
 
             if (ulBorder)
             {
-                // button border:
+                // prompt border:
 
                 // now paint button frame
                 rclWin.xRight--;
@@ -2013,6 +1681,199 @@ VOID RwgtPaint(HWND hwnd,
 }
 
 /*
+ *@@ DrawTargetEmphasis:
+ *      paint a black rectangle around the icon if fStatus is TRUE
+ *      or a dialog-background--colored one otherwise.
+ */
+
+VOID DrawTargetEmphasis(HWND hwnd,
+                        HPS hps,
+                        BOOL fStatus)
+{
+    RECTL rclWin;
+    LONG lColor;
+
+    WinQueryWindowRect(hwnd, &rclWin);
+    pgpihSwitchToRGB(hps);
+
+    rclWin.xLeft += 1;
+//    rclWin.xRight -= 1;
+    rclWin.yBottom += 1;
+//    rclWin.yTop -= 1;
+
+    if (fStatus)
+       lColor = CLR_BLACK;
+    else
+       lColor = pwinhQueryPresColor(hwnd,
+                                    PP_BACKGROUNDCOLOR,
+                                    FALSE,
+                                    SYSCLR_DIALOGBACKGROUND);
+
+    pgpihDraw3DFrame(hps, &rclWin, 1, lColor, lColor);
+}
+
+/*
+ *@@ RwgtDragOverDrop:
+ *      implementation for DM_DRAGOVER and DM_DROP
+ *
+ *@@added V0.3.0 (2001-02-09) [lafaix]
+ */
+
+MRESULT RwgtDragOverDrop(HWND hwnd,
+                         MPARAM mp1,
+                         MPARAM mp2,
+                         BOOL fDrop)
+{
+    MRESULT mrc = 0;
+
+    // get widget data from QWL_USER (stored there by WM_CREATE)
+    PXCENTERWIDGET pWidget = (PXCENTERWIDGET)WinQueryWindowPtr(hwnd, QWL_USER);
+    if (pWidget)
+    {
+        // get private data from that widget data
+        PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
+        if (pPrivate && pPrivate->Setup.fCanDrop)
+        {
+            PDRAGINFO dragInfo = (PDRAGINFO)mp1;
+            PDRAGITEM dragItem;
+            USHORT usOp, usIndicator;
+            ULONG ulCount;
+
+            DrgAccessDraginfo(dragInfo);
+            switch (dragInfo->usOperation)
+            {
+                case DO_UNKNOWN:
+                  DrgFreeDraginfo(dragInfo);
+                  return (MRFROM2SHORT(DOR_NODROPOP, 0));
+                case DO_DEFAULT:
+                  usOp = DO_COPY;
+                  break;
+                case DO_LINK:
+                case DO_COPY:
+                case DO_MOVE:
+                  usOp = dragInfo->usOperation;
+                  break;
+            }
+
+            usIndicator = DOR_NEVERDROP;
+            ulCount = DrgQueryDragitemCount(dragInfo);
+
+            if (  (pPrivate->Setup.fCanDrop == CANDROP_FILES)
+               || (pPrivate->Setup.fCanDrop == CANDROP_OBJECTS)
+               || (ulCount == 1))
+            {
+                int i;
+                PSZ pszMech = ((pPrivate->Setup.fCanDrop == CANDROP_ONEOBJECT) ||
+                               (pPrivate->Setup.fCanDrop == CANDROP_OBJECTS)) ?
+                               "DRM_OBJECT" : "DRM_OS2FILE";
+
+                usIndicator = DOR_DROP;
+
+                // we must check all elements to ensure they are acceptable
+                for (i = 0; i < ulCount && usIndicator == DOR_DROP; i++)
+                {
+                    dragItem = DrgQueryDragitemPtr(dragInfo, i);
+
+                    if (((dragItem->fsSupportedOps & DO_COPYABLE) &&
+                         (usOp == (USHORT)DO_COPY))               ||
+                        ((dragItem->fsSupportedOps & DO_MOVEABLE) &&
+                         (usOp == (USHORT)DO_MOVE))               ||
+                        ((dragItem->fsSupportedOps & DO_LINKABLE) &&
+                         (usOp == (USHORT)DO_LINK)))
+                    {
+                        if (DrgVerifyRMF(dragItem, pszMech, NULL))
+                            usIndicator = DOR_DROP;
+                        else
+                            usIndicator = DOR_NEVERDROP;
+                    }
+                    else
+                        usIndicator = DOR_NODROPOP;
+                }
+
+                // OK, drop allowed
+                if (usIndicator == DOR_DROP)
+                {
+                    HPS hps = DrgGetPS(hwnd);
+
+                    DrawTargetEmphasis(hwnd, hps, !fDrop);
+
+                    DrgReleasePS(hps);
+
+                    if (fDrop)
+                    {
+                        CHAR szTemp[CCHMAXPATH];
+                        POINTL ptl;
+                        USHORT usModifiers = KC_NONE;
+
+                        plstClear(pPrivate->pllQueue);
+
+                        // for each dropped item
+                        while (ulCount--)
+                        {
+                            dragItem = DrgQueryDragitemPtr(dragInfo, ulCount);
+                            DrgQueryStrName(dragItem->hstrContainerName, CCHMAXPATH, szTemp);
+                            DrgQueryStrName(dragItem->hstrSourceName, CCHMAXPATH, szTemp+strlen(szTemp));
+                            plstAppendItem(pPrivate->pllQueue, plstStrDup(szTemp));
+                        }
+
+                        // the drop coordinates are relative to the desktop,
+                        // so we must convert them
+                        ptl.x = dragInfo->xDrop;
+                        ptl.y = dragInfo->yDrop;
+                        WinMapWindowPoints(HWND_DESKTOP, hwnd, &ptl, 1);
+
+                        // rebuild the modifiers from dragInfo->usOperation
+                        switch (dragInfo->usOperation)
+                        {
+                            case DO_COPY:
+                                usModifiers = KC_CTRL;
+                                break;
+                            case DO_MOVE:
+                                usModifiers = KC_SHIFT;
+                                break;
+                            case DO_LINK:
+                                usModifiers = KC_SHIFT | KC_CTRL;
+                                break;
+                        }
+
+                        WinPostMsg(hwnd,
+                                   WM_BUTTON1CLICK,
+                                   MPFROM2SHORT(ptl.x, ptl.y),
+                                   MPFROM2SHORT(0, usModifiers));
+                    } // end if (fDrop)
+                } // end if (usIndicator == DOR_DROP)
+            }
+
+            DrgFreeDraginfo(dragInfo);
+            mrc = MRFROM2SHORT(usIndicator, usOp);
+        }
+    }
+
+    return (mrc);
+}
+
+/*
+ *@@ RwgtDragLeave:
+ *      implementation for DM_DRAGLEAVE
+ *
+ *@@added V0.3.0 (2001-02-09) [lafaix]
+ */
+
+MRESULT RwgtDragLeave(HWND hwnd,
+                      MPARAM mp1,
+                      MPARAM mp2)
+{
+    MRESULT mrc = 0;
+    HPS hps = DrgGetPS(hwnd);
+
+    DrawTargetEmphasis(hwnd, hps, FALSE);
+
+    DrgReleasePS(hps);
+
+    return (mrc);
+}
+
+/*
  *@@ RwgtDestroy:
  *      implementation for WM_DESTROY.
  *
@@ -2022,16 +1883,15 @@ VOID RwgtPaint(HWND hwnd,
 VOID RwgtDestroy(HWND hwnd,
                  PXCENTERWIDGET pWidget)
 {
-    PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+    PRPROMPTPRIVATE pPrivate = (PRPROMPTPRIVATE)pWidget->pUser;
     if (pPrivate)
     {
         RwgtClearSetup(&pPrivate->Setup);
 
+        plstFree(&(pPrivate->pllQueue));
+
         if (pPrivate->hUserIcon)
             WinFreeFileIcon(pPrivate->hUserIcon);
-        if (pPrivate->hwndMenu)
-            WinDestroyWindow(pPrivate->hwndMenu);
-        plstFree(&(pPrivate->pllQueue));
 
         free(pPrivate);
             // pWidget is cleaned up by DestroyWidgets
@@ -2039,8 +1899,8 @@ VOID RwgtDestroy(HWND hwnd,
 }
 
 /*
- *@@ fnwpRMenuWidget:
- *      window procedure for the rexx menu widget class.
+ *@@ fnwpRPromptWidget:
+ *      window procedure for the rexx prompt widget class.
  *
  *      There are a few rules which widget window procs
  *      must follow. See ctrDefWidgetProc in src\shared\center.c
@@ -2050,7 +1910,7 @@ VOID RwgtDestroy(HWND hwnd,
  *      which follows the basic rules for a PM window class.
  */
 
-MRESULT EXPENTRY fnwpRMenuWidget(HWND hwnd,
+MRESULT EXPENTRY fnwpRPromptWidget(HWND hwnd,
                                    ULONG msg,
                                    MPARAM mp1,
                                    MPARAM mp2)
@@ -2074,7 +1934,7 @@ MRESULT EXPENTRY fnwpRMenuWidget(HWND hwnd,
          *          WinSetWindowPtr(hwnd, QWL_USER, mp1);
          *
          *      We use XCENTERWIDGET.pUser for allocating
-         *      RMENUPRIVATE for our own stuff.
+         *      RPROMPTPRIVATE for our own stuff.
          */
 
         case WM_CREATE:
@@ -2130,80 +1990,31 @@ MRESULT EXPENTRY fnwpRMenuWidget(HWND hwnd,
         break;
 
         /*
-         * WM_BUTTON1CLICK:
+         * DM_DRAGOVER
          *
          */
 
-        case WM_BUTTON1CLICK:
-            RwgtButton1Click(hwnd, mp1, mp2);
-
-            mrc = (MPARAM)TRUE;
+        case DM_DRAGOVER:
+            mrc = RwgtDragOverDrop(hwnd, mp1, mp2, FALSE);
         break;
 
         /*
-         * WM_MENUSELECT:
-         *      record the current state of Alt, Ctrl, and Shift,
-         *      so that we can pass it to the handling script.
-         */
-
-        case WM_MENUSELECT:
-            G_usModifiers = 0;
-            if (WinGetKeyState(HWND_DESKTOP, VK_SHIFT) & 0x8000)
-                G_usModifiers |= KC_SHIFT;
-            if (WinGetKeyState(HWND_DESKTOP, VK_CTRL) & 0x8000)
-                G_usModifiers |= KC_CTRL;
-            if (WinGetKeyState(HWND_DESKTOP, VK_ALT) & 0x8000)
-                G_usModifiers |= KC_ALT;
-            mrc = pWidget->pfnwpDefWidgetProc(hwnd, msg, mp1, mp2);
-        break;
-
-        /*
-         * WM_MENUEND:
-         *      if mp2 == pPrivate->hwndMenu, we can clear the
-         *      linked list and or remove the sunk effect.
+         * DM_DRAGLEAVE
          *
          */
 
-        case WM_MENUEND:
+        case DM_DRAGLEAVE:
+            mrc = RwgtDragLeave(hwnd, mp1, mp2);
         break;
 
-        case WM_BUTTON1UP:
-        case WM_BUTTON1DOWN:
-            {
-            PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
+        /*
+         * DM_DROP
+         *
+         */
 
-            WinSetCapture(HWND_DESKTOP,
-                          (msg == WM_BUTTON1DOWN) ? hwnd : NULLHANDLE);
-            pPrivate->fMenuSunk = (msg == WM_BUTTON1DOWN);
-
-            // repaint sunk button state
-            WinInvalidateRect(hwnd, NULL, FALSE);
-            }
+        case DM_DROP:
+            mrc = RwgtDragOverDrop(hwnd, mp1, mp2, TRUE);
         break;
-
-        case WM_COMMAND:
-        {
-            PRMENUPRIVATE pPrivate = (PRMENUPRIVATE)pWidget->pUser;
-            PLISTNODE pNode = plstQueryFirstNode(pPrivate->pllQueue);
-            USHORT usCount = 0;
-            PSZ pszCmd = NULL;
-
-            // dropped elements
-            while (pNode)
-            {
-                if (usCount++ == SHORT1FROMMP(mp1))
-                    pszCmd = (PSZ)pNode->pItemData;
-
-                pNode = pNode->pNext;
-            }
-
-            if (pszCmd)
-                // do command
-                RwgtDoCommand(hwnd, mp1, mp2, pszCmd);
-            else
-                mrc = pWidget->pfnwpDefWidgetProc(hwnd, msg, mp1, mp2);
-
-        break; }
 
         default:
             mrc = pWidget->pfnwpDefWidgetProc(hwnd, msg, mp1, mp2);
@@ -2306,10 +2117,10 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
         // all imports OK:
         // register our PM window class
         if (!WinRegisterClass(hab,
-                              WNDCLASS_WIDGET_RMENU,
-                              fnwpRMenuWidget,
+                              WNDCLASS_WIDGET_RPROMPT,
+                              fnwpRPromptWidget,
                               CS_PARENTCLIP | CS_SIZEREDRAW | CS_SYNCPAINT,
-                              sizeof(PRMENUPRIVATE))
+                              sizeof(PRPROMPTPRIVATE))
                                     // extra memory to reserve for QWL_USER
                              )
             strcpy(pszErrorMsg, "WinRegisterClass failed.");
@@ -2324,6 +2135,11 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
             // load NLS strings
             LOADSTRING(ID_CRSI_NAME, pszName);
+            LOADSTRING(ID_CRSI_NODROP, pszNoDrop);
+            LOADSTRING(ID_CRSI_DROPFILE, pszDropFile);
+            LOADSTRING(ID_CRSI_DROPFILES, pszDropFiles);
+            LOADSTRING(ID_CRSI_DROPOBJECT, pszDropObject);
+            LOADSTRING(ID_CRSI_DROPOBJECTS, pszDropObjects);
             LOADSTRING(ID_CRSI_ALREADYRUNNING, pszAlreadyRunning);
             LOADSTRING(ID_CRSI_THREADINGREQUIRED, pszThreadingRequired);
             LOADSTRING(ID_CRSI_SCRIPTERROR, pszScriptError);
@@ -2333,7 +2149,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             G_WidgetClasses[0].pcszClassTitle = pszName;
 
             // register our REXX exit (stem initializer)
-            rc = RexxRegisterExitDll("MENUINIT", // REXX exit name
+            rc = RexxRegisterExitDll("PROMPTINIT", // REXX exit name
                                 G_szThis,                // module name
                                 "RwgtInitializeStem",    // function name
                                 NULL,                    // No user area
@@ -2342,7 +2158,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             _Pmpf(("RexxRegisterExitDll returns %d", rc));
 
             // register our REXX exit (stem extracter)
-            rc = RexxRegisterExitDll("MENUTERM", // REXX exit name
+            rc = RexxRegisterExitDll("PROMPTTERM", // REXX exit name
                                 G_szThis,                // module name
                                 "RwgtExtractStem",       // function name
                                 NULL,                    // No user area
@@ -2351,9 +2167,9 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             _Pmpf(("RexxRegisterExitDll returns %d", rc));
 
             // initialize our global REXX exit list structure
-            G_exit_list[0].sysexit_name = "MENUINIT";
+            G_exit_list[0].sysexit_name = "PROMPTINIT";
             G_exit_list[0].sysexit_code = RXINI;
-            G_exit_list[1].sysexit_name = "MENUTERM";
+            G_exit_list[1].sysexit_name = "PROMPTTERM";
             G_exit_list[1].sysexit_code = RXTER;
             G_exit_list[2].sysexit_code = RXENDLST;
 
@@ -2389,12 +2205,17 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
 VOID EXPENTRY RwgtUnInitModule(VOID)
 {
-    RexxDeregisterExit("MENUINIT",       // REXX exit name
+    RexxDeregisterExit("PROMPTINIT",       // REXX exit name
                        G_szThis);          // module name
-    RexxDeregisterExit("MENUTERM",       // REXX exit name
+    RexxDeregisterExit("PROMPTTERM",       // REXX exit name
                        G_szThis);          // module name
 
     free(pszName);
+    free(pszNoDrop);
+    free(pszDropFile);
+    free(pszDropFiles);
+    free(pszDropObject);
+    free(pszDropObjects);
     free(pszAlreadyRunning);
     free(pszThreadingRequired);
     free(pszScriptError);

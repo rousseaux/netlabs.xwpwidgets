@@ -90,6 +90,8 @@ help:
 
 link: $(XWPRUNNING)\plugins\xcenter\rbutton.hlp \
       $(XWPRUNNING)\plugins\xcenter\rgauge.hlp \
+      $(XWPRUNNING)\plugins\xcenter\rmenu.hlp \
+      $(XWPRUNNING)\plugins\xcenter\rmonitor.hlp \
       $(XWPRUNNING)\plugins\xcenter\spacer.hlp \
 
 # Finally, define rules for linking the target DLLs and EXEs
@@ -123,6 +125,48 @@ $(XWPRUNNING)\plugins\xcenter\rgauge.hlp: $(MODULESDIR)\$(@B).hlp
 	cmd.exe /c copy $(MODULESDIR)\$(@B).hlp $(XWPRUNNING)\plugins\xcenter
 
 $(MODULESDIR)\rgauge.hlp: rexx\$(@B).ipf
+    @cd rexx
+    @ipfc $(@B).ipf $(MODULESDIR)\$(@B).hlp
+    @cd ..
+
+#
+# Making RMENU.HLP
+#
+$(XWPRUNNING)\plugins\xcenter\rmenu.hlp: $(MODULESDIR)\$(@B).hlp
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).hlp $(XWPRUNNING)\plugins\xcenter
+
+$(MODULESDIR)\rmenu.hlp: rexx\$(@B).ipf
+    @cd rexx
+    @ipfc $(@B).ipf $(MODULESDIR)\$(@B).hlp
+    @cd ..
+
+#
+# Making RMONITOR.HLP
+#
+$(XWPRUNNING)\plugins\xcenter\rmonitor.hlp: $(MODULESDIR)\$(@B).hlp
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).hlp $(XWPRUNNING)\plugins\xcenter
+
+$(MODULESDIR)\rmonitor.hlp: rexx\$(@B).ipf
+    @cd rexx
+    @ipfc $(@B).ipf $(MODULESDIR)\$(@B).hlp
+    @cd ..
+
+#
+# Making RSCRLR.HLP
+#
+$(XWPRUNNING)\plugins\xcenter\rscrlrr.hlp: $(MODULESDIR)\$(@B).hlp
+!ifdef XWP_UNLOCK_MODULES
+	unlock $@
+!endif
+	cmd.exe /c copy $(MODULESDIR)\$(@B).hlp $(XWPRUNNING)\plugins\xcenter
+
+$(MODULESDIR)\rscrlr.hlp: rexx\$(@B).ipf
     @cd rexx
     @ipfc $(@B).ipf $(MODULESDIR)\$(@B).hlp
     @cd ..

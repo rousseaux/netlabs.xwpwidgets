@@ -1,7 +1,7 @@
 
 ;
-; rgauge.def:
-;       module definition file for RGAUGE.DLL, an XCenter
+; rmonitor.def:
+;       module definition file for RMONITOR.DLL, an XCenter
 ;       plug-in widget DLL.
 ;
 ;       Copyright (C) 2001 Martin Lafaix.
@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx gauge plugin DLL'
+LIBRARY RMONITOR INITGLOBAL TERMGLOBAL
+Description '@#Martin Lafaix:0.7.0#@ Rexx monitor plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
@@ -25,11 +25,11 @@ DATA              SINGLE READWRITE LOADONCALL SHARED
 CODE              LOADONCALL
 
 EXPORTS
-    RwgtInitModule          @1
-    RwgtUnInitModule        @2
-    RwgtQueryVersion        @3
+    RwgtInitModule            @1
+    RwgtUnInitModule          @2
+    RwgtQueryVersion          @3
 
-    RwgtHelpHook            @65
-    RwgtExtractGaugeStem    @66
-    RwgtInitializeGaugeStem @67
+    RwgtHelpHook              @65
+    RwgtExtractMonitorStem    @66
+    RwgtInitializeMonitorStem @67
 

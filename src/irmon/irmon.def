@@ -1,10 +1,10 @@
 
 ;
-; rgauge.def:
-;       module definition file for RGAUGE.DLL, an XCenter
+; irmon.def:
+;       module definition file for IRMON.DLL, an XCenter
 ;       plug-in widget DLL.
 ;
-;       Copyright (C) 2001 Martin Lafaix.
+;       Copyright (C) 2001 Markus Montkowski.
 ;       This file is part of the XWorkplace source package.
 ;       XWorkplace is free software; you can redistribute it and/or modify
 ;       it under the terms of the GNU General Public License as published
@@ -16,20 +16,20 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx gauge plugin DLL'
+LIBRARY IRMON INITGLOBAL TERMGLOBAL
+Description '@#Ulrich M”ller:0.9.16#@ XWorkplace IR-Monitor widget DLL'
 PROTMODE
 
-DATA              SINGLE READWRITE LOADONCALL SHARED
+DATA              MULTIPLE READWRITE LOADONCALL NONSHARED
+;       doesn't really matter, because the widget is only ever used
+;       in the WPS process; we use MULTIPLE NONSHARED here to reduce
+;       the amount of shared memory that is needed for the DLL
 
 CODE              LOADONCALL
 
 EXPORTS
-    RwgtInitModule          @1
-    RwgtUnInitModule        @2
-    RwgtQueryVersion        @3
+    WgtInitModule      @1
+    WgtUnInitModule    @2
+    WgtQueryVersion    @3
 
-    RwgtHelpHook            @65
-    RwgtExtractGaugeStem    @66
-    RwgtInitializeGaugeStem @67
 

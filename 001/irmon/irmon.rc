@@ -1,0 +1,14 @@
+#include "irmon\w_irmonrc.h"
+
+BITMAP ID_BmpCONN1         "IR-Connection.bmp"
+BITMAP ID_BmpCONN2         "IR-Connection1.bmp"
+BITMAP ID_BmpCONN3         "IR-Connection2.bmp"
+BITMAP ID_BmpCONN4         "IR-Connection3.bmp"
+BITMAP ID_BmpCONN5         "IR-Connection4.bmp"
+BITMAP ID_BmpCONN6         "IR-Connection5.bmp"
+BITMAP ID_BmpCONN7         "IR-Connection6.bmp"
+BITMAP ID_BmpCONN8         "IR-Connection7.bmp"
+BITMAP ID_BmpOFF           "IR-Off.bmp"
+BITMAP ID_BmpSCAN1         "IR-Scan.bmp"
+BITMAP ID_BmpSCAN2         "IR-Scan2.bmp"
+

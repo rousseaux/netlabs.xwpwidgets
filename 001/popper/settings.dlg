@@ -1,0 +1,32 @@
+DLGTEMPLATE 1200 LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "popper setup", 1200, 12, 6, 162, 84, NOT WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        GROUPBOX        " Pop-Server ",      101,  3, 32, 155, 50
+          LTEXT           "Title",           102,  6, 65,  25,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+          LTEXT           "Server",          103,  6, 55,  25,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+          LTEXT           "User",            104,  6, 45,  25,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+          LTEXT           "Password",        105,  6, 35,  28,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+
+          LTEXT           "check every",     106,  6, 20,  34,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+          LTEXT           "seconds",         107, 65, 20,  28,  8
+          PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+
+          ENTRYFIELD      "hotmail"          110, 38, 67,  90,  6, ES_MARGIN|WS_GROUP|WS_TABSTOP
+          ENTRYFIELD      "pop.hotmail.com", 111, 38, 57,  90,  6, ES_MARGIN|WS_GROUP|WS_TABSTOP
+          ENTRYFIELD      "110",             112,134, 57,  15,  6, ES_MARGIN|WS_TABSTOP
+          ENTRYFIELD      "billg",           113, 38, 47,  60,  6, ES_MARGIN|WS_TABSTOP
+          ENTRYFIELD      "dixiklo",         114, 38, 37,  60,  6, ES_MARGIN|WS_TABSTOP|ES_UNREADABLE
+
+          ENTRYFIELD      "60",              115, 45, 22,  15,  6, ES_MARGIN|WS_TABSTOP
+          AUTOCHECKBOX    "save password",   116,  6,  1,  82, 10, WS_TABSTOP|WS_GROUP
+
+        DEFPUSHBUTTON     "Ok",              210, 127,  2,  30, 10
+    END
+END

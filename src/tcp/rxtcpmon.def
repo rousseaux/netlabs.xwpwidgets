@@ -1,0 +1,14 @@
+LIBRARY RXTCPMON INITINSTANCE LONGNAMES
+PROTMODE
+DESCRIPTION 'RXTCPMON Utilities - (c) Copyright Cliff Brady, Martin Lafaix 2001'
+DATA MULTIPLE NONSHARED
+STACKSIZE 32768
+EXPORTS
+     TCPLOADFUNCS                = RxLoadTCPMon                  @1
+     TCPDROPFUNCS                = RxDropTCPMon                  @2
+     TCPQUERYRECCOUNT            = RxTCPRecCount                 @3
+     TCPQUERYSNDCOUNT            = RxTCPSndCount                 @4
+     TCPQUERYSTATS               = RxTCPSRCount                  @5
+     TCPQUERYAVAILABLEINTERFACES = RxTCPQueryAvailableInterfaces @6
+     TCPQUERYINTERFACE           = RxTCPQueryInterface           @7
+     DOSQUERYSYSINFO             = RxDosQuerySysInfo             @8

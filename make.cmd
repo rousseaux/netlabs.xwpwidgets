@@ -1,4 +1,4 @@
-/* Make XWorkplace */
+/* Make XWorkplace Widget Library */
 "@echo off"
 
 /*

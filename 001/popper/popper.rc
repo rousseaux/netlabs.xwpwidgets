@@ -1,0 +1,21 @@
+#include <os2.h>
+#include "dlgids.h"
+
+RCINCLUDE "settings.dlg"
+
+ICON   2500 email1.ico
+/*ICON 2500 drive.ico
+POINTER 1000 hand.ptr*/
+
+MENU   3000
+BEGIN
+  PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+  MENUITEM "~check now",  3010
+  MENUITEM "~reset",      3020
+  MENUITEM SEPARATOR
+  MENUITEM "Popper widget", 3030, MIS_SUBMENU
+  BEGIN
+    MENUITEM "Propertie~s", ID_CRMI_PROPERTIES
+    MENUITEM "~Remove widget", ID_CRMI_REMOVEWGT
+  END
+END

@@ -1,10 +1,10 @@
 
 /*
- *@@sourcefile w_rgauge.c:
- *      XCenter "Rexx gauge" widget.
+ *@@sourcefile w_rmonitor.c:
+ *      XCenter "Rexx monitor" widget.
  *
  *      This is an example of an XCenter widget plugin.
- *      This widget resides in RGAUGE.DLL, which (as
+ *      This widget resides in RMONITOR.DLL, which (as
  *      with all widget plugins) must be put into the
  *      plugins/xcenter directory of the XWorkplace
  *      installation directory.
@@ -22,20 +22,20 @@
  *         return the widgets minimal XWorkplace version level
  *         required.
  *
- *      A Rexx gauge widget recognize the following setup strings:
+ *      A Rexx monitor widget recognize the following setup strings:
  *
  *      -- BGNDCOL:  the background color (in rrggbb format).
- *      -- COLOR1:   the color for the first part of the gauge (in
- *                   rrggbb format).
- *      -- COLOR2:   the color for the second part of the gauge (in
- *                   rrggbb format).
- *      -- COLOR3:   the color for the third part of the gauge (in
- *                   rrggbb format).
  *      -- DBLCLK:   the encoded script to be run whenever
  *                   a double click occurs.
  *      -- FONT:     the font used for the widget's text (in "8.Helv"
  *                   format).
  *      -- HEIGHT:   the height in pixels.
+ *      -- LAYOUT:   the monitor layout (a number from 4 to 6, 4 being
+ *                   the default).
+ *                   4 is icon on left, text on right
+ *                   5 is icon on middle, text on middle
+ *                   6 is text on left, icon on right
+ *                   (text is centered in the remaining space)
  *      -- REFRESH:  the interval to use between refreshes, in 1/1000
  *                   of a seconds (it must be greater or equal than
  *                   500).
@@ -43,7 +43,7 @@
  *      -- SIZEABLE: 1 if the widget is user-sizeable.
  *      -- TEXTCOL:  the color of the widget's text (in rrggbb
  *                   format).
- *      -- TITLE:    the default title of the gauge, encoded.
+ *      -- TITLE:    the default title of the monitor, encoded.
  *      -- WIDTH:    the width in pixels.
  *
  *      The makefile in src\rexx compiles widgets
@@ -141,7 +141,7 @@
 #include "shared\center.h"              // public XCenter interfaces
 #include "shared\common.h"              // the majestic XWorkplace include file
 
-#include "rexx\w_rgauge.h"              // private rgauge definitions
+#include "rexx\w_rmonitor.h"            // private rmonitor definitions
 
 #define INCL_NOICON
 #include "rexx\common.h"                // common stuff for REXX widgets
@@ -160,13 +160,13 @@
  *      class(es) in this DLL.
  */
 
-#define WNDCLASS_WIDGET_RGAUGE "XWPCenterRexxGaugeWidget"
+#define WNDCLASS_WIDGET_RMONITOR "XWPCenterRexxMonitorWidget"
 
 static XCENTERWIDGETCLASS G_WidgetClasses[]
     = {
-        WNDCLASS_WIDGET_RGAUGE,     // PM window class name
+        WNDCLASS_WIDGET_RMONITOR,   // PM window class name
         0,                          // additional flag, not used here
-        "RexxGauge",                // internal widget class name
+        "RexxMonitor",              // internal widget class name
         NULL,                       // widget class name displayed to user;
                                     // is set in RwgtInitModule (NLS)
         WGTF_TOOLTIP | WGTF_TRAYABLE,
@@ -268,9 +268,9 @@ RESOLVEFUNCTION G_aImports[] =
  ********************************************************************/
 
 /*
- *@@ RGAUGESETUP:
+ *@@ RMONITORSETUP:
  *      instance data to which setup strings correspond.
- *      This is also a member of RGAUGEPRIVATE.
+ *      This is also a member of RMONITORPRIVATE.
  *
  *      Putting these settings into a separate structure
  *      is no requirement, but comes in handy if you
@@ -278,7 +278,7 @@ RESOLVEFUNCTION G_aImports[] =
  *      both the open widget window and a settings dialog.
  */
 
-typedef struct _RGAUGESETUP
+typedef struct _RMONITORSETUP
 {
     LONG        lcolBackground,         // background color
                 lcolForeground;         // foreground color (for text)
@@ -293,10 +293,6 @@ typedef struct _RGAUGESETUP
     ULONG       ulScriptLength;
             // strlen(pszScript), for speed.  V0.7.0 (2001-07-15) [lafaix]
 
-    LONG        lcol1,
-                lcol2,
-                lcol3;
-
     ULONG       ulHeight,
                 ulWidth;
 
@@ -305,26 +301,26 @@ typedef struct _RGAUGESETUP
     PSZ         pszDblClkScript;
 
     BOOL        fSizeable;
-} RGAUGESETUP, *PRGAUGESETUP;
+} RMONITORSETUP, *PRMONITORSETUP;
 
 /*
- *@@ RGAUGEPRIVATE:
+ *@@ RMONITORPRIVATE:
  *      more window data for the widget.
  *
  *      An instance of this is created on WM_CREATE in
- *      fnwpRGaugeWidget and stored in XCENTERWIDGET.pUser.
+ *      fnwpRMonitorWidget and stored in XCENTERWIDGET.pUser.
  *
  *@@changed V0.7.0 (2001-07-16) [lafaix]: achHWNDxxx unified, made read only
  */
 
-typedef struct _RGAUGEPRIVATE
+typedef struct _RMONITORPRIVATE
 {
     PXCENTERWIDGET pWidget;
             // reverse ptr to general widget data ptr; we need
             // that all the time and don't want to pass it on
             // the stack with each function call
 
-    RGAUGESETUP    Setup;
+    RMONITORSETUP    Setup;
             // widget settings that correspond to a setup string
 
     CHAR           achX[16];
@@ -333,22 +329,17 @@ typedef struct _RGAUGEPRIVATE
     CHAR           achHWND[16];
             // placeholders for scripts arguments
 
-    ULONG          ulVal1,
-                   ulVal2,
-                   ulVal3;
-            // the returned values for the gauge
-
     BOOL           fBusy;
             // TRUE if a script is currently running, false otherwise
 
     BOOL           fTooltipShowing;
-            // TRUE when tooltip shown over the gauge
+            // TRUE when tooltip shown over the monitor
 
     CHAR           achText[100];
-            // the text to be used for the gauge
+            // the text to be used for the monitor
 
     CHAR           achTooltip[250];
-            // the current tooltip for the gauge (if null, the default
+            // the current tooltip for the monitor (if null, the default
             // title is used)
 
     ULONG          ulTimerID;
@@ -363,13 +354,13 @@ typedef struct _RGAUGEPRIVATE
     USHORT         usUserDataLength;
             // user data area length
 
+    HPOINTER       hUserIcon;
+            // currently shown icon (if not null)
+
     LONG           lcolForeground,
-                   lcolBackground,
-                   lcol1,
-                   lcol2,
-                   lcol3;
+                   lcolBackground;
             // runtime colors (if -1L, the defaults apply)
-} RGAUGEPRIVATE, *PRGAUGEPRIVATE;
+} RMONITORPRIVATE, *PRMONITORPRIVATE;
 
 /* ******************************************************************
  *
@@ -395,7 +386,7 @@ typedef struct _RGAUGEPRIVATE
 
 VOID RwgtClearSetup(PVOID pvSetup)
 {
-    PRGAUGESETUP pSetup = (PRGAUGESETUP)pvSetup;
+    PRMONITORSETUP pSetup = (PRMONITORSETUP)pvSetup;
 
     if (pSetup)
     {
@@ -425,7 +416,7 @@ VOID RwgtClearSetup(PVOID pvSetup)
  */
 
 VOID RwgtScanSetup(const char *pcszSetupString,
-                   PRGAUGESETUP pSetup)
+                   PRMONITORSETUP pSetup)
 {
     PSZ p;
 
@@ -513,39 +504,6 @@ VOID RwgtScanSetup(const char *pcszSetupString,
     else
         pSetup->pszTitle = strdup("");
 
-    // color 1:
-    p = pctrScanSetupString(pcszSetupString,
-                            "COLOR1");
-    if (p)
-    {
-        pSetup->lcol1 = pctrParseColorString(p);
-        pctrFreeSetupValue(p);
-    }
-    else
-        pSetup->lcol1 = RGB_GREEN;
-
-    // color 2:
-    p = pctrScanSetupString(pcszSetupString,
-                            "COLOR2");
-    if (p)
-    {
-        pSetup->lcol2 = pctrParseColorString(p);
-        pctrFreeSetupValue(p);
-    }
-    else
-        pSetup->lcol2 = RGB_YELLOW;
-
-    // color 3:
-    p = pctrScanSetupString(pcszSetupString,
-                            "COLOR3");
-    if (p)
-    {
-        pSetup->lcol3 = pctrParseColorString(p);
-        pctrFreeSetupValue(p);
-    }
-    else
-        pSetup->lcol3 = RGB_RED;
-
     // width:
     p = pctrScanSetupString(pcszSetupString,
                             "WIDTH");
@@ -602,12 +560,12 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PVOID pvSetup)                                       
+                   PVOID pvSetup)
 {
-    CHAR         szTemp[CCHMAXSCRIPT*3+8];
+    CHAR           szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
-    PSZ          psz = 0;
-    PRGAUGESETUP pSetup = (PRGAUGESETUP)pvSetup;
+    PSZ            psz = 0;
+    PRMONITORSETUP pSetup = (PRMONITORSETUP)pvSetup;
 
     pxstrInit(pstrSetup, 500);
 
@@ -626,18 +584,6 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
                 pSetup->pszFont);
         pxstrcat(pstrSetup, szTemp, 0);
     }
-
-    sprintf(szTemp, "COLOR1=%06lX;",
-            pSetup->lcol1);
-    pxstrcat(pstrSetup, szTemp, 0);
-
-    sprintf(szTemp, "COLOR2=%06lX;",
-            pSetup->lcol2);
-    pxstrcat(pstrSetup, szTemp, 0);
-
-    sprintf(szTemp, "COLOR3=%06lX;",
-            pSetup->lcol3);
-    pxstrcat(pstrSetup, szTemp, 0);
 
     if (pSetup->pszScript)
     {
@@ -710,40 +656,26 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
  */
 
 VOID Settings2Dlg(HWND hwnd,
-                  PRGAUGESETUP pSetup)
+                  PRMONITORSETUP pSetup)
 {
-    WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, pSetup->pszTitle);
-    WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, pSetup->pszScript);
-    WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, pSetup->pszDblClkScript);
+    WinSetDlgItemText(hwnd, ID_CRDI_RMONITOR_TITLE, pSetup->pszTitle);
+    WinSetDlgItemText(hwnd, ID_CRDI_RMONITOR_SCRIPT, pSetup->pszScript);
+    WinSetDlgItemText(hwnd, ID_CRDI_RMONITOR_DBLCLK, pSetup->pszDblClkScript);
 
-    WinSetDlgItemShort(hwnd, ID_CRDI_RGAUGE_REFRESH, pSetup->ulTimerDelay, FALSE);
+    WinSetDlgItemShort(hwnd, ID_CRDI_RMONITOR_REFRESH, pSetup->ulTimerDelay, FALSE);
 
-    // adjusting colors
-    WinSetPresParam(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
-                    PP_BACKGROUNDCOLOR,
-                    sizeof(ULONG),
-                    &pSetup->lcol1);
-    WinSetPresParam(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR2),
-                    PP_BACKGROUNDCOLOR,
-                    sizeof(ULONG),
-                    &pSetup->lcol2);
-    WinSetPresParam(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR3),
-                    PP_BACKGROUNDCOLOR,
-                    sizeof(ULONG),
-                    &pSetup->lcol3);
+    WinSendDlgItemMsg(hwnd, ID_CRDI_RMONITOR_TITLE, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXTITLE), (MPARAM)0);
+    WinSendDlgItemMsg(hwnd, ID_CRDI_RMONITOR_SCRIPT, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
+    WinSendDlgItemMsg(hwnd, ID_CRDI_RMONITOR_DBLCLK, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
 
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RGAUGE_TITLE, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXTITLE), (MPARAM)0);
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RGAUGE_SCRIPT, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
-    WinSendDlgItemMsg(hwnd, ID_CRDI_RGAUGE_DBLCLK, MLM_SETTEXTLIMIT, MPFROMLONG(CCHMAXSCRIPT), (MPARAM)0);
-
-    WinSetDlgItemShort(hwnd, ID_CRDI_RGAUGE_WIDTH, pSetup->ulWidth, FALSE);
-    WinCheckButton(hwnd, ID_CRDI_RGAUGE_RESIZEABLE, pSetup->fSizeable);
-    WinCheckButton(hwnd, ID_CRDI_RGAUGE_FIXEDWIDTH, !pSetup->fSizeable);
+    WinSetDlgItemShort(hwnd, ID_CRDI_RMONITOR_WIDTH, pSetup->ulWidth, FALSE);
+    WinCheckButton(hwnd, ID_CRDI_RMONITOR_RESIZEABLE, pSetup->fSizeable);
+    WinCheckButton(hwnd, ID_CRDI_RMONITOR_FIXEDWIDTH, !pSetup->fSizeable);
 }
 
 /*
  *@@ fnwpSettingsDlg:
- *      dialog proc for the rgauge settings dialog.
+ *      dialog proc for the rmonitor settings dialog.
  *
  *@@changed V0.5.2 (2001-06-18) [lafaix]: added Apply/Reset support
  *@@changed V0.7.0 (2001-07-16) [lafaix]: reworked MLE handling (no more malloc for each changes)
@@ -768,7 +700,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
         {
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
             PSTORAGE pStorage = calloc(1, sizeof(STORAGE));
-            PRGAUGESETUP pSetup = calloc(1, sizeof(RGAUGESETUP));
+            PRMONITORSETUP pSetup = calloc(1, sizeof(RMONITORSETUP));
 
             WinSetWindowPtr(hwnd, QWL_USER, pData);
             if (    (pSetup)
@@ -801,7 +733,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRGAUGESETUP pSetup = (PRGAUGESETUP)((PSTORAGE)pData->pUser)->pSetup;
+                PRMONITORSETUP pSetup = (PRMONITORSETUP)((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usCmd = (USHORT)mp1;
@@ -819,30 +751,16 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             XSTRING strSetup;
                             CHAR szTemp[CCHMAXSCRIPT+1];
 
-                            // saving colors
-                            pSetup->lcol1 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_GREEN);
-                            pSetup->lcol2 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR2),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_YELLOW);
-                            pSetup->lcol3 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR3),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_RED);
-
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszScript);
                             pSetup->pszScript = strdup(szTemp);
                             pSetup->ulScriptLength = strlen(szTemp);
 
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszDblClkScript);
                             pSetup->pszDblClkScript = strdup(szTemp);
 
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_TITLE, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszTitle);
                             pSetup->pszTitle = strdup(szTemp);
 
@@ -866,30 +784,16 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             PSTORAGE pStorage = (PSTORAGE)pData->pUser;
                             CHAR szTemp[CCHMAXSCRIPT+1];
 
-                            // saving colors
-                            pSetup->lcol1 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR1),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_GREEN);
-                            pSetup->lcol2 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR2),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_YELLOW);
-                            pSetup->lcol3 = pwinhQueryPresColor(WinWindowFromID(hwnd, ID_CRDI_RGAUGE_COLOR3),
-                                                                PP_BACKGROUNDCOLOR,
-                                                                FALSE,
-                                                                RGB_RED);
-
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_SCRIPT, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszScript);
                             pSetup->pszScript = strdup(szTemp);
                             pSetup->ulScriptLength = strlen(szTemp);
 
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_DBLCLK, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszDblClkScript);
                             pSetup->pszDblClkScript = strdup(szTemp);
 
-                            WinQueryDlgItemText(hwnd, ID_CRDI_RGAUGE_TITLE, sizeof(szTemp), (PSZ)szTemp);
+                            WinQueryDlgItemText(hwnd, ID_CRDI_RMONITOR_TITLE, sizeof(szTemp), (PSZ)szTemp);
                             free(pSetup->pszTitle);
                             pSetup->pszTitle = strdup(szTemp);
 
@@ -961,7 +865,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         case DID_HELP:
                             pctrDisplayHelp(pData->pGlobals,
                                             RwgtQueryHelpLibrary(),
-                                            ID_CRH_RGAUGE_SETTINGS);
+                                            ID_CRH_RMONITOR_SETTINGS);
                         break;
                     } // end switch (usCmd)
                 } // end if (pSetup)
@@ -978,7 +882,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(hwnd, QWL_USER);
             if (pData)
             {
-                PRGAUGESETUP pSetup = (PRGAUGESETUP)((PSTORAGE)pData->pUser)->pSetup;
+                PRMONITORSETUP pSetup = (PRMONITORSETUP)((PSTORAGE)pData->pUser)->pSetup;
                 if (pSetup)
                 {
                     USHORT usItemID = SHORT1FROMMP(mp1),
@@ -986,7 +890,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                     switch (usItemID)
                     {
                         // scripts: status area handling
-                        case ID_CRDI_RGAUGE_SCRIPT:
+                        case ID_CRDI_RMONITOR_SCRIPT:
                             if (usNotifyCode == MLN_SETFOCUS)
                             {
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
@@ -996,12 +900,12 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             if (usNotifyCode == MLN_KILLFOCUS)
                             {
                                 WinStopTimer(G_habThis, hwnd, 1);
-                                WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_STATUS, "");
+                                WinSetDlgItemText(hwnd, ID_CRDI_RMONITOR_STATUS, "");
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
                             }
                         break;
 
-                        case ID_CRDI_RGAUGE_DBLCLK:
+                        case ID_CRDI_RMONITOR_DBLCLK:
                             if (usNotifyCode == MLN_SETFOCUS)
                             {
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
@@ -1011,15 +915,16 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             if (usNotifyCode == MLN_KILLFOCUS)
                             {
                                 WinStopTimer(G_habThis, hwnd, 2);
-                                WinSetDlgItemText(hwnd, ID_CRDI_RGAUGE_STATUS2, "");
+                                WinSetDlgItemText(hwnd, ID_CRDI_RMONITOR_STATUS2, "");
                                 ((PSTORAGE)pData->pUser)->ulCurrent = 0;
                             }
                         break;
 
                         // refresh rate:
-                        case ID_CRDI_RGAUGE_REFRESH:
+                        case ID_CRDI_RMONITOR_REFRESH:
                             if (usNotifyCode == EN_CHANGE)
                             {
+                                // @todo: we need to be able to query LONGs
                                 SHORT sValue;
 
                                 if (WinQueryDlgItemShort(hwnd, usItemID, &sValue, FALSE))
@@ -1028,11 +933,11 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         break;
 
                         // sizeable:
-                        case ID_CRDI_RGAUGE_RESIZEABLE:
-                        case ID_CRDI_RGAUGE_FIXEDWIDTH:
+                        case ID_CRDI_RMONITOR_RESIZEABLE:
+                        case ID_CRDI_RMONITOR_FIXEDWIDTH:
                             if (usNotifyCode == BN_CLICKED)
                             {
-                                if (WinQueryButtonCheckstate(hwnd, ID_CRDI_RGAUGE_RESIZEABLE))
+                                if (WinQueryButtonCheckstate(hwnd, ID_CRDI_RMONITOR_RESIZEABLE))
                                     pSetup->fSizeable = TRUE;
                                 else
                                     pSetup->fSizeable = FALSE;
@@ -1040,7 +945,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                         break;
 
                         // width:
-                        case ID_CRDI_RGAUGE_WIDTH:
+                        case ID_CRDI_RMONITOR_WIDTH:
                             if (usNotifyCode == EN_CHANGE)
                             {
                                 SHORT sValue;
@@ -1106,11 +1011,11 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                     if (pStorage)
                     {
                         USHORT usMLE = (SHORT1FROMMP(mp1) == 1)
-                                           ? ID_CRDI_RGAUGE_SCRIPT
-                                           : ID_CRDI_RGAUGE_DBLCLK,
+                                           ? ID_CRDI_RMONITOR_SCRIPT
+                                           : ID_CRDI_RMONITOR_DBLCLK,
                                usEF = (SHORT1FROMMP(mp1) == 1)
-                                          ? ID_CRDI_RGAUGE_STATUS
-                                          : ID_CRDI_RGAUGE_STATUS2;
+                                          ? ID_CRDI_RMONITOR_STATUS
+                                          : ID_CRDI_RMONITOR_STATUS2;
 
                         ULONG ulTotal = (ULONG)WinSendDlgItemMsg(hwnd,
                                                           usMLE,
@@ -1185,9 +1090,9 @@ BOOL EXPENTRY RwgtHelpHook(HAB hab,
 
     switch ((USHORT)idTopic)
     {
-        case ID_CRH_RGAUGE_DBLCLKERROR1:
-        case ID_CRH_RGAUGE_DBLCLKERROR2:
-        case ID_CRH_RGAUGE_TIMERERROR:
+        case ID_CRH_RMONITOR_DBLCLKERROR1:
+        case ID_CRH_RMONITOR_DBLCLKERROR2:
+        case ID_CRH_RMONITOR_TIMERERROR:
             // the hook is _global_, so we must process this message
             // only if it comes from one of our windows.  G_hwnd is
             // used for this purpose, as there is no other way to
@@ -1211,7 +1116,7 @@ BOOL EXPENTRY RwgtHelpHook(HAB hab,
 
 /*
  *@@ RwgtShowSettingsDlg:
- *      this displays the rgauge widget's settings
+ *      this displays the rmonitor widget's settings
  *      dialog.
  *
  *      This procedure's address is stored in
@@ -1231,7 +1136,7 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
                            pData->hwndOwner,
                            fnwpSettingsDlg,
                            G_hmodThis,
-                           ID_CRD_RGAUGE_SETTINGS,
+                           ID_CRD_RMONITOR_SETTINGS,
                            // pass original setup string with WM_INITDLG
                            (PVOID)pData);
     if (hwnd)
@@ -1250,8 +1155,8 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
 }
 
 /*
- *@@ RwgtInitializeGaugeStem
- *      Initialize the GAUGE.USER stem value.
+ *@@ RwgtInitializeMonitorStem
+ *      Initialize the MONITOR.USER stem value.
  *
  *      This function is reentrant, and should not allocate heap
  *      memory.  It gets its parameter from the (just completed)
@@ -1260,9 +1165,9 @@ VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData)
  *@@added V0.5.1 (2001-06-06) [lafaix]
  */
 
-LONG EXPENTRY RwgtInitializeGaugeStem(LONG exitno,
-                                      LONG subfunc,
-                                      PUCHAR parmblock)
+LONG EXPENTRY RwgtInitializeMonitorStem(LONG exitno,
+                                        LONG subfunc,
+                                        PUCHAR parmblock)
 {
     SHVBLOCK block;
     CHAR     szData[250];
@@ -1300,14 +1205,14 @@ LONG EXPENTRY RwgtInitializeGaugeStem(LONG exitno,
 
         if (pWidget)
         {
-            PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+            PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
 
             if (pPrivate)
             {
                 block.shvcode = RXSHV_SET;
 
                 // user data
-                MAKERXSTRING(block.shvname, "GAUGE.USER", 10);
+                MAKERXSTRING(block.shvname, "MONITOR.USER", 12);
                 MAKERXSTRING(block.shvvalue, pPrivate->abUserData, pPrivate->usUserDataLength);
 
                 RexxVariablePool(&block);
@@ -1319,21 +1224,21 @@ LONG EXPENTRY RwgtInitializeGaugeStem(LONG exitno,
 }
 
 /*
- *@@ RwgtExtractGaugeStem
- *      Extract the GAUGE. stem values.
+ *@@ RwgtExtractMonitorStem
+ *      Extract the MONITOR. stem values.
  *
  *      This function is reentrant, and should not allocate heap
  *      memory.  It gets its parameter from the (just completed)
  *      script, using RexxVariablePool.
  *
  *@@added V0.1.0 (2001-02-19) [lafaix]
- *@@changed V0.5.1 (2001-06-06) [lafaix]: added gauge.user, restricted values to range 0..100
+ *@@changed V0.5.1 (2001-06-06) [lafaix]: added monitor.user, restricted values to range 0..100
  *@@changed V0.7.0 (2001-07-19) [lafaix]: speed enhancements, we don't query unnecessary items anymore
  */
 
-LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
-                                   LONG subfunc,
-                                   PUCHAR parmblock)
+LONG EXPENTRY RwgtExtractMonitorStem(LONG exitno,
+                                     LONG subfunc,
+                                     PUCHAR parmblock)
 {
     SHVBLOCK block;
     CHAR     szData[250];
@@ -1369,7 +1274,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
 
         if (pWidget)
         {
-            PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+            PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
 
             if (pPrivate)
             {
@@ -1380,107 +1285,43 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                     // this is the timer script, so we must collect
                     // all possible changes
 
-                    // ulVal1
-                    MAKERXSTRING(block.shvname, "GAUGE.1", 7);
+                    // background color
+                    MAKERXSTRING(block.shvname, "MONITOR.BACKGROUND", 18);
                     RexxVariablePool(&block);
                     if (block.shvret == RXSHV_OK)
                     {
                         szData[block.shvvaluelen] = 0;
-                        pPrivate->ulVal1 = min(max(atoi(szData), 0), 100);
-
-                        if (pPrivate->ulVal1 != 0)
-                        {
-                            MAKERXSTRING(block.shvname, "GAUGE.COLOR1", 12);
-                            RexxVariablePool(&block);
-                            if (block.shvret == RXSHV_OK)
-                            {
-                                szData[block.shvvaluelen] = 0;
-                                pPrivate->lcol1 = pctrParseColorString(szData);
-                            }
-                            else
-                                pPrivate->lcol1 = -1L;
-                        }
+                        pPrivate->lcolBackground = pctrParseColorString(szData);
                     }
                     else
-                        pPrivate->ulVal1 = 0;
+                        pPrivate->lcolBackground = -1L;
 
-                    // ulVal2
-                    if (pPrivate->ulVal1 != 100)
+                    // user icon
+                    MAKERXSTRING(block.shvname, "MONITOR.ICON", 12);
+                    MAKERXSTRING(block.shvvalue, szData, 250-1);
+                    RexxVariablePool(&block);
+                    if (block.shvret == RXSHV_OK)
                     {
-                        MAKERXSTRING(block.shvname, "GAUGE.2", 7);
-                        RexxVariablePool(&block);
-                        if (block.shvret == RXSHV_OK)
-                        {
-                            szData[block.shvvaluelen] = 0;
-                            pPrivate->ulVal2 = min(max(atoi(szData), 0), 100);
+                        // an icon has been specified (it may be invalid, but
+                        // that's not our problem); so free the previous one
+                        if (pPrivate->hUserIcon)
+                            WinFreeFileIcon(pPrivate->hUserIcon);
 
-                            if (pPrivate->ulVal2 > pPrivate->ulVal1)
-                            {
-                                MAKERXSTRING(block.shvname, "GAUGE.COLOR2", 12);
-                                RexxVariablePool(&block);
-                                if (block.shvret == RXSHV_OK)
-                                {
-                                    szData[block.shvvaluelen] = 0;
-                                    pPrivate->lcol2 = pctrParseColorString(szData);
-                                }
-                                else
-                                    pPrivate->lcol2 = -1L;
-                            }
-                        }
-                        else
-                            pPrivate->ulVal2 = 0;
+                        szData[block.shvvaluelen] = 0;
+                        pPrivate->hUserIcon = WinLoadFileIcon(szData, FALSE);
                     }
-
-                    // ulVal3
-                    if (    (pPrivate->ulVal1 != 100)
-                         && (pPrivate->ulVal2 != 100)
-                       )
+                    else
                     {
-                        MAKERXSTRING(block.shvname, "GAUGE.3", 7);
-                        RexxVariablePool(&block);
-                        if (block.shvret == RXSHV_OK)
-                        {
-                            szData[block.shvvaluelen] = 0;
-                            pPrivate->ulVal3 = min(max(atoi(szData), 0), 100);
+                        // use the default icon; we must free the previous
+                        // one if appropriate
+                        if (pPrivate->hUserIcon)
+                            WinFreeFileIcon(pPrivate->hUserIcon);
 
-                            if (    (pPrivate->ulVal3 > pPrivate->ulVal2)
-                                 && (pPrivate->ulVal3 > pPrivate->ulVal1)
-                               )
-                            {
-                                MAKERXSTRING(block.shvname, "GAUGE.COLOR3", 12);
-                                RexxVariablePool(&block);
-                                if (block.shvret == RXSHV_OK)
-                                {
-                                    szData[block.shvvaluelen] = 0;
-                                    pPrivate->lcol3 = pctrParseColorString(szData);
-                                }
-                                else
-                                    pPrivate->lcol3 = -1L;
-                            }
-                        }
-                        else
-                            pPrivate->ulVal3 = 0;
-                    }
-
-                    // background color
-                    if (    (pPrivate->ulVal1 != 100)
-                         && (pPrivate->ulVal2 != 100)
-                         && (pPrivate->ulVal3 != 100)
-                       )
-                    {
-                        MAKERXSTRING(block.shvname, "GAUGE.BACKGROUND", 16);
-                        RexxVariablePool(&block);
-                        if (block.shvret == RXSHV_OK)
-                        {
-                            szData[block.shvvaluelen] = 0;
-                            pPrivate->lcolBackground = pctrParseColorString(szData);
-                        }
-                        else
-                            pPrivate->lcolBackground = -1L;
+                        pPrivate->hUserIcon = NULLHANDLE;
                     }
 
                     // text
-                    MAKERXSTRING(block.shvname, "GAUGE.TEXT", 10);
+                    MAKERXSTRING(block.shvname, "MONITOR.TEXT", 12);
                     MAKERXSTRING(block.shvvalue, pPrivate->achText, 100-1);
                     RexxVariablePool(&block);
                     if (block.shvret == RXSHV_OK)
@@ -1489,7 +1330,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
 
                         if (block.shvvaluelen)
                         {
-                            MAKERXSTRING(block.shvname, "GAUGE.FOREGROUND", 16);
+                            MAKERXSTRING(block.shvname, "MONITOR.FOREGROUND", 18);
                             MAKERXSTRING(block.shvvalue, szData, 250-1);
                             RexxVariablePool(&block);
                             if (block.shvret == RXSHV_OK)
@@ -1505,7 +1346,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
                         pPrivate->achText[0] = 0;
 
                     // tooltip
-                    MAKERXSTRING(block.shvname, "GAUGE.TOOLTIP", 13);
+                    MAKERXSTRING(block.shvname, "MONITOR.TOOLTIP", 15);
                     MAKERXSTRING(block.shvvalue, pPrivate->achTooltip, 250-1);
                     RexxVariablePool(&block);
                     if (block.shvret == RXSHV_OK)
@@ -1516,7 +1357,7 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
 
                 // for all scripts, we collect the user data area
 
-                MAKERXSTRING(block.shvname, "GAUGE.USER", 10);
+                MAKERXSTRING(block.shvname, "MONITOR.USER", 12);
                 MAKERXSTRING(block.shvvalue, szData, USERDATASIZE);
                 RexxVariablePool(&block);
                 if (block.shvret == RXSHV_OK)
@@ -1552,7 +1393,7 @@ MRESULT RwgtCreate(HWND hwnd,
 {
     MRESULT mrc = 0;
     PSZ p;
-    PRGAUGEPRIVATE pPrivate = calloc(1, sizeof(RGAUGEPRIVATE));
+    PRMONITORPRIVATE pPrivate = calloc(1, sizeof(RMONITORPRIVATE));
 
     // link the two together
     pWidget->pUser = pPrivate;
@@ -1584,14 +1425,11 @@ MRESULT RwgtCreate(HWND hwnd,
     // left NULL, the "Help" context menu item is disabled
 
     pWidget->pcszHelpLibrary = RwgtQueryHelpLibrary();
-    pWidget->ulHelpPanelID = ID_CRH_RGAUGE_MAIN;
+    pWidget->ulHelpPanelID = ID_CRH_RMONITOR_MAIN;
 
     // specifying default runtime colors
     pPrivate->lcolForeground =
-    pPrivate->lcolBackground =
-    pPrivate->lcol1          =
-    pPrivate->lcol2          =
-    pPrivate->lcol3          = -1L;
+    pPrivate->lcolBackground = -1L;
 
     // computing hex representation for hwnd handle (passed to scripts)
     sprintf(pPrivate->achHWND, "%08lX", (LONG)hwnd);
@@ -1627,7 +1465,7 @@ void RwgtButton1DblClk(HWND hwnd,
 
     if (pWidget)
     {
-        PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+        PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
 
         if (pPrivate)
         {
@@ -1641,7 +1479,7 @@ void RwgtButton1DblClk(HWND hwnd,
                               hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
-                              ID_CRH_RGAUGE_DBLCLKERROR1,
+                              ID_CRH_RMONITOR_DBLCLKERROR1,
                               MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
                 G_hwnd = NULLHANDLE;
             }
@@ -1690,10 +1528,10 @@ void RwgtButton1DblClk(HWND hwnd,
                 {
                     rc = RexxStart(4,
                                    &params[0],
-                                   "RexxGaugeDblClk",
+                                   "RexxMonitorDblClk",
                                    &instore[0],
                                    "CMD",
-                                   RXSUBROUTINE, //COMMAND,
+                                   RXCOMMAND,
                                    G_exit_list,
                                    &src,
                                    &retstr);
@@ -1717,7 +1555,7 @@ void RwgtButton1DblClk(HWND hwnd,
                                   hwnd,
                                   szBuf,
                                   pPrivate->Setup.pszTitle,
-                                  ID_CRH_RGAUGE_DBLCLKERROR2,
+                                  ID_CRH_RMONITOR_DBLCLKERROR2,
                                   MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
                     if (G_hwnd == hwnd)
@@ -1761,7 +1599,7 @@ BOOL RwgtControl(HWND hwnd,
     if (pWidget)
     {
         // get private data from that widget data
-        PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+        PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
         if (pPrivate)
         {
             USHORT  usID = SHORT1FROMMP(mp1),
@@ -1823,7 +1661,7 @@ BOOL RwgtControl(HWND hwnd,
                         pPrivate->pszInstore = NULL;
                         pPrivate->lInstoreSize = 0;
 
-                        // re-run gauge script, so that the display
+                        // re-run monitor script, so that the display
                         // is up to date
                         if (RwgtTimer(hwnd, pWidget))
                         {
@@ -1881,14 +1719,13 @@ BOOL RwgtControl(HWND hwnd,
  *      implementation for WM_PAINT.
  *
  *      This really does nothing, except painting the background,
- *      up to 3 rectangles and possibly a centered text.
+ *      possibly an icon, and possibly a centered text.
  *
  *      No double-buffering is used.
  *
- *      The gauge values are not computed here.  This is done
+ *      The monitor values are not computed here.  This is done
  *      in RwgtTimer.
  *
- *@@changed V0.3.2 (2001-03-16) [lafaix]: clip gauge values at 100
  *@@changed V0.5.1 (2001-06-07) [lafaix]: added runtime color support
  */
 
@@ -1899,7 +1736,7 @@ VOID RwgtPaint(HWND hwnd,
 
     if (hps)
     {
-        PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+        PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
         if (pPrivate)
         {
             RECTL       rclWin;
@@ -1938,48 +1775,9 @@ VOID RwgtPaint(HWND hwnd,
             rclWin.yBottom++;
                 // rclWin now exclusive and shrunk
 
-            // draw the gauge
+            // draw the monitor
             lLeft = rclWin.xLeft;
             lRight = rclWin.xRight;
-
-            // part 1
-            if (pPrivate->ulVal1 > 0)
-            {
-                rclWin.xRight = lLeft + (lRight - lLeft) * min(pPrivate->ulVal1, 100) / 100;
-                WinFillRect(hps,
-                            &rclWin,
-                            (pPrivate->lcol1 == -1L)
-                                ? pPrivate->Setup.lcol1
-                                : pPrivate->lcol1);
-                rclWin.xLeft = rclWin.xRight;
-            }
-
-            // part 2
-            if (    (pPrivate->ulVal2 > pPrivate->ulVal1)
-                 && (pPrivate->ulVal2 > 0))
-            {
-                rclWin.xRight = lLeft + (lRight - lLeft) * min(pPrivate->ulVal2, 100) / 100;
-                WinFillRect(hps,
-                            &rclWin,
-                            (pPrivate->lcol2 == -1L)
-                                ? pPrivate->Setup.lcol2
-                                : pPrivate->lcol2);
-                rclWin.xLeft = rclWin.xRight;
-            }
-
-            // part 3
-            if (    (pPrivate->ulVal3 > pPrivate->ulVal2)
-                 && (pPrivate->ulVal3 > pPrivate->ulVal1)
-                 && (pPrivate->ulVal3 > 0))
-            {
-                rclWin.xRight = lLeft + (lRight - lLeft) * min(pPrivate->ulVal3, 100) / 100;
-                WinFillRect(hps,
-                            &rclWin,
-                            (pPrivate->lcol3 == -1L)
-                                ? pPrivate->Setup.lcol3
-                                : pPrivate->lcol3);
-                rclWin.xLeft = rclWin.xRight;
-            }
 
             // the background, if any
             rclWin.xRight = lRight;
@@ -1989,6 +1787,24 @@ VOID RwgtPaint(HWND hwnd,
                             (pPrivate->lcolBackground == -1L)
                                 ? pPrivate->Setup.lcolBackground
                                 : pPrivate->lcolBackground);
+
+            // If a user icon exists, use it.  Otherwise, do
+            // nothing.
+            if (pPrivate->hUserIcon != NULLHANDLE)
+            {
+                ULONG cx = rclWin.xRight - rclWin.xLeft,
+                      cy = rclWin.yTop - rclWin.yBottom,
+                      cxMiniIcon = pWidget->pGlobals->cxMiniIcon;
+
+                GpiIntersectClipRectangle(hps, &rclWin);    // exclusive!
+                WinDrawPointer(hps,
+                               // @todo: handle layout
+                               rclWin.xLeft,
+                               rclWin.yBottom + ((cy - cxMiniIcon) / 2),
+                               pPrivate->hUserIcon, // hptr,
+                               DP_MINI);
+                lLeft += cxMiniIcon;
+            }
 
             // draw the text, centered
             rclWin.xLeft = lLeft;
@@ -2020,7 +1836,7 @@ VOID RwgtWindowPosChanged(HWND hwnd, MPARAM mp1, MPARAM mp2)
     PXCENTERWIDGET pWidget = (PXCENTERWIDGET)WinQueryWindowPtr(hwnd, QWL_USER);
     if (pWidget)
     {
-        PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+        PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
         if (pPrivate)
         {
             PSWP pswpNew = (PSWP)mp1,
@@ -2052,7 +1868,7 @@ VOID RwgtWindowPosChanged(HWND hwnd, MPARAM mp1, MPARAM mp2)
 
 /*
  *@@ RwgtTimer:
- *      updates the gauge values by running the script, updates the
+ *      updates the monitor values by running the script, updates the
  *      window.
  *
  *      pWidget must not be NULL.
@@ -2063,7 +1879,7 @@ VOID RwgtWindowPosChanged(HWND hwnd, MPARAM mp1, MPARAM mp2)
 BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
 {
     BOOL bRC = TRUE;
-    PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+    PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
 
     if (    (pPrivate)
          && (pPrivate->fBusy == 0)           // script not already running
@@ -2097,10 +1913,10 @@ BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
         {
             rc = RexxStart(1,
                            &params[0],
-                           "RexxGaugeTimer",
+                           "RexxMonitorTimer",
                            &instore[0],
                            "CMD",
-                           RXSUBROUTINE, //COMMAND,
+                           RXCOMMAND,
                            G_exit_list,
                            &src,
                            &retstr);
@@ -2140,7 +1956,7 @@ BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
                           hwnd,
                           szBuf,
                           pPrivate->Setup.pszTitle,
-                          ID_CRH_RGAUGE_TIMERERROR,
+                          ID_CRH_RMONITOR_TIMERERROR,
                           MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
 
             if (G_hwnd == hwnd)
@@ -2182,7 +1998,7 @@ BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
 VOID RwgtDestroy(HWND hwnd,
                  PXCENTERWIDGET pWidget)
 {
-    PRGAUGEPRIVATE pPrivate = (PRGAUGEPRIVATE)pWidget->pUser;
+    PRMONITORPRIVATE pPrivate = (PRMONITORPRIVATE)pWidget->pUser;
     if (pPrivate)
     {
         RwgtClearSetup(&pPrivate->Setup);
@@ -2195,14 +2011,17 @@ VOID RwgtDestroy(HWND hwnd,
         if (pPrivate->pszInstore)
             DosFreeMem(pPrivate->pszInstore);
 
+        if (pPrivate->hUserIcon)
+            WinFreeFileIcon(pPrivate->hUserIcon);
+
         free(pPrivate);
             // pWidget is cleaned up by DestroyWidgets
     }
 }
 
 /*
- *@@ fnwpRGaugeWidget:
- *      window procedure for the rexx gauge widget class.
+ *@@ fnwpRMonitorWidget:
+ *      window procedure for the rexx monitor widget class.
  *
  *      There are a few rules which widget window procs
  *      must follow. See ctrDefWidgetProc in src\shared\center.c
@@ -2212,10 +2031,10 @@ VOID RwgtDestroy(HWND hwnd,
  *      which follows the basic rules for a PM window class.
  */
 
-MRESULT EXPENTRY fnwpRGaugeWidget(HWND hwnd,
-                                  ULONG msg,
-                                  MPARAM mp1,
-                                  MPARAM mp2)
+MRESULT EXPENTRY fnwpRMonitorWidget(HWND hwnd,
+                                    ULONG msg,
+                                    MPARAM mp1,
+                                    MPARAM mp2)
 {
     MRESULT mrc = 0;
     // get widget data from QWL_USER (stored there by WM_CREATE)
@@ -2236,7 +2055,7 @@ MRESULT EXPENTRY fnwpRGaugeWidget(HWND hwnd,
          *          WinSetWindowPtr(hwnd, QWL_USER, mp1);
          *
          *      We use XCENTERWIDGET.pUser for allocating
-         *      RGAUGEPRIVATE for our own stuff.
+         *      RMONITORPRIVATE for our own stuff.
          */
 
         case WM_CREATE:
@@ -2384,7 +2203,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                               HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                         
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
 {
     ULONG   ulrc = 0,
             ul = 0;
@@ -2421,10 +2240,10 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
         // all imports OK:
         // register our PM window class
         if (!WinRegisterClass(hab,
-                              WNDCLASS_WIDGET_RGAUGE,
-                              fnwpRGaugeWidget,
+                              WNDCLASS_WIDGET_RMONITOR,
+                              fnwpRMonitorWidget,
                               CS_PARENTCLIP | CS_SIZEREDRAW | CS_SYNCPAINT,
-                              sizeof(PRGAUGEPRIVATE))
+                              sizeof(PRMONITORPRIVATE))
                                     // extra memory to reserve for QWL_USER
                              )
             strcpy(pszErrorMsg, "WinRegisterClass failed.");
@@ -2438,28 +2257,28 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             *ppaClasses = G_WidgetClasses;
 
             // register our REXX exit (stem initializer)
-            rc = RexxRegisterExitDll("GAUGEINIT",        // REXX exit name
+            rc = RexxRegisterExitDll("MONITORINIT",        // REXX exit name
                                 G_szThis,                // module name
-                                "RwgtInitializeGaugeStem",
+                                "RwgtInitializeMonitorStem",
                                                          // function name
                                 NULL,                    // No user area
                                 RXEXIT_NONDROP);         // local drop only
 
-            _Pmpf(("RexxRegisterExitDll GAUGEINIT returns %d", rc));
+            _Pmpf(("RexxRegisterExitDll MONITORINIT returns %d", rc));
 
             // register our REXX exit (stem dereferencer)
-            rc = RexxRegisterExitDll("GAUGESTEM",        // REXX exit name
+            rc = RexxRegisterExitDll("MONITORSTEM",      // REXX exit name
                                 G_szThis,                // module name
-                                "RwgtExtractGaugeStem",  // function name
+                                "RwgtExtractMonitorStem",// function name
                                 NULL,                    // No user area
                                 RXEXIT_NONDROP);         // local drop only
 
-            _Pmpf(("RexxRegisterExitDll GAUGESTEM returns %d", rc));
+            _Pmpf(("RexxRegisterExitDll MONITORSTEM returns %d", rc));
 
             // initialize our global REXX exit list structure
-            G_exit_list[0].sysexit_name = "GAUGEINIT";
+            G_exit_list[0].sysexit_name = "MONITORINIT";
             G_exit_list[0].sysexit_code = RXINI;
-            G_exit_list[1].sysexit_name = "GAUGESTEM";
+            G_exit_list[1].sysexit_name = "MONITORSTEM";
             G_exit_list[1].sysexit_code = RXTER;
             G_exit_list[2].sysexit_code = RXENDLST;
 
@@ -2504,9 +2323,9 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
 VOID EXPENTRY RwgtUnInitModule(VOID)
 {
-    RexxDeregisterExit("GAUGEINIT",      // REXX exit name
+    RexxDeregisterExit("MONITORINIT",    // REXX exit name
                        G_szThis);        // module name
-    RexxDeregisterExit("GAUGESTEM",      // REXX exit name
+    RexxDeregisterExit("MONITORSTEM",    // REXX exit name
                        G_szThis);        // module name
 
     free(pszName);

@@ -1,7 +1,7 @@
 
 /*
- *@@sourcefile w_rmenu.h:
- *      private header file for the REXX menu widget.
+ *@@sourcefile w_rscrlr.h:
+ *      private header file for the REXX scroller widget.
  *      See src\shared\center.c for an introduction to
  *      the XCenter and widgets.
  *
@@ -9,7 +9,7 @@
 
 /*
  *      Copyright (C) 2001 Martin Lafaix.
- *      This file is part of the XWorkplace Widget Library source package.
+ *      This file is part of the XWorkplace source package.
  *      XWorkplace is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published
  *      by the Free Software Foundation, in version 2 as it comes in the
@@ -20,16 +20,16 @@
  *      GNU General Public License for more details.
  */
 
-#ifndef RMENU_HEADER_INCLUDED
-    #define RMENU_HEADER_INCLUDED
+#ifndef RSCRLR_HEADER_INCLUDED
+    #define RSCRLR_HEADER_INCLUDED
 
     #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before w_rmenu.h.
+        #error shared\center.h must be included before rexx\w_rscrlr.h.
     #endif
 
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
-    PFNWP G_pfnwpOldIconFile;
+    BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget);
 
     PFNEXCHOOKERROR G_pfnExcHookError;
 
@@ -64,44 +64,48 @@
 
     // NLS strings
     PSZ pszName,
-        pszAlreadyRunning,
-        pszThreadingRequired,
-        pszScriptError,
         pszSettingsStatus,
-        pszThreadCreationFailed;
+        pszInterpreterErrorDblClk,
+        pszInterpreterErrorTimer,
+        pszAlreadyRunning;
 
-    // REXX button settings dialog ids
-    #define ID_CRD_RMENUWGT_SETTINGS      1000
-    #define ID_CRDI_RMENU_MENU            1001
-    #define ID_CRDI_RMENU_SEPARATETHREAD  1002
-    #define ID_CRDI_RMENU_TITLE           1003
-    #define ID_CRDI_RMENU_ICONFILE        1004
-    #define ID_CRDI_RMENU_ICON            1005
-    #define ID_CRDI_SCRIPT_ICON           ID_CRDI_RMENU_ICON
-    #define ID_CRDI_RMENU_TEXT            1006
-    #define DID_APPLY                     1007
-    #define DID_RESET                     1008
-    #define ID_CRDI_RMENU_STATUS          1009
-    #define ID_CRDI_RMENU_STATUS2         1010
+    // REXX scroller settings dialog ids
+    #define ID_CRD_RSCRLR_SETTINGS         1000
+    #define ID_CRDI_RSCRLR_SCRIPT          1001
+    #define ID_CRDI_RSCRLR_DBLCLK          1002
+    #define ID_CRDI_RSCRLR_REFRESH         1003
+    #define ID_CRDI_RSCRLR_TITLE           1004
+    #define ID_CRDI_RSCRLR_COLOR1          1005
+    #define ID_CRDI_RSCRLR_COLOR2          1006
+    #define ID_CRDI_RSCRLR_COLOR3          1007
+    #define ID_CRDI_RSCRLR_RESIZEABLE      1008
+    #define ID_CRDI_RSCRLR_FIXEDWIDTH      1009
+    #define ID_CRDI_RSCRLR_WIDTH           1010
+    #define DID_APPLY                      1011
+    #define DID_RESET                      1012
+    #define ID_CRDI_RSCRLR_STATUS          1013
+    #define ID_CRDI_RSCRLR_STATUS2         1014
+    #define ID_CRDI_RSCRLR_FILLGRAPH       1015
+    #define ID_CRDI_RSCRLR_LINEGRAPH       1016
+    #define ID_CRDI_RSCRLR_AVERAGE         1017
+    #define ID_CRDI_RSCRLR_BLMODE          1018
 
-    // REXX menu resources ids
-    #define ID_RMENUICON                  1000
+    #define ID_CRH_RSCRLR_SETTINGS         1000
+    #define ID_CRH_RSCRLR_MAIN             1001
+    #define ID_CRH_RSCRLR_DBLCLKERROR1     1002
+    #define ID_CRH_RSCRLR_DBLCLKERROR2     1003
+    #define ID_CRH_RSCRLR_TIMERERROR       1004
 
-    #define ID_CRH_RMENU_SETTINGS         1000
-    #define ID_CRH_RMENU_MAIN             1001
-    #define ID_CRH_RMENU_SCRIPTERROR      1002
-    #define ID_CRH_RMENU_ALREADYRUNNING   1003
-    #define ID_CRH_RMENU_THREADCREATION   1004
+    #define ID_CRSI_NAME                   1000
+    #define ID_CRSI_INTERPRETER_DBLCLK     1001
+    #define ID_CRSI_INTERPRETER_TIMER      1002
+    #define ID_CRSI_ALREADYRUNNING         1006
+    #define ID_CRSI_SETTINGSSTATUS         1007
 
-    #define ID_CRSI_NAME                  1000
-    #define ID_CRSI_ALREADYRUNNING        1006
-    #define ID_CRSI_THREADINGREQUIRED     1007
-    #define ID_CRSI_SCRIPTERROR           1008
-    #define ID_CRSI_THREADCREATIONFAILED  1009
-    #define ID_CRSI_SETTINGSSTATUS        1010
+    #define ID_BGBMP                       1019
 
     #ifndef DID_HELP
-        #define DID_HELP                  97
+        #define DID_HELP               97
     #endif
 
 #endif

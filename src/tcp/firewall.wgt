@@ -1,0 +1,90 @@
+/* */
+
+numhits = 0
+scalednumhits = 0
+prots. = 0
+uniqueprots = 0
+uniqueports = 0
+ports. = 0
+portslist = ''
+ipaddress. = 0
+uniqueip = 0
+
+ETCDIR = value('etc',,'OS2ENVIRONMENT')
+infile = ETCDIR'\rexxsl.log'
+
+do until lines(infile)=0
+  /*Read the file line-by-line until all done */
+  currentline = linein(infile)
+  if wordpos('packet', currentline) \= 0 then do
+    /* found matching line so analyze it */
+    numhits = numhits + 1 /* simply keep number of total denied packets for gauge*/
+
+    /* source IPs */
+    sourceip = word(currentline, 12) /* Source IP address is 12th word on line */
+    if ipaddress.sourceip = 0 then
+      uniqueip = uniqueip + 1 /* new source IP address */
+    ipaddress.sourceip = ipaddress.sourceip + 1 /* increment number of times this source IP address  has been found */
+
+    /* protocols */
+    subprotocol = word(currentline, 15) /* Protocol used (TCP or UDP) is 15th line with extra : at end */
+    subprotocol = strip(subprotocol, 't', ':') /* Get rid of trailing colon */
+    if prots.protocol = 0 then
+      uniqueprots = uniqueprots + 1 /* new protocol used for first time */
+    prots.protocol = prots.protocol + 1   /* increment number of times this protocol  has been found */
+
+    /* ports */
+    subport = word(currentline, 16) /* Probed port is part of 16th word on line */
+    parse var subport . '->' localport . /*Strip other junk around port to leave only number */
+    if ports.localport = 0 then do
+      uniqueports = uniqueports + 1 /* new port hit for first time */
+      portslist = portslist localport /* maintain a list of probed ports */
+    end
+    ports.localport = ports.localport + 1 /* increment number of times this port  has been probed */
+
+  end /* end do loop for if wordpos then */
+end /* end of linein do loop */
+call stream infile, 'c', 'close'
+
+uptimems = DosQuerySysInfo(14) /* read system uptime in milliseconds */
+uptimesecs = uptimems / 1000
+uptimehr = uptimesecs % 3600
+uptimemins = (uptimesecs // 3600) % 60
+uptimesec= uptimesecs // 60
+
+if numhits < 100 then
+  scalednumhits = numhits
+else
+if numhits < 1000 then
+  scalednumhits = numhits % 10
+else
+if numhits < 10000 then
+  scalednumhits = numhits % 100
+
+select
+  when scalednumhits < 50 then
+    gauge.1 = scalednumhits
+  when scalednumhits < 75 then do
+    gauge.1 = 49
+    gauge.2 = scalednumhits
+  end /* do */
+otherwise
+  gauge.1 = 49
+  gauge.2 = 74
+  gauge.3 = scalednumhits
+end  /* select */
+
+gauge.text = numhits' Dropped'
+gauge.tooltip = ' Uptime=' uptimehr':'uptimemins':'uptimesec%1
+
+j = 0;
+do i = 1 for words(portslist)
+  j = j + 1
+  port = word(portslist, i)
+  gauge.tooltip = gauge.tooltip'0d0a'x ||,
+                  ' Port' port':  dropped' ports.port 'packets'
+end /* do i = 1 for words(portslist) */
+
+/*
+say 'There were' j 'unique ports that were probed.'
+*/

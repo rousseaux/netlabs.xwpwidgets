@@ -1,6 +1,6 @@
 #
 # makefile:
-#       makefile for src/rexx directory.
+#       makefile for src/irmon directory.
 #       For use with IBM NMAKE, which comes with the IBM compilers,
 #       the Developer's Toolkit, and the DDK.
 #
@@ -8,6 +8,8 @@
 #       object files directory. Note that we use the VAC subsystem
 #       libraries here to reduce DLL sizes. As a result, the
 #       widgets must be single-threaded.
+#
+#       All the makefiles have been restructured with V0.9.0.
 #
 #       Called from:    main makefile
 #
@@ -56,16 +58,7 @@ OUTPUTDIR = $(BASE_OUTPUTDIR)\widgets
 # These will be put into BIN\.
 # If you add a new source, add the corresponding .OBJ file here.
 OBJS = \
-    $(OUTPUTDIR)\w_rbutton.obj \
-    $(OUTPUTDIR)\w_rgauge.obj \
-    $(OUTPUTDIR)\w_rmenu.obj \
-    $(OUTPUTDIR)\w_rmonitor.obj \
-    $(OUTPUTDIR)\w_rscrlr.obj \
-    $(OUTPUTDIR)\rbutton.res \
-    $(OUTPUTDIR)\rgauge.res \
-    $(OUTPUTDIR)\rmenu.res \
-    $(OUTPUTDIR)\rmonitor.res \
-    $(OUTPUTDIR)\rscrlr.res
+    $(OUTPUTDIR)\w_irmon.obj
 
 # The main target:
 # If we're called from the main makefile, MAINMAKERUNNING is defined,
@@ -77,7 +70,7 @@ all:   \
     callmainmake
     @echo ----- Leaving $(MAKEDIR)
 !else
-    $(OBJS) $(OUTPUTDIR)\rbutton.res $(OUTPUTDIR)\rgauge.res
+    $(OBJS) $(OUTPUTDIR)\irmon.res
     @echo ----- Leaving $(MAKEDIR)
 !endif
 
@@ -118,7 +111,7 @@ HLPINC = $(HELPERS_BASE)\include\helpers
 XWPINC = $(XWP_BASE)\include
 
 # NLS location
-NLS = $(PROJECT_BASE_DIR)\$(XWP_LANG_CODE)\rexx
+NLS = $(PROJECT_BASE_DIR)\$(XWP_LANG_CODE)\irmon
 
 # Now define dependencies for all our .OBJ files by telling NMAKE
 # which .OBJ file depends on what. For each .OBJ we define what files
@@ -136,88 +129,19 @@ NLS = $(PROJECT_BASE_DIR)\$(XWP_LANG_CODE)\rexx
 # XWorkplace "library" .OBJ files used by several classes.
 # Source code is here in SRC\MAIN.
 
-$(OUTPUTDIR)\w_rbutton.obj: \
+$(OUTPUTDIR)\w_irmon.obj: \
     $(XWPINC)\setup.h \
-    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h $(HLPINC)\threads.h \
-	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
-	$(HLPINC)\linklist.h \
+    $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
+	$(HLPINC)\prfh.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
     $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
-    $(INC)\rexx\w_rbutton.h \
+    $(INC)\irmon\w_irmonrc.h \
     $(@B).c
 
-$(OUTPUTDIR)\w_rgauge.obj: \
-    $(XWPINC)\setup.h \
-    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
-	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
-	$(HLPINC)\timer.h \
-    $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
-    $(INC)\rexx\w_rgauge.h \
-    $(@B).c
-
-$(OUTPUTDIR)\w_rmonitor.obj: \
-    $(XWPINC)\setup.h \
-    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
-	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
-	$(HLPINC)\timer.h \
-    $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
-    $(INC)\rexx\w_rmonitor.h \
-    $(@B).c
-
-$(OUTPUTDIR)\w_rmenu.obj: \
-    $(XWPINC)\setup.h \
-    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
-	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
-	$(HLPINC)\timer.h \
-    $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
-    $(INC)\rexx\w_rmenu.h \
-    $(@B).c
-
-$(OUTPUTDIR)\w_rscrlr.obj: \
-    $(XWPINC)\setup.h \
-    $(HLPINC)\comctl.h $(HLPINC)\dosh.h $(HLPINC)\gpih.h \
-	$(HLPINC)\prfh.h $(HLPINC)\except.h $(HLPINC)\winh.h $(HLPINC)\xstring.h \
-	$(HLPINC)\timer.h \
-    $(XWPINC)\shared\center.h $(XWPINC)\shared\common.h \
-    $(INC)\rexx\w_rscrlr.h \
-    $(@B).c
-
-$(OUTPUTDIR)\rbutton.res: \
-    $(NLS)\rbutton.rc $(NLS)\rbutton.dlg $(NLS)\default.ico \
-    $(INC)\rexx\w_rbutton.h \
+$(OUTPUTDIR)\irmon.res: \
+    $(NLS)\irmon.rc \
+    $(INC)\irmon\w_irmonrc.h \
     # RCINCLUDE is stupid in that it requires its arg to be in the current dir
     @cd $(NLS)
-    $(RC) -r $(NLS)\rbutton.rc $(OUTPUTDIR)\$(@B).res
-    @cd $(MAKEDIR)
-
-$(OUTPUTDIR)\rgauge.res: \
-    $(NLS)\rgauge.rc $(NLS)\rgauge.dlg \
-    $(INC)\rexx\w_rgauge.h \
-    # RCINCLUDE is stupid in that it requires its arg to be in the current dir
-    @cd $(NLS)
-    $(RC) -r $(NLS)\rgauge.rc $(OUTPUTDIR)\$(@B).res
-    @cd $(MAKEDIR)
-
-$(OUTPUTDIR)\rmonitor.res: \
-    $(NLS)\rmonitor.rc $(NLS)\rmonitor.dlg \
-    $(INC)\rexx\w_rmonitor.h \
-    # RCINCLUDE is stupid in that it requires its arg to be in the current dir
-    @cd $(NLS)
-    $(RC) -r $(NLS)\rmonitor.rc $(OUTPUTDIR)\$(@B).res
-    @cd $(MAKEDIR)
-
-$(OUTPUTDIR)\rmenu.res: \
-    $(NLS)\rmenu.rc $(NLS)\rmenu.dlg \
-    $(INC)\rexx\w_rmenu.h \
-    # RCINCLUDE is stupid in that it requires its arg to be in the current dir
-    @cd $(NLS)
-    $(RC) -r $(NLS)\rmenu.rc $(OUTPUTDIR)\$(@B).res
-    @cd $(MAKEDIR)
-
-$(OUTPUTDIR)\rscrlr.res: \
-    $(NLS)\rmenu.rc $(NLS)\rscrlr.dlg \
-    $(INC)\rexx\w_rscrlr.h \
-    # RCINCLUDE is stupid in that it requires its arg to be in the current dir
-    @cd $(NLS)
-    $(RC) -r $(NLS)\rscrlr.rc $(OUTPUTDIR)\$(@B).res
+    $(RC) -r $(NLS)\irmon.rc $(OUTPUTDIR)\$(@B).res
     @cd $(MAKEDIR)
 

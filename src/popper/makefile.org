@@ -1,0 +1,35 @@
+# define your directories here
+XWP_BASE_DIR = f:\work\xworkplace
+HLP_BASE_DIR = f:\work\xwphelpers
+OUTPUT_DIR   = .\
+
+HELPER_OBJS=dosh.obj \
+            pmprintf.lib
+
+# compiler flags
+CC=icc /Ss /Se /Q /G4 /Ge- /O+ /C /Tdp /Gm+ /Tl+ /Tl15 /O+ /DTCPV40HDRS /I$(HLP_BASE_DIR)\include;$(XWP_BASE_DIR)\include;
+LK=ilink /DLL
+RC=rc
+
+all: popper.dll
+
+popper.dll: popper.obj socket.obj popper.res $(HELPER_OBJS)
+   $(LK) popper.obj socket.obj $(HELPER_OBJS) so32dll.lib tcp32dll.lib popper.def
+   $(RC) popper.res popper.dll
+
+popper.res: popper.rc
+   $(RC) -i $(XWP_BASE_DIR)\include -r popper.rc
+
+popper.obj: popper.c
+   $(CC) popper.c
+
+socket.obj: socket.c
+   $(CC) socket.c
+
+dosh.obj: $(HLP_BASE_DIR)\src\helpers\dosh.c
+   $(CC) $(HLP_BASE_DIR)\src\helpers\dosh.c
+
+clean:
+  del *.obj
+  del *.dll
+  del *.res
