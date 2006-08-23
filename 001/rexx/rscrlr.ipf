@@ -29,6 +29,11 @@ XCenter.
 and select :hp2.Properties:ehp2..  A dialog will pop up that allows you
 to define the script to run, the widget's title, and so on.
 
+:p.If the CTRL key is down when an XCenter is opened, the scroller
+script will not be started.  Open the widget's properties and select
+Apply to start the script.  This could be useful when debugging rogue
+scripts.
+
 :p.See also:
 :ul compact.
 :li.:link reftype=hd res=10001.More on REXX scroller scripts:elink.

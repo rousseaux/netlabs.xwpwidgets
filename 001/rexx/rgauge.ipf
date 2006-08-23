@@ -1,17 +1,17 @@
 .* EBOOKIE (IPFTAGS.DEF)
 .* Copyright (c) 2001 Martin Lafaix. All Rights Reserved.
 :userdoc.
-:h1 res=1001.XCenter: REXX Gauge Widget 
+:h1 res=1001.XCenter: REXX Gauge Widget
 :lm margin=1.
 :p.The XCenter :hp2.REXX gauge:ehp2. widget displays a gauge whose
-appearance is defined by a REXX script.  The script is run at 
+appearance is defined by a REXX script.  The script is run at
 regular intervals, and the gauge is updated accordingly.
 .*
 :p.:artwork runin name='gauge000.bmp'. :artwork runin
 name='gauge002.bmp'.
 
 :p.A gauge can contain up to four segments, and may also display
-text.  The tooltip can be modified by the script to give 
+text.  The tooltip can be modified by the script to give
 additional information.
 
 :p.On some REXX gauges, you can double click with mouse button 1.
@@ -24,11 +24,15 @@ XCenter.
 and select :hp2.Properties:ehp2..  A dialog will pop up that allows you
 to define the script to run, the widget's title, and so on.
 
+:p.If the CTRL key is down when an XCenter is opened, the gauge script
+will not be started.  Open the widget's properties and select Apply to
+start the script.  This could be useful when debugging rogue scripts.
+
 :p.See also:
 :ul compact.
 :li.:link reftype=hd res=10001.More on REXX gauge scripts:elink.
-:li.:link reftype=hd res=10002.More on double click action 
-scripts:elink.                          
+:li.:link reftype=hd res=10002.More on double click action
+scripts:elink.
 :eul.
 
 :h1 res=1000.XCenter: REXX Gauge Widget Settings
@@ -42,25 +46,25 @@ a few seconds, if it is not redefined by the gauge script.  You can
 specify anything you want.  The length of the title cannot exceed 250
 characters though.
 
-:p.The :hp2.Gauge script:ehp2. field is the actual REXX program 
-that will be run at regular intervals.  If no script is defined, 
+:p.The :hp2.Gauge script:ehp2. field is the actual REXX program
+that will be run at regular intervals.  If no script is defined,
 nothing happens.
 
-:p.The :hp2.Double click action:ehp2. field is the actual REXX 
+:p.The :hp2.Double click action:ehp2. field is the actual REXX
 program that will run whenever you double click on the widget.  The
 script is run in the XCenter thread.
 
 :p.The :hp2.Refresh rate:ehp2. defines how often the gauge script should
 be run.  The value is in milliseconds, and cannot be lower than 500ms.
 
-:p.The :hp2.Gauge colors:ehp2. area defines the colors to use for the 
+:p.The :hp2.Gauge colors:ehp2. area defines the colors to use for the
 gauge.  To change a color, drop a color over the corresponding area.
 
-:p.The :hp2.Gauge width:ehp2. area defines the width of the gauge. 
+:p.The :hp2.Gauge width:ehp2. area defines the width of the gauge.
 The gauge is either of a fixed width or resizeable, interactively.
 
-.* V0.5.2 (2001-06-21) [lafaix] 
-:p.The :hp2.OK:ehp2. button saves the changes and closes the dialog. 
+.* V0.5.2 (2001-06-21) [lafaix]
+:p.The :hp2.OK:ehp2. button saves the changes and closes the dialog.
 The :hp2.Apply:ehp2. button saves the changes but does not close the
 dialog.  The :hp2.Reset:ehp2. button restores the values to the last
 saved ones.  The :hp2.Cancel:ehp2. button restores the values to what
@@ -69,8 +73,8 @@ they were before the dialog was opened, and close the dialog.
 :p.See also:
 :ul compact.
 :li.:link reftype=hd res=10001.More on REXX gauge scripts:elink.
-:li.:link reftype=hd res=10002.More on double click action 
-scripts:elink.                          
+:li.:link reftype=hd res=10002.More on double click action
+scripts:elink.
 :eul.
 
 :h1 res=10001.More on REXX gauge scripts
@@ -79,9 +83,9 @@ scripts:elink.
 to 5000 characters.  This is due to the fact that REXX gauges are
 intended for small scripts and that the script remains in memory as
 long as the XCenter is open.
-     
+
 :p.When the script is run, one argument is provided:
-:dl compact.                      
+:dl compact.
 :dt.Arg(1)
 :dd.contains the window handle of the widget (in hex).
 :edl.
@@ -93,23 +97,23 @@ inclusive.  They are stored in :hp2.GAUGE.1:ehp2., :hp2.GAUGE.2:ehp2.,
 and :hp2.GAUGE.3:ehp2..  The text and tooltip are stored in
 :hp2.GAUGE.TEXT:ehp2. and :hp2.GAUGE.TOOLTIP:ehp2. respectively.
 
-:p.The left side of the gauge corresponds to 0 and the right side to 
-100.  From 0 to value 1, the gauge is painted using color 1; from 
+:p.The left side of the gauge corresponds to 0 and the right side to
+100.  From 0 to value 1, the gauge is painted using color 1; from
 value 1 to value 2, the gauge is painted using color 2; and from value
-2 to value 3, the gauge is painted using color 3.  The rest of the 
+2 to value 3, the gauge is painted using color 3.  The rest of the
 gauge, if applicable, is painted using background color.
 
-:p.If a value is null, or lower than the preceding values, it is 
+:p.If a value is null, or lower than the preceding values, it is
 ignored.
 
-:p.The text is painted using text color, and is centered over the 
+:p.The text is painted using text color, and is centered over the
 gauge.  If no text is defined, no text is painted over the gauge.
 
-:p.The tooltip is painted the usual way for tooltips.  If no tooltip 
+:p.The tooltip is painted the usual way for tooltips.  If no tooltip
 is defined by the script, the default tooltip (if any) is used.
 
 .* V0.5.1 (2001-06-07) [lafaix]
-:p.Additionally, the script may access the widget's user data area. 
+:p.Additionally, the script may access the widget's user data area.
 This area contains up to one hundred bytes.  Its use is not
 constrained in any way.  The current user data area is stored in
 :hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
@@ -121,7 +125,7 @@ the double click action script.  You can use it to pass informations
 between the two.
 
 .* V0.5.1 (2001-06-07) [lafaix]
-:p.Finally, the script may define any of the following five 
+:p.Finally, the script may define any of the following five
 values&colon.
 :dl compact break=all.
 :dt.:hp2.GAUGE.BACKGROUND:ehp2.
@@ -129,7 +133,7 @@ values&colon.
 :dt.:hp2.GAUGE.COLOR1:ehp2.
 :dt.:hp2.GAUGE.COLOR2:ehp2.
 :dt.:hp2.GAUGE.COLOR3:ehp2.
-:dd.are the colors of the respective elements.  The format is of the 
+:dd.are the colors of the respective elements.  The format is of the
 'RRGGBB' form (for example, pure blue is 0000FF).
 :edl.
 .*
@@ -138,14 +142,14 @@ default value is used.  Changes are not persistent.
 
 :p.Here are two examples of scripts:
 
-:p.This first script is a disk free space monitor.  The color changes 
+:p.This first script is a disk free space monitor.  The color changes
 at 75% and 90% thresholds:
-:p.:artwork runin name='gauge000.bmp'. :artwork runin 
+:p.:artwork runin name='gauge000.bmp'. :artwork runin
 name='gauge003.bmp'.
 
 :xmp.
 /* Disk monitor */
-  
+
 if RxFuncQuery('SysLoadFuncs') then do
      call RxFuncAdd 'SysLoadFuncs','RexxUtil','SysLoadFuncs'
      call SysLoadFuncs
@@ -173,7 +177,7 @@ gauge.text = dsk '('strip(label)')' t'%'
 :exmp.
 .*
 :p.The script starts with a required comment, then loads the Sys*
-functions if they are not already loaded, queries the disk 
+functions if they are not already loaded, queries the disk
 settings, and finally sets the gauge.
 
 :p.The second script is a simple clock.  The date is returned for the
@@ -194,31 +198,31 @@ gauge.text = time()
  * Color 333333322111111112233333
  *
  */
-select                             
+select
   when time('H') < 7 &splitvbar. time('H') > 19 then
     gauge.3 = 100
   when time('H') < 9 &splitvbar. time('H') > 17 then
-    gauge.2 = 100             
+    gauge.2 = 100
 otherwise
   gauge.1 = 100
 end
-:exmp.                        
+:exmp.
 .*
 :p.The first two lines (the ones starting with 'gauge.') are enough to
-define a clock widget.  The rest of the script is used to change the 
+define a clock widget.  The rest of the script is used to change the
 background's color.
 
 :nt.
-Remember that gauge scripts are run at regular intervals.  Be 
-sure not to consume too many CPU cycles.  Also, choose the refresh 
-interval wisely.  For the two examples above, 5000ms seems just fine 
+Remember that gauge scripts are run at regular intervals.  Be
+sure not to consume too many CPU cycles.  Also, choose the refresh
+interval wisely.  For the two examples above, 5000ms seems just fine
 for the disk monitor, and 1000ms for the clock if you want the seconds
 to elapse fluidly.
-:p.Finally, you should not rely on the timer script running regularly. 
-There is no guarantee that the script is run if the widget is not visible. 
+:p.Finally, you should not rely on the timer script running regularly.
+There is no guarantee that the script is run if the widget is not visible.
 Do not use scripts such as CRON-like ones.
 :ent.
-  
+
 :h1 res=10002.More on double click action scripts
 :lm margin=1.
 :p.A double click action script can be any valid REXX script, but its
@@ -242,7 +246,7 @@ pointer.
 :dd.
 contains the modifiers in action when the mouse
 button was depressed.  This is a number that combines the status of
-the :hp2.Shift:ehp2., :hp2.Control:ehp2., and :hp2.Alt:ehp2. keys. 
+the :hp2.Shift:ehp2., :hp2.Control:ehp2., and :hp2.Alt:ehp2. keys.
 :hp2.Shift:ehp2. is represented by the number 8, :hp2.Control:ehp2.
 by 16 and :hp2.Alt:ehp2. by 32.  These numbers are added if
 more that one modifier was depressed.  For example, a value of 24
@@ -254,7 +258,7 @@ is the window handle of the widget (in hex).
 :edl.
 .*
 .* V0.5.1 (2001-06-07) [lafaix]
-:p.Additionally, the script may access the widget's user data area. 
+:p.Additionally, the script may access the widget's user data area.
 This area contains up to one hundred bytes.  Its use is not
 constrained in any way.  The current user data area is stored in
 :hp2.GAUGE.USER:ehp2..  The value of this field is preserved between
@@ -317,7 +321,7 @@ though.
 :p.The script to be run on double click is already running.
 
 .* V0.5.2 (2001-07-08) [lafaix]
-:p.This situation normally cannot happen.  If it does, it means there 
+:p.This situation normally cannot happen.  If it does, it means there
 is a bug in the XWorkplace widget library.  Please report it with as
 much details as possible.  Thank you.
 
@@ -328,7 +332,7 @@ much details as possible.  Thank you.
 :p.To find out what the error code means, consult the :hp1.REXX
 Information:ehp1. or :hp1.Object REXX Reference:ehp1. online guides.
 
-:p.To find out where the script failed, check the SIGNAL ON ERROR and 
+:p.To find out where the script failed, check the SIGNAL ON ERROR and
 SIGNAL ON SYNTAX instructions in the aforementioned manuals.
 
 :p.REXX scripts can include error checking routines.  But keep in mind
@@ -363,7 +367,7 @@ and select OK.
 :p.To find out what the error code means, consult the :hp1.REXX
 Information:ehp1. or :hp1.Object REXX Reference:ehp1. online guides.
 
-:p.To find out where the script failed, check the SIGNAL ON ERROR and 
+:p.To find out where the script failed, check the SIGNAL ON ERROR and
 SIGNAL ON SYNTAX instructions in the aforementioned manuals.
 
 :p.REXX scripts can include error checking routines.  But keep in mind
@@ -389,10 +393,10 @@ syntax:
   / /* an intentional error again */
 :exmp.
 .*
-:p.Note the last line.  It contains an intentional syntax error.  It 
+:p.Note the last line.  It contains an intentional syntax error.  It
 is a trick used to stop the gauge script.  If it wasn't there, the
 error message box would pop up again and again, each time the script
-would be run.  It cause an extra error (error #35, "Invalid 
+would be run.  It cause an extra error (error #35, "Invalid
 expression") that you can safely ignore.
 
 :euserdoc.

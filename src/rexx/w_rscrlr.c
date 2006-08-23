@@ -1721,6 +1721,8 @@ LONG EXPENTRY RwgtExtractScrlrStem(LONG exitno,
 /*
  *@@ RwgtCreate:
  *      implementation for WM_CREATE.
+ *
+ *@added V0.7.1 (2003-01-19) [lafaix]: do not start script if VK_CTRL down
  */
 
 MRESULT RwgtCreate(HWND hwnd,
@@ -1777,15 +1779,17 @@ MRESULT RwgtCreate(HWND hwnd,
 
     // run the script once, so that the display is correct on
     // startup (the timer send ticks _after_ its expiration delay)
-    if (RwgtTimer(hwnd, pWidget))
-    {
-        // start update timer, as the script looks OK (there is no
-        // need starting the timer if the script is invalid)
-        pPrivate->ulTimerID = ptmrStartXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
-                                              hwnd,
-                                              1,
-                                              pPrivate->Setup.ulTimerDelay);
-    }
+    // V0.7.1 (2003-01-19) [lafaix]: VK_CTRL check added
+    if ((WinGetKeyState(HWND_DESKTOP, VK_CTRL) & 0x8000) == 0)
+        if (RwgtTimer(hwnd, pWidget))
+        {
+            // start update timer, as the script looks OK (there is no
+            // need starting the timer if the script is invalid)
+            pPrivate->ulTimerID = ptmrStartXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
+                                                  hwnd,
+                                                  1,
+                                                  pPrivate->Setup.ulTimerDelay);
+        }
 
     return (mrc);
 }

@@ -602,7 +602,7 @@ VOID RwgtScanSetup(const char *pcszSetupString,
  */
 
 VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                   PVOID pvSetup)                                       
+                   PVOID pvSetup)
 {
     CHAR         szTemp[CCHMAXSCRIPT*3+8];
             // 3 times the length of an unencoded script plus length of "SCRIPT="
@@ -1545,6 +1545,8 @@ LONG EXPENTRY RwgtExtractGaugeStem(LONG exitno,
 /*
  *@@ RwgtCreate:
  *      implementation for WM_CREATE.
+ *
+ *@changed V0.7.1 (2003-01-19) [lafaix]: do not start script if VK_CTRL down
  */
 
 MRESULT RwgtCreate(HWND hwnd,
@@ -1598,15 +1600,17 @@ MRESULT RwgtCreate(HWND hwnd,
 
     // run the script once, so that the display is correct on
     // startup (the timer send ticks _after_ its expiration delay)
-    if (RwgtTimer(hwnd, pWidget))
-    {
-        // start update timer, as the script looks OK (there is no
-        // need starting the timer if the script is invalid)
-        pPrivate->ulTimerID = ptmrStartXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
-                                              hwnd,
-                                              1,
-                                              pPrivate->Setup.ulTimerDelay);
-    }
+    // V0.7.1 (2003-01-19) [lafaix]: VK_CTRL check added
+    if ((WinGetKeyState(HWND_DESKTOP, VK_CTRL) & 0x8000) == 0)
+        if (RwgtTimer(hwnd, pWidget))
+        {
+            // start update timer, as the script looks OK (there is no
+            // need starting the timer if the script is invalid)
+             pPrivate->ulTimerID = ptmrStartXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
+                                                   hwnd,
+                                                   1,
+                                                   pPrivate->Setup.ulTimerDelay);
+        }
 
     return (mrc);
 }
@@ -2384,7 +2388,7 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
                               HMODULE hmodSelf,     // plugin module handle
                               HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                               PXCENTERWIDGETCLASS *ppaClasses,
-                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                         
+                              PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
 {
     ULONG   ulrc = 0,
             ul = 0;
