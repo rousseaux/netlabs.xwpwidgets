@@ -18,7 +18,6 @@
 #define INCL_PM
 #include <os2.h>
 
-#include "shared\center.h"
 #include "rexx\w_rscrlr.h"
 
 rcinclude ".\rscrlr.dlg"

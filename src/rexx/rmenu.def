@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RMENU INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.5.2#@ Rexx menu plugin DLL'
+Description '@#Martin Lafaix:0.7.0#@ Rexx menu plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

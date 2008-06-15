@@ -23,10 +23,6 @@
 #ifndef RBUTTON_HEADER_INCLUDED
     #define RBUTTON_HEADER_INCLUDED
 
-    #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before widgets\w_rbutton.h.
-    #endif
-
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
     PFNWP G_pfnwpOldIconFile;
@@ -67,7 +63,7 @@
                 // used for the two scripts, so it has been made global in
                 // order to save some CPU time.  It is initialized in
                 // RwgtInitModule.
-    
+
     // NLS strings
     PSZ pszName,
         pszNoDrop,

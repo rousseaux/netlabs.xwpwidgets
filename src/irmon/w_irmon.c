@@ -537,7 +537,7 @@ VOID WgtScanSetup(const char *pcszSetupString,
  */
 
 VOID WgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared first)
-                  PIRSETUP pSetup)                                       
+                  PIRSETUP pSetup)
 {
   CHAR    szTemp[100];
   // PSZ     psz = 0;
@@ -1242,7 +1242,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,         // XCenter's anchor block
                              HMODULE hmodPlugin, // module handle of the widget DLL
                              HMODULE hmodXFLDR,    // XFLDR.DLL module handle
                              PXCENTERWIDGETCLASS *ppaClasses,
-                             PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg                         
+                             PSZ pszErrorMsg)  // if 0 is returned, 500 bytes of error msg
 {
   char szError[256];
   ULONG   ulrc = 0;
@@ -1289,7 +1289,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,         // XCenter's anchor block
     pInitRexx = NULL;
     pUninitRexx = NULL;
     DosFreeModule(g_hRexxDLL);
-    g_hRexxDLL = NULL;
+    g_hRexxDLL = NULLHANDLE;
   }
 
   if (!fImportsFailed)

@@ -328,7 +328,7 @@ LINK_ALWAYSPACK = $(LINK)
 # RESOURCE COMPILER
 # -----------------
 
-RC      = rc -p -x2 -n -i $(PROJECT_BASE_DIR)\include
+RC      = rc -p -x2 -n -i $(PROJECT_BASE_DIR)\include -i $(XWP_BASE)\include
 
 # RC options:
 # -p       pack (64K boundaries)
@@ -339,6 +339,6 @@ RC      = rc -p -x2 -n -i $(PROJECT_BASE_DIR)\include
 # COPY COMMAND
 # ------------
 
-COPY = cmd.exe /c copy
+COPY = copy
 
 

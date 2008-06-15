@@ -39,7 +39,7 @@
     See PROGREF.INF for details. */
 
 /* CVS_WORK_ROOT must point to the root of your CVS tree. */
-/* CVS_WORK_ROOT XWPRUNNING= */
+/* SET CVS_WORK_ROOT= */
 
 /* XWPRUNNING (current XFolder/XWorkplace installation
    from where WPS classes are registered; the executables

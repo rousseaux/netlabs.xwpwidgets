@@ -1,7 +1,10 @@
 #ifndef OS2_INCLUDED
    #include <os2.h>
 #endif
-DLGINCLUDE 1 "F:\work\xworkplace\src\widgets\w_spacer.h"
+
+#ifndef FCF_CLOSEBUTTON
+    #define FCF_CLOSEBUTTON            0x04000000L // toolkit 4 only
+#endif
 
 DLGTEMPLATE ID_CRD_SPACER_SETTINGS LOADONCALL MOVEABLE DISCARDABLE
 BEGIN

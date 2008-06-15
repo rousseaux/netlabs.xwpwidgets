@@ -17,7 +17,7 @@
 ;
 
 LIBRARY IRMON INITGLOBAL TERMGLOBAL
-Description '@#Ulrich M”ller:0.9.16#@ XWorkplace IR-Monitor widget DLL'
+Description '@#Martin Lafaix:0.7.0#@ IR Monitor plugin DLL'
 PROTMODE
 
 DATA              MULTIPLE READWRITE LOADONCALL NONSHARED

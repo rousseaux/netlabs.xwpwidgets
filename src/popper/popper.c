@@ -1139,7 +1139,7 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                   DosKillThread(pPrivate->tidPopperThread);
                 pthrCreate(NULL,
                            fntPop3CheckThread,
-                           pPrivate->tidPopperThread,
+                           &pPrivate->tidPopperThread,
                            "PopperThread",
                            THRF_PMMSGQUEUE | THRF_TRANSIENT,
                            (ULONG)pPrivate);
@@ -1296,7 +1296,7 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
               // check for new-mails
               pthrCreate(NULL,
                          fntPop3CheckThread,
-                         pPrivate->tidPopperThread,
+                         &pPrivate->tidPopperThread,
                          "PopperThread",
                          THRF_PMMSGQUEUE | THRF_TRANSIENT,
                          (ULONG)pPrivate);

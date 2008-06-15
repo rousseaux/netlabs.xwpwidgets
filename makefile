@@ -71,6 +71,12 @@ MODULESDIR=$(PROJECT_OUTPUT_DIR)\widgets
 !endif
 !if [@md $(MODULESDIR) 2> NUL]
 !endif
+!if [@md $(XWPRUNNING) 2> NUL]
+!endif
+!if [@md $(XWPRUNNING)\plugins 2> NUL]
+!endif
+!if [@md $(XWPRUNNING)\plugins\xcenter 2> NUL]
+!endif
 
 # VARIABLES
 # ---------
@@ -111,6 +117,8 @@ SUBMAKE_PASS_STRING = "PROJECT_BASE_DIR=$(PROJECT_BASE_DIR)" "PROJECT_INCLUDE=$(
 # store current directory so we can change back later
 CURRENT_DIR = $(MAKEDIR)
 
+#buildlevel.cmd batch file
+BLDLEVEL_CMD = $(XWP_BASE)\tools\buildlevel.cmd
 
 # PSEUDOTARGETS
 # -------------
@@ -173,12 +181,12 @@ $(XWPRUNNING)\plugins\xcenter\rbutton.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\rexx\rbutton.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx button plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Rexx button plugin DLL"
 
 $(MODULESDIR)\rbutton.dll: $(RBUTTONOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -195,12 +203,12 @@ $(XWPRUNNING)\plugins\xcenter\rgauge.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\rexx\rgauge.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx gauge plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Rexx gauge plugin DLL"
 
 $(MODULESDIR)\rgauge.dll: $(RGAUGEOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -217,12 +225,12 @@ $(XWPRUNNING)\plugins\xcenter\rmonitor.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\rexx\rmonitor.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx monitor plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Rexx monitor plugin DLL"
 
 $(MODULESDIR)\rmonitor.dll: $(RMONITOROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -239,12 +247,12 @@ $(XWPRUNNING)\plugins\xcenter\rmenu.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\rexx\rmenu.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx menu plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Rexx menu plugin DLL"
 
 $(MODULESDIR)\rmenu.dll: $(RMENUOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -261,12 +269,12 @@ $(XWPRUNNING)\plugins\xcenter\rscrlr.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\rexx\rscrlr.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Rexx scroller plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Rexx scroller plugin DLL"
 
 $(MODULESDIR)\rscrlr.dll: $(RSCRLROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -283,12 +291,12 @@ $(XWPRUNNING)\plugins\xcenter\spacer.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\spacer\spacer.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Spacer plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Spacer plugin DLL"
 
 $(MODULESDIR)\spacer.dll: $(SPACEROBJS) src\spacer\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -305,12 +313,12 @@ $(XWPRUNNING)\plugins\xcenter\irmon.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\irmon\irmon.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "IR Monitor plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "IR Monitor plugin DLL"
 
 $(MODULESDIR)\irmon.dll: $(IRMONOBJS) src\irmon\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@
@@ -327,12 +335,12 @@ $(XWPRUNNING)\plugins\xcenter\popper.dll: $(MODULESDIR)\$(@B).dll
 !ifdef XWP_UNLOCK_MODULES
 	unlock $@
 !endif
-	cmd.exe /c copy $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
-	cmd.exe /c copy $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).dll $(XWPRUNNING)\plugins\xcenter
+	$(COPY) $(MODULESDIR)\$(@B).sym $(XWPRUNNING)\plugins\xcenter
 
 # update DEF file if buildlevel has changed
 src\popper\popper.def: include\bldlevel.h
-	cmd.exe /c BuildLevel.cmd $@ include\bldlevel.h "Popper plugin DLL"
+	$(BLDLEVEL_CMD) $@ include\bldlevel.h "Popper plugin DLL"
 
 $(MODULESDIR)\popper.dll: $(POPPEROBJS) src\popper\$(@B).def $(XWP_OUTPUT_ROOT)\widgets\$(@B).res
 	@echo $(MAKEDIR)\makefile: Linking $@

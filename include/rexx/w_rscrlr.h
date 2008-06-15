@@ -23,10 +23,6 @@
 #ifndef RSCRLR_HEADER_INCLUDED
     #define RSCRLR_HEADER_INCLUDED
 
-    #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before rexx\w_rscrlr.h.
-    #endif
-
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
     BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget);

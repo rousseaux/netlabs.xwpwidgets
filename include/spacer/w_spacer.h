@@ -22,23 +22,19 @@
 
 #ifndef SPACER_HEADER_INCLUDED
     #define SPACER_HEADER_INCLUDED
-    
-    #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before widgets\w_spacer.h.
-    #endif
 
     VOID EXPENTRY SwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
     // this module handle
     HMODULE G_hmodThis = NULLHANDLE;
-    
+
     // this module name
     CHAR G_szThis[CCHMAXPATH] = {0};
-    
+
     // Spacer widget styles
     #define SWS_GREEDYX 0x1
     #define SWS_GREEDYY 0x2
-    
+
     // NLS strings
     PSZ pszName;
 
@@ -56,7 +52,7 @@
 
     #define ID_XSH_WIDGET_SPACER_SETTINGS  1000
     #define ID_XSH_WIDGET_SPACER_MAIN      1001
-    
+
     #define ID_CRSI_NAME                   1000
 
     #ifndef DID_HELP

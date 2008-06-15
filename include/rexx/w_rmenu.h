@@ -23,10 +23,6 @@
 #ifndef RMENU_HEADER_INCLUDED
     #define RMENU_HEADER_INCLUDED
 
-    #ifndef CENTER_HEADER_INCLUDED
-        #error shared\center.h must be included before w_rmenu.h.
-    #endif
-
     VOID EXPENTRY RwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
     PFNWP G_pfnwpOldIconFile;

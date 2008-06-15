@@ -2,6 +2,10 @@
    #include <os2.h>
 #endif
 
+#ifndef FCF_CLOSEBUTTON
+    #define FCF_CLOSEBUTTON            0x04000000L // toolkit 4 only
+#endif
+
 DLGTEMPLATE 1000 LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
     DIALOG  "Rexx menu - Properties", 1000, -11, -62, 293, 196, ,
