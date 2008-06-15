@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx scroller plugin DLL'
+Description '@#Martin Lafaix:0.7.2#@ Rexx scroller plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
@@ -29,7 +29,6 @@ EXPORTS
     RwgtUnInitModule        @2
     RwgtQueryVersion        @3
 
-    RwgtHelpHook            @65
     RwgtExtractScrlrStem    @66
     RwgtInitializeScrlrStem @67
 

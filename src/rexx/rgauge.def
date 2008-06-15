@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Rexx gauge plugin DLL'
+Description '@#Martin Lafaix:0.7.2#@ Rexx gauge plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
@@ -29,7 +29,6 @@ EXPORTS
     RwgtUnInitModule        @2
     RwgtQueryVersion        @3
 
-    RwgtHelpHook            @65
     RwgtExtractGaugeStem    @66
     RwgtInitializeGaugeStem @67
 

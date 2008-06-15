@@ -1003,48 +1003,10 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
  *
  *   Callbacks stored in XCENTERWIDGETCLASS
  *
+ *@@removed V0.7.2 (2007-05-28) [GYoung]: RwgtHelpHook It caused F1 related crashes in other Apps
+ *
  ********************************************************************/
 
-/*
- *@@ RwgtHelpHook:
- *      this handles the help requests from the message boxes.
- *
- *@@added V0.3.0 (2001-02-18) [lafaix]
- */
-
-BOOL EXPENTRY RwgtHelpHook(HAB hab,
-                           ULONG usMode,
-                           ULONG idTopic,
-                           ULONG idSubTopic,
-                           PRECTL prcPosition)
-{
-    BOOL rc = FALSE;
-
-    switch ((USHORT)idTopic)
-    {
-        case ID_CRH_RMENU_SCRIPTERROR:
-        case ID_CRH_RMENU_ALREADYRUNNING:
-        case ID_CRH_RMENU_THREADCREATION:
-            // the hook is _global_, so we must process this message
-            // only if it comes from one of our windows.  G_hwnd is
-            // used for this purpose, as there is no other way to
-            // know if the help request came from one of our message
-            // box.
-            if (G_hwnd)
-            {
-                PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(G_hwnd, QWL_USER);
-
-                if (pData)
-                    pctrDisplayHelp(pData->pGlobals,
-                                    RwgtQueryHelpLibrary(),
-                                    (USHORT)idTopic);
-                rc = TRUE;
-            }
-        break;
-    }
-
-    return (rc);
-}
 
 /*
  *@@ RwgtShowSettingsDlg:
@@ -1160,7 +1122,7 @@ void _Optlink fntRunCommandScript(PTHREADINFO pti)
                       szBuf,
                       pPrivate->Setup.pszTitle,
                       ID_CRH_RMENU_SCRIPTERROR,
-                      MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                      MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
         // more than one thread may be running; G_hwnd may have changed
         if (G_hwnd == hwnd)
@@ -1601,7 +1563,7 @@ void RwgtButton1Click(HWND hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
                               ID_CRH_RMENU_ALREADYRUNNING,
-                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                              MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
                 // more than one thread may be running; G_hwnd may have changed
                 if (G_hwnd == hwnd)
@@ -1671,7 +1633,7 @@ void RwgtButton1Click(HWND hwnd,
                                   szBuf,
                                   pPrivate->Setup.pszTitle,
                                   ID_CRH_RMENU_SCRIPTERROR,
-                                  MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                                  MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
                     // more than one thread may be running; G_hwnd may have changed
                     if (G_hwnd == hwnd)
@@ -1725,7 +1687,7 @@ void RwgtDoCommand(HWND hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
                               ID_CRH_RMENU_ALREADYRUNNING,
-                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                              MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
                 // more than one thread may be running; G_hwnd may have changed
                 if (G_hwnd == hwnd)
@@ -1765,7 +1727,7 @@ void RwgtDoCommand(HWND hwnd,
                                       pszThreadCreationFailed,
                                       pPrivate->Setup.pszTitle,
                                       ID_CRH_RMENU_THREADCREATION,
-                                      MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                                      MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
                         // more than one thread may be running;
                         // G_hwnd may have changed
@@ -2357,13 +2319,6 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
             G_exit_list[1].sysexit_code = RXTER;
             G_exit_list[2].sysexit_code = RXENDLST;
 
-            // register help hook for message boxes
-            WinSetHook(hab,
-                       NULLHANDLE,  // global queue
-                       HK_HELP,
-                       (PFN)RwgtHelpHook,
-                       G_hmodThis);
-            G_habThis = hab;
 
             // return no. of classes in this DLL (one here):
             ulrc = sizeof(G_WidgetClasses) / sizeof(G_WidgetClasses[0]);
@@ -2399,11 +2354,6 @@ VOID EXPENTRY RwgtUnInitModule(VOID)
     free(pszThreadingRequired);
     free(pszScriptError);
 
-    WinReleaseHook(G_habThis,
-                   NULLHANDLE,
-                   HK_HELP,
-                   (PFN)RwgtHelpHook,
-                   G_hmodThis);
 }
 
 /*

@@ -16,7 +16,7 @@
  */
 
 #define BLDLEVEL_VENDOR         "Martin Lafaix"
-#define BLDLEVEL_VERSION        "0.7.0"
+#define BLDLEVEL_VERSION        "0.7.2"
 #define BLDLEVEL_INFO           "to be overridden"
 
 

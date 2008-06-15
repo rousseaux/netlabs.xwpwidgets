@@ -1166,48 +1166,10 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
  *
  *   Callbacks stored in XCENTERWIDGETCLASS
  *
+ *@@removed V0.7.2 (2007-05-28) [GYoung]: RwgtHelpHook It caused F1 related crashes in other Apps
+ *
  ********************************************************************/
 
-/*
- *@@ RwgtHelpHook:
- *      this handles the help requests from the message boxes.
- *
- *@@added V0.1.0 (2001-02-18) [lafaix]
- */
-
-BOOL EXPENTRY RwgtHelpHook(HAB hab,
-                           ULONG usMode,
-                           ULONG idTopic,
-                           ULONG idSubTopic,
-                           PRECTL prcPosition)
-{
-    BOOL rc = FALSE;
-
-    switch ((USHORT)idTopic)
-    {
-        case ID_CRH_RGAUGE_DBLCLKERROR1:
-        case ID_CRH_RGAUGE_DBLCLKERROR2:
-        case ID_CRH_RGAUGE_TIMERERROR:
-            // the hook is _global_, so we must process this message
-            // only if it comes from one of our windows.  G_hwnd is
-            // used for this purpose, as there is no other way to
-            // know if the help request came from one of our message
-            // box.
-            if (G_hwnd)
-            {
-                PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)WinQueryWindowPtr(G_hwnd, QWL_USER);
-
-                if (pData)
-                    pctrDisplayHelp(pData->pGlobals,
-                                    RwgtQueryHelpLibrary(),
-                                    (USHORT)idTopic);
-                rc = TRUE;
-            }
-        break;
-    }
-
-    return (rc);
-}
 
 /*
  *@@ RwgtShowSettingsDlg:
@@ -1646,7 +1608,9 @@ void RwgtButton1DblClk(HWND hwnd,
                               pszAlreadyRunning,
                               pPrivate->Setup.pszTitle,
                               ID_CRH_RGAUGE_DBLCLKERROR1,
-                              MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                              MB_OK|MB_INFORMATION|MB_MOVEABLE);
+
+                if (G_hwnd == hwnd)
                 G_hwnd = NULLHANDLE;
             }
             else
@@ -1722,7 +1686,7 @@ void RwgtButton1DblClk(HWND hwnd,
                                   szBuf,
                                   pPrivate->Setup.pszTitle,
                                   ID_CRH_RGAUGE_DBLCLKERROR2,
-                                  MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                                  MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
                     if (G_hwnd == hwnd)
                         G_hwnd = NULLHANDLE;
@@ -2145,7 +2109,7 @@ BOOL RwgtTimer(HWND hwnd, PXCENTERWIDGET pWidget)
                           szBuf,
                           pPrivate->Setup.pszTitle,
                           ID_CRH_RGAUGE_TIMERERROR,
-                          MB_OK|MB_HELP|MB_INFORMATION|MB_MOVEABLE);
+                          MB_OK|MB_INFORMATION|MB_MOVEABLE);
 
             if (G_hwnd == hwnd)
                 G_hwnd = NULLHANDLE;
@@ -2476,14 +2440,6 @@ ULONG EXPENTRY RwgtInitModule(HAB hab,         // XCenter's anchor block
 
             G_WidgetClasses[0].pcszClassTitle = pszName;
 
-            // register help hook for message boxes
-            WinSetHook(hab,
-                       NULLHANDLE,  // global queue
-                       HK_HELP,
-                       (PFN)RwgtHelpHook,
-                       G_hmodThis);
-            G_habThis = hab;
-
             // return no. of classes in this DLL (one here):
             ulrc = sizeof(G_WidgetClasses) / sizeof(G_WidgetClasses[0]);
         }
@@ -2518,11 +2474,6 @@ VOID EXPENTRY RwgtUnInitModule(VOID)
     free(pszInterpreterErrorTimer);
     free(pszAlreadyRunning);
 
-    WinReleaseHook(G_habThis,
-                   NULLHANDLE,
-                   HK_HELP,
-                   (PFN)RwgtHelpHook,
-                   G_hmodThis);
 }
 
 /*

@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.0#@ Spacer plugin DLL'
+Description '@#Martin Lafaix:0.7.2#@ Spacer plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
