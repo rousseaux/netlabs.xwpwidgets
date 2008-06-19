@@ -236,7 +236,7 @@ $(MODULESDIR)\rmonitor.dll: $(RMONITOROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RMONITOROBJS) REXX.LIB
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
 
@@ -258,7 +258,7 @@ $(MODULESDIR)\rmenu.dll: $(RMENUOBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\widg
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RMENUOBJS) REXX.LIB
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
 
@@ -280,7 +280,7 @@ $(MODULESDIR)\rscrlr.dll: $(RSCRLROBJS) src\rexx\$(@B).def $(XWP_OUTPUT_ROOT)\wi
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\rexx\$(@B).def $(RSCRLROBJS) REXX.LIB
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
 
@@ -302,7 +302,7 @@ $(MODULESDIR)\spacer.dll: $(SPACEROBJS) src\spacer\$(@B).def $(XWP_OUTPUT_ROOT)\
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\spacer\$(@B).def $(SPACEROBJS)
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
 
@@ -324,7 +324,7 @@ $(MODULESDIR)\irmon.dll: $(IRMONOBJS) src\irmon\$(@B).def $(XWP_OUTPUT_ROOT)\wid
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\irmon\$(@B).def $(IRMONOBJS)
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
 
@@ -346,7 +346,19 @@ $(MODULESDIR)\popper.dll: $(POPPEROBJS) src\popper\$(@B).def $(XWP_OUTPUT_ROOT)\
 	@echo $(MAKEDIR)\makefile: Linking $@
 	$(LINK) /OUT:$@ src\popper\$(@B).def $(POPPEROBJS) so32dll.lib tcp32dll.lib
 	@cd $(MODULESDIR)
-   $(RC) $(@B).res $(@B).dll
+	$(RC) $(@B).res $(@B).dll
 	mapsym /n $(@B).map > NUL
 	@cd $(CURRENT_DIR)
+
+nls:
+	@echo $(MAKEDIR)\makefile: Going for subdir 001
+	@cd 001
+	@nmake -nologo all "MAINMAKERUNNING=YES" $(SUBMAKE_PASS_STRING)
+	@cd ..
+
+wpi: really_all
+	makewpi $(XWP_BASE)
+
+clean:
+	if exist bin\widgets\* del bin\widgets\* /n
 

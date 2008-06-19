@@ -47,6 +47,7 @@
 /* SET XWPRUNNING= */
 
 /* *** go! */
+parse arg opts
 
 /* reset timer */
 call time("E")
@@ -55,7 +56,7 @@ mydir = directory();
 Say "***********************************************"
 Say "*  Making XWP Widget Library     (./MAIN/)... *"
 Say "***********************************************"
-"nmake -nologo all"
+"nmake -nologo all" opts
 
 Say "***********************************************"
 Say "*  Making NLS files...                        *"

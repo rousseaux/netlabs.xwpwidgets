@@ -1,0 +1,194 @@
+<WARPIN>
+<HEAD>
+<PCK INDEX=1
+     PACKAGEID="Netlabs\XWorkplace\Spacer widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="Spacer widget"
+     SELECT
+     BASE
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the spacer widget.</PCK>
+<PCK INDEX=2
+     PACKAGEID="Netlabs\XWorkplace\REXX button widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="REXX button widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the REXX button widget.</PCK>
+<PCK INDEX=3
+     PACKAGEID="Netlabs\XWorkplace\REXX gauge widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="REXX gauge widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the REXX gauge widget.</PCK>
+<PCK INDEX=4
+     PACKAGEID="Netlabs\XWorkplace\REXX scroller widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="REXX scroller widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the REXX scroller widget.</PCK>
+<PCK INDEX=5
+     PACKAGEID="Netlabs\XWorkplace\REXX menu widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="REXX menu widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the REXX menu widget.</PCK>
+<PCK INDEX=6
+     PACKAGEID="Netlabs\XWorkplace\REXX monitor widget\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="REXX monitor widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the REXX monitor widget.</PCK>
+<PCK INDEX=7
+     PACKAGEID="Netlabs\XWorkplace\Popper\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="Popper widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the Popper widget.</PCK>
+<PCK INDEX=8
+     PACKAGEID="Netlabs\XWorkplace\IRmon\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="IRmon widget"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the IRmon widget.</PCK>
+<PCK INDEX=9
+     PACKAGEID="Netlabs\XWorkplace\TCPmon\0\7\3"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TITLE="TCPmon widgets for REXXGauge"
+     SELECT
+     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
+     >This package contains the TCPmon widgets.</PCK>
+</HEAD>
+<!-- Here come the different pages. They are linked by
+     the <NEXTBUTTON> tags, which must have a target.
+     Each page must have a TYPE= attribute, which tells
+     WarpIN what will be visible on that page. -->
+<BODY>
+<!-- page 1: introductory page -->
+<PAGE INDEX=1 TYPE=README>
+<TEXT>
+Please read through all of the following before installing.
+Then select "Next" to continue.
+Select "Cancel" to abort installation.</TEXT>
+
+<README FORMAT=PLAIN>
+
+XWorkplace Widget Library 0.7.3 README
+(W) Martin Lafaix, Feb 5, 2001
+Last updated June 19, 2008 by Gregg Young
+
+
+0. CONTENTS OF THIS FILE
+========================
+
+    1. INTRODUCTION
+    2. INSTALLATION
+    3. LICENSE, COPYRIGHT, DISCLAIMER
+    4. CONTACT
+
+
+1. INTRODUCTION
+===============
+
+    Welcome to XWorkplace Widget Library V0.7.3.
+
+    XWorkplace Widget Library is a set of XCenter widgets for
+    use with XWorkplace.
+
+
+    About this release
+    ------------------
+
+    This version is an unofficial release of the library. The release
+    was built with the latest source on the netlabs CVS by Gregg Young.
+
+    This release adds 2 new widgets (REXX menu & monitor) which have
+    only been tested to see if they install and their properties open
+    It also fixes the F1 crash that occurs in some applications
+    (e.g. PMView, PMseek, GT utilities, etc) when the rexx widget DLLs
+    are loaded.
+
+    When used with XWorkplace V0.9.13 or higher, the widgets
+    can be added in trays. The properties dialog opens in
+    XWorkplace 1.0.8. This was not tested in earlier releases.
+
+
+2. INSTALLATION
+===============
+
+    XWorkplace Widget Library must be installed using WarpIN.
+
+    ---> In any case, before installing, MAKE A WPS BACKUP.
+
+    Note: Use WarpIN V0.9.8 or higher to install this archive.
+
+    Once installed, you must close all XCenter instances and
+    reopen them, so that the new widgets are recognized.
+
+    If one of the help files installed by the library has been
+    accessed during the session, you must at least restart the
+    Workplace Shell before install.  Otherwise, the existing
+    files may remain locked, and WarpIN will not be able to
+    overwrite them.
+
+
+3. LICENSE, COPYRIGHT, DISCLAIMER
+=================================
+
+    Copyright (C) 2001 Martin Lafaix, Markus Montkowski,
+    Cristiano Guadagnino, fonz and others.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as contained in
+    the file COPYING in the installation directory.
+
+    The full source code is available. See XFLDR001.INF for details.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    For details, refer to the "Notices" section in XFLDR001.INF.
+
+
+4. CONTACT
+==========
+
+    We have created two mailing lists at netlabs.org for contact.
+    Please use these lists from now on for questions, suggestions,
+    and bug reports.
+
+    For XWorkplace users:
+        xworkplace-user@netlabs.org
+
+    For XWorkplace developers and those who are interested:
+        xworkplace-dev@netlabs.org
+
+</README>
+
+
+<NEXTBUTTON TARGET=2>~Next</NEXTBUTTON>
+</PAGE>
+<!-- The TYPE=CONTAINER will list the packages which can be installed. -->
+<PAGE INDEX=2 TYPE=CONTAINER>
+<NEXTBUTTON TARGET=3>~Next</NEXTBUTTON>
+<TEXT>
+On this page, you may deselect the package if it is already installed
+or change the package's target path. </TEXT>
+</PAGE>
+<!-- Display another TEXT page to inform the user
+        that installation will begin. We use the TARGET=0
+        with the NEXTBUTTON tag which starts installation. -->
+<PAGE INDEX=3 TYPE=TEXT>
+<NEXTBUTTON TARGET=0>I~nstall</NEXTBUTTON>
+<TEXT>
+Press "Install" to begin installing this archive.</TEXT>
+</PAGE>
+</BODY>
+</WARPIN>
