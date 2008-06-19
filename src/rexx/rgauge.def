@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.2#@ Rexx gauge plugin DLL'
+Description '@#Netlabs:0.7.3#@ Rexx gauge plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

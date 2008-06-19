@@ -17,7 +17,7 @@
 ;
 
 LIBRARY POPPER INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.2#@ Popper plugin DLL'
+Description '@#Netlabs:0.7.3#@ Popper plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

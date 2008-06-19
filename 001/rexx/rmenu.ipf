@@ -180,7 +180,7 @@ menu.3 = 'run=&tilde.Run...'
 menu.4 = '-'
 menu.5 = 'lockup=&tilde.Lockup now'
 menu.6 = 'restart=&tilde.Restart WPS'
-menu.7 = 'shutdown=& Shut down'
+menu.7 = 'shutdown=Shut &tilde.down'
 menu.0 = 7
 
 dummy.1 = '*foo=Not implemented yet &colon.)'

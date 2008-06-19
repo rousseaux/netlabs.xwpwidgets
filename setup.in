@@ -335,10 +335,13 @@ RC      = rc -p -x2 -n -i $(PROJECT_BASE_DIR)\include -i $(XWP_BASE)\include
 # -x2      Warp 3 compression
 # -n       no logo
 
-
 # COPY COMMAND
 # ------------
 
 COPY = copy
 
+# DEL COMMAND
+# ------------
+
+DEL = del
 

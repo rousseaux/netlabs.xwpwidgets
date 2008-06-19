@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RMONITOR INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.2#@ Rexx monitor plugin DLL'
+Description '@#Netlabs:0.7.3#@ Rexx monitor plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

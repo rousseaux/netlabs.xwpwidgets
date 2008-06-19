@@ -17,7 +17,7 @@
 ;
 
 LIBRARY IRMON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.2#@ IR Monitor plugin DLL'
+Description '@#Netlabs:0.7.3#@ IR Monitor plugin DLL'
 PROTMODE
 
 DATA              MULTIPLE READWRITE LOADONCALL NONSHARED

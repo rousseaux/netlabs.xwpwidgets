@@ -15,8 +15,8 @@
  *      GNU General Public License for more details.
  */
 
-#define BLDLEVEL_VENDOR         "Martin Lafaix"
-#define BLDLEVEL_VERSION        "0.7.2"
+#define BLDLEVEL_VENDOR         "Netlabs"
+#define BLDLEVEL_VERSION        "0.7.3"
 #define BLDLEVEL_INFO           "to be overridden"
 
 

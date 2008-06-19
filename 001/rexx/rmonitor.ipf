@@ -8,8 +8,8 @@ whose
 appearance is defined by a REXX script.  The script is run at
 regular intervals, and the monitor is updated accordingly.
 .*
-:p.:artwork runin name='monitor000.bmp'. :artwork runin
-name='monitor002.bmp'.
+:p.:artwork runin name='monitor0.bmp'. :artwork runin
+name='monitor2.bmp'.
 
 :p.A monitor can contain an icon, and may also display
 text.  The tooltip can be modified by the script to give
@@ -135,8 +135,8 @@ default value is used.  Changes are not persistent.
 
 :p.This first script is a disk free space monitor.  The color changes
 at 75% and 90% thresholds:
-:p.:artwork runin name='monitor000.bmp'. :artwork runin
-name='monitor003.bmp'.
+:p.:artwork runin name='monitor0.bmp'. :artwork runin
+name='monitor3.bmp'.
 
 :xmp.
 /* POP3 monitor */
@@ -151,8 +151,8 @@ settings, and finally sets the monitor icon.
 :p.The second script is a simple clock.  The date is returned for the
 tooltip, and the color of the background changes to reflect the
 time of day:
-:p.:artwork runin name='monitor001.bmp'. :artwork runin
-name='monitor002.bmp'.
+:p.:artwork runin name='monitor1.bmp'. :artwork runin
+name='monitor2.bmp'.
 
 :xmp.
 /* clock */

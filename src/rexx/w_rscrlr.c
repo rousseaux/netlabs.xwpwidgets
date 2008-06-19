@@ -42,8 +42,13 @@
  *      -- SCRIPT:   the script to be run, encoded.
  *      -- SIZEABLE: 1 if the widget is user-sizeable.
  *      -- FILLED:   1 if the graph should be filled.
+ *      -- AUTOSCALE:1 if the graph should be automatically scaled based
+ *                   on the maximum detected value.
  *      -- AVERAGE:  1 if the widget should average values to
  *                   produce a smoother curve.
+ *      -- BLMODE:   1 if the widget should be drawn in "baseline mode".
+ *      -- BMPSCALE: 1 if the background bitmap should be scaled to fit
+ *                   the widget size (clipped otherwise)
  *      -- TEXTCOL:  the color of the widget's text (in rrggbb
  *                   format).
  *      -- TITLE:    the default title of the scroller, encoded.
@@ -322,7 +327,8 @@ typedef struct _RSCRLRSETUP
 
     BOOL        fFilled;
     BOOL        fAverage;
-
+    BOOL        fAutoScale;
+    BOOL        fBmpScale;
     BOOL        fBLMode;
             // if TRUE, the widget goes into "baseline" mode
 
@@ -633,6 +639,26 @@ VOID RwgtScanSetup(const char *pcszSetupString,
     else
         pSetup->fFilled = 1;
 
+    // autoscale:
+    p = pctrScanSetupString(pcszSetupString,
+                            "AUTOSCALE");
+    if (p)
+    {
+        pSetup->fAutoScale = (strcmp(p, "1") == 0);
+    }
+    else
+        pSetup->fAutoScale = 0;
+
+    // scale bg bitmap:
+    p = pctrScanSetupString(pcszSetupString,
+                            "BMPSCALE");
+    if (p)
+    {
+        pSetup->fBmpScale = (strcmp(p, "1") == 0);
+    }
+    else
+        pSetup->fBmpScale = 0;
+
     // average:
     p = pctrScanSetupString(pcszSetupString,
                             "AVERAGE");
@@ -775,6 +801,12 @@ VOID RwgtSaveSetup(PXSTRING pstrSetup,       // out: setup string (is cleared fi
     else
         pxstrcat(pstrSetup, "FILLED=0;", 9);
 
+    if (pSetup->fAutoScale)
+        pxstrcat(pstrSetup, "AUTOSCALE=1;", 12);
+
+    if (pSetup->fBmpScale)
+        pxstrcat(pstrSetup, "BMPSCALE=1;", 11);
+
     if (pSetup->fAverage)
         pxstrcat(pstrSetup, "AVERAGE=1;", 10);
 
@@ -839,8 +871,13 @@ VOID Settings2Dlg(HWND hwnd,
 
     WinCheckButton(hwnd, ID_CRDI_RSCRLR_FILLGRAPH, pSetup->fFilled);
     WinCheckButton(hwnd, ID_CRDI_RSCRLR_LINEGRAPH, !pSetup->fFilled);
+
     WinCheckButton(hwnd, ID_CRDI_RSCRLR_AVERAGE, pSetup->fAverage);
     WinCheckButton(hwnd, ID_CRDI_RSCRLR_BLMODE, pSetup->fBLMode);
+    WinCheckButton(hwnd, ID_CRDI_RSCRLR_AUTOSCALE, pSetup->fAutoScale);
+
+    WinCheckButton(hwnd, ID_CRDI_RSCRLR_BMPSCALE, pSetup->fBmpScale);
+    WinCheckButton(hwnd, ID_CRDI_RSCRLR_BMPCLIP, !pSetup->fBmpScale);
 }
 
 /*
@@ -869,6 +906,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
             PWIDGETSETTINGSDLGDATA pData = (PWIDGETSETTINGSDLGDATA)mp2;
             PSTORAGE pStorage = calloc(1, sizeof(STORAGE));
             PRSCRLRSETUP pSetup = calloc(1, sizeof(RSCRLRSETUP));
+            HWND hwndCtrl;
 
             WinSetWindowPtr(hwnd, QWL_USER, pData);
             if (    (pSetup)
@@ -887,6 +925,17 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                 RwgtScanSetup(pData->pcszSetupString, pSetup);
 
                 Settings2Dlg(hwnd, pSetup);
+
+                // show the "script" MLE and hide the "double click action" MLE
+                hwndCtrl = WinWindowFromID(hwnd,
+                                           ID_CRDI_RSCRLR_SCRIPT);
+                if (hwndCtrl)
+                    WinShowWindow(hwndCtrl, TRUE);
+
+                hwndCtrl = WinWindowFromID(hwnd,
+                                           ID_CRDI_RSCRLR_DBLCLK);
+                if (hwndCtrl)
+                    WinShowWindow(hwndCtrl, FALSE);
             }
             mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
         break; }
@@ -955,6 +1004,48 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                             pxstrClear(&strSetup);
                             WinDismissDlg(hwnd, DID_OK);
                         break; }
+
+                        /*
+                         * DID_SHOWSCRIPT:
+                         *      show the MLE for the script, and hide the
+                         *      MLE for the double click action
+                         */
+
+                        case DID_SHOWSCRIPT:
+                        {
+                            HWND hwndCtrl;
+
+                            hwndCtrl = WinWindowFromID(hwnd,
+                                                       ID_CRDI_RSCRLR_SCRIPT);
+                            if (hwndCtrl)
+                                WinShowWindow(hwndCtrl, TRUE);
+
+                            hwndCtrl = WinWindowFromID(hwnd,
+                                                       ID_CRDI_RSCRLR_DBLCLK);
+                            if (hwndCtrl)
+                                WinShowWindow(hwndCtrl, FALSE);
+                        break;}
+
+                        /*
+                         * DID_SHOWDBLCLK:
+                         *      show the MLE for the double click action,
+                         *      and hide the MLE for the script
+                         */
+
+                        case DID_SHOWDBLCLK:
+                        {
+                            HWND hwndCtrl;
+
+                            hwndCtrl = WinWindowFromID(hwnd,
+                                                       ID_CRDI_RSCRLR_DBLCLK);
+                            if (hwndCtrl)
+                                WinShowWindow(hwndCtrl, TRUE);
+
+                            hwndCtrl = WinWindowFromID(hwnd,
+                                                       ID_CRDI_RSCRLR_SCRIPT);
+                            if (hwndCtrl)
+                                WinShowWindow(hwndCtrl, FALSE);
+                        break;}
 
                         /*
                          * DID_APPLY:
@@ -1149,6 +1240,29 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd,
                                     pSetup->fFilled = TRUE;
                                 else
                                     pSetup->fFilled = FALSE;
+                            }
+                        break;
+
+                        // autoscale:
+                        case ID_CRDI_RSCRLR_AUTOSCALE:
+                            if (usNotifyCode = BN_CLICKED)
+                            {
+                                if (WinQueryButtonCheckstate(hwnd, ID_CRDI_RSCRLR_AUTOSCALE))
+                                    pSetup->fAutoScale = TRUE;
+                                else
+                                    pSetup->fAutoScale = FALSE;
+                            }
+                        break;
+
+                        // scale bg bmp:
+                        case ID_CRDI_RSCRLR_BMPSCALE:
+                        case ID_CRDI_RSCRLR_BMPCLIP:
+                            if (usNotifyCode = BN_CLICKED)
+                            {
+                                if (WinQueryButtonCheckstate(hwnd, ID_CRDI_RSCRLR_BMPSCALE))
+                                    pSetup->fBmpScale = TRUE;
+                                else
+                                    pSetup->fBmpScale = FALSE;
                             }
                         break;
 
@@ -1372,15 +1486,15 @@ VOID LoadBitmap(HWND hwnd,
             _Pmpf(("Error %d loading background bitmap file \"%s\".",
                     arc,
                     pPrivate->achBgBmp));
-
-    if (    (!pPrivate->hbmBgBmp)
-         && (!(pPrivate->hbmBgBmp = GpiLoadBitmap(hps,
-                                                  G_hmodThis,
-                                                  ID_BGBMP,
-                                                  0,
-                                                  0)))
-       )
-        _Pmpf(("Cannot load background bitmap"));
+        else
+            if (    (!pPrivate->hbmBgBmp)
+                 && (!(pPrivate->hbmBgBmp = GpiLoadBitmap(hps,
+                                                            G_hmodThis,
+                                                            ID_BGBMP,
+                                                            0,
+                                                            0)))
+            )
+                _Pmpf(("Cannot load background bitmap"));
 
     if (pPrivate->hbmBgBmp)
     {
@@ -1529,7 +1643,14 @@ LONG EXPENTRY RwgtExtractScrlrStem(LONG exitno,
                     if (block.shvret == RXSHV_OK)
                     {
                         szData[block.shvvaluelen] = 0;
-                        pPrivate->lVal1 = atoi(szData);
+                        if (pPrivate->Setup.fAutoScale)
+                            pPrivate->lVal1 = atoi(szData);
+                        else
+                        {
+                            pPrivate->lVal1 = min(atoi(szData), 100);
+                            if (pPrivate->lVal1 < 0)
+                                pPrivate->lVal1 = max(pPrivate->lVal1, -100);
+                        }
 
                         if (pPrivate->lVal1 != 0)
                         {
@@ -1553,7 +1674,14 @@ LONG EXPENTRY RwgtExtractScrlrStem(LONG exitno,
                     if (block.shvret == RXSHV_OK)
                     {
                         szData[block.shvvaluelen] = 0;
-                        pPrivate->lVal2 = atoi(szData);
+                        if (pPrivate->Setup.fAutoScale)
+                            pPrivate->lVal2 = atoi(szData);
+                        else
+                        {
+                            pPrivate->lVal2 = min(atoi(szData), 100);
+                            if (pPrivate->lVal2 < 0)
+                                pPrivate->lVal2 = max(pPrivate->lVal2, -100);
+                        }
 
                         if (pPrivate->lVal2 != 0)
                         {
@@ -1577,7 +1705,14 @@ LONG EXPENTRY RwgtExtractScrlrStem(LONG exitno,
                     if (block.shvret == RXSHV_OK)
                     {
                         szData[block.shvvaluelen] = 0;
-                        pPrivate->lVal3 = atoi(szData);
+                        if (pPrivate->Setup.fAutoScale)
+                            pPrivate->lVal3 = atoi(szData);
+                        else
+                        {
+                            pPrivate->lVal3 = min(atoi(szData), 100);
+                            if (pPrivate->lVal3 < 0)
+                                pPrivate->lVal3 = max(pPrivate->lVal3, -100);
+                        }
 
                         if (pPrivate->lVal3 != 0)
                         {
@@ -1684,8 +1819,6 @@ LONG EXPENTRY RwgtExtractScrlrStem(LONG exitno,
 /*
  *@@ RwgtCreate:
  *      implementation for WM_CREATE.
- *
- *@added V0.7.1 (2003-01-19) [lafaix]: do not start script if VK_CTRL down
  */
 
 MRESULT RwgtCreate(HWND hwnd,
@@ -1788,9 +1921,8 @@ void RwgtButton1DblClk(HWND hwnd,
                               pPrivate->Setup.pszTitle,
                               ID_CRH_RSCRLR_DBLCLKERROR1,
                               MB_OK|MB_INFORMATION|MB_MOVEABLE);
-
                 if (G_hwnd == hwnd)
-                G_hwnd = NULLHANDLE;
+                    G_hwnd = NULLHANDLE;
             }
             else
             if (    (pPrivate->Setup.pszDblClkScript)
@@ -2039,7 +2171,7 @@ VOID RwgtUpdateGraph(HWND hwnd,
     PXCENTERWIDGET pWidget = pPrivate->pWidget;
 
     RECTL   rclBmp;
-    POINTL  ptl;
+    POINTL  ptl, ptlDest;
     ULONG   ul = 0;
     BOOL    fAvg = pPrivate->Setup.fAverage;
     LONG    lBL = 0;    // baseline position
@@ -2050,6 +2182,10 @@ VOID RwgtUpdateGraph(HWND hwnd,
 
     rclBmp.xRight -= 2;
     rclBmp.yTop -= 2;
+
+    // position for the background bitmap when in DBM_NORMAL mode
+    ptlDest.x = rclBmp.xLeft;
+    ptlDest.y = rclBmp.yBottom;
 
     if (!pPrivate->pBitmap) {
         pPrivate->pBitmap = pgpihCreateXBitmap(pWidget->habWidget,
@@ -2064,34 +2200,35 @@ VOID RwgtUpdateGraph(HWND hwnd,
         if (!pPrivate->cValues)
         {
             // fill the bitmap rectangle
-            if (pPrivate->hbmBgBmp != NULLHANDLE)
-            {
+            GpiSetColor(hpsMem,
+                        (pPrivate->lcolBackground == -1L)
+                            ? pPrivate->Setup.lcolBackground
+                            : pPrivate->lcolBackground);
+            pgpihBox(hpsMem,
+                    DRO_FILL,
+                    &rclBmp);
+
+            if (pPrivate->hbmBgBmp)
                 WinDrawBitmap(hpsMem,
                                 pPrivate->hbmBgBmp,
                                 NULL,
-                                (PPOINTL)&rclBmp,
-                                0,
-                                0,
-                                DBM_STRETCH);
-            }
-            else
-            {
-                GpiSetColor(hpsMem,
-                            (pPrivate->lcolBackground == -1L)
-                                ? pPrivate->Setup.lcolBackground
-                                : pPrivate->lcolBackground);
-
-                pgpihBox(hpsMem,
-                        DRO_FILL,
-                        &rclBmp);
-            }
+                                (pPrivate->Setup.fBmpScale
+                                    ? (PPOINTL)&rclBmp
+                                    : &ptlDest),
+                                0L,
+                                0L,
+                                (pPrivate->Setup.fBmpScale
+                                    ? DBM_STRETCH
+                                    : DBM_NORMAL));
         }
         else
         {
             // find the max value first
             LONG lMaxValue = 0;
             for (ul = 0;
-                 ((ul < pPrivate->cValues) && (ul < rclBmp.xRight));
+                 ((ul < pPrivate->cValues) &&
+                  (ul < rclBmp.xRight)     &&
+                  (pPrivate->Setup.fAutoScale));
                  ul++)
             {
                 LONG lThis;
@@ -2112,32 +2249,34 @@ VOID RwgtUpdateGraph(HWND hwnd,
                     lMaxValue = lThis;
             }
 
+            // if we don't autoscale, the max is always 100
+            if (!pPrivate->Setup.fAutoScale) lMaxValue = 100;
+
             // Set the baseline
             lBL = (rclBmp.yTop / 2) * (pPrivate->Setup.fBLMode);
                 // if fBLMode is FALSE, this always returns 0
 
             // fill the bitmap rectangle
-            if (pPrivate->hbmBgBmp != NULLHANDLE)
-            {
+            GpiSetColor(hpsMem,
+                        (pPrivate->lcolBackground == -1L)
+                            ? pPrivate->Setup.lcolBackground
+                            : pPrivate->lcolBackground);
+            pgpihBox(hpsMem,
+                    DRO_FILL,
+                    &rclBmp);
+
+            if (pPrivate->hbmBgBmp)
                 WinDrawBitmap(hpsMem,
                                 pPrivate->hbmBgBmp,
                                 NULL,
-                                (PPOINTL)&rclBmp,
+                                (pPrivate->Setup.fBmpScale
+                                    ? (PPOINTL)&rclBmp
+                                    : &ptlDest),
                                 0,
                                 0,
-                                DBM_STRETCH);
-            }
-            else
-            {
-                GpiSetColor(hpsMem,
-                            (pPrivate->lcolBackground == -1L)
-                                ? pPrivate->Setup.lcolBackground
-                                : pPrivate->lcolBackground);
-
-                pgpihBox(hpsMem,
-                        DRO_FILL,
-                        &rclBmp);
-            }
+                                (pPrivate->Setup.fBmpScale
+                                    ? DBM_STRETCH
+                                    : DBM_NORMAL));
 
             if (lMaxValue)  // avoid division by zero
             {
@@ -2803,11 +2942,11 @@ VOID RwgtDestroy(HWND hwnd,
     {
         RwgtClearSetup(&pPrivate->Setup);
 
-        if (pPrivate->pBitmap)
-            pgpihDestroyXBitmap(&pPrivate->pBitmap);
-
         if (pPrivate->hbmBgBmp)
             GpiDeleteBitmap(pPrivate->hbmBgBmp);
+
+        if (pPrivate->pBitmap)
+            pgpihDestroyXBitmap(&pPrivate->pBitmap);
 
         if (pPrivate->ulTimerID)
             ptmrStopXTimer((PXTIMERSET)pWidget->pGlobals->pvXTimerSet,
@@ -2912,13 +3051,6 @@ MRESULT EXPENTRY fnwpRScrlrWidget(HWND hwnd,
             {
                 // this gets sent before this is set!
                 RwgtPresParamChanged(hwnd, (ULONG)mp1, pWidget);
-                if (  ((ULONG)mp1 == 0)
-                    ||((ULONG)mp1 == PP_BACKGROUNDCOLOR)
-                    ||((ULONG)mp1 == PP_FOREGROUNDCOLOR)
-                    ||((ULONG)mp1 == PP_FONTNAMESIZE))
-                {
-                    pPrivate->fUpdateGraph = TRUE;
-                }
             }
         break;
 
@@ -3140,7 +3272,6 @@ VOID EXPENTRY RwgtUnInitModule(VOID)
     free(pszInterpreterErrorDblClk);
     free(pszInterpreterErrorTimer);
     free(pszAlreadyRunning);
-
 }
 
 /*

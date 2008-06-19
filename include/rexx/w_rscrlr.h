@@ -81,10 +81,18 @@
     #define DID_RESET                      1012
     #define ID_CRDI_RSCRLR_STATUS          1013
     #define ID_CRDI_RSCRLR_STATUS2         1014
+
     #define ID_CRDI_RSCRLR_FILLGRAPH       1015
     #define ID_CRDI_RSCRLR_LINEGRAPH       1016
     #define ID_CRDI_RSCRLR_AVERAGE         1017
     #define ID_CRDI_RSCRLR_BLMODE          1018
+    #define ID_CRDI_RSCRLR_AUTOSCALE       1019
+
+    #define DID_SHOWSCRIPT                 1020
+    #define DID_SHOWDBLCLK                 1021
+
+    #define ID_CRDI_RSCRLR_BMPSCALE        1022
+    #define ID_CRDI_RSCRLR_BMPCLIP         1023
 
     #define ID_CRH_RSCRLR_SETTINGS         1000
     #define ID_CRH_RSCRLR_MAIN             1001
@@ -98,7 +106,7 @@
     #define ID_CRSI_ALREADYRUNNING         1006
     #define ID_CRSI_SETTINGSSTATUS         1007
 
-    #define ID_BGBMP                       1019
+    #define ID_BGBMP                       1024
 
     #ifndef DID_HELP
         #define DID_HELP               97

@@ -17,7 +17,7 @@
 ;
 
 LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Martin Lafaix:0.7.2#@ Rexx scroller plugin DLL'
+Description '@#Netlabs:0.7.3#@ Rexx scroller plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
