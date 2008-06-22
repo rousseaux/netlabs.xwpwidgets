@@ -2,7 +2,7 @@
 <HEAD>
 <PCK INDEX=1
      PACKAGEID="Netlabs\XWorkplace\Spacer widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="Spacer widget"
      SELECT
      BASE
@@ -10,60 +10,53 @@
      >This package contains the spacer widget.</PCK>
 <PCK INDEX=2
      PACKAGEID="Netlabs\XWorkplace\REXX button widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX button widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX button widget.</PCK>
 <PCK INDEX=3
      PACKAGEID="Netlabs\XWorkplace\REXX gauge widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX gauge widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX gauge widget.</PCK>
 <PCK INDEX=4
      PACKAGEID="Netlabs\XWorkplace\REXX scroller widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX scroller widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX scroller widget.</PCK>
 <PCK INDEX=5
      PACKAGEID="Netlabs\XWorkplace\REXX menu widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX menu widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX menu widget.</PCK>
 <PCK INDEX=6
      PACKAGEID="Netlabs\XWorkplace\REXX monitor widget\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX monitor widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX monitor widget.</PCK>
 <PCK INDEX=7
      PACKAGEID="Netlabs\XWorkplace\Popper\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="Popper widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the Popper widget.</PCK>
 <PCK INDEX=8
      PACKAGEID="Netlabs\XWorkplace\IRmon\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
+     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="IRmon widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the IRmon widget.</PCK>
-<PCK INDEX=9
-     PACKAGEID="Netlabs\XWorkplace\TCPmon\0\7\3"
-     TARGET="$(Ulrich M”ller\XWorkplace\Kernel)"
-     TITLE="TCPmon widgets for REXXGauge"
-     SELECT
-     REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
-     >This package contains the TCPmon widgets.</PCK>
 </HEAD>
 <!-- Here come the different pages. They are linked by
      the <NEXTBUTTON> tags, which must have a target.

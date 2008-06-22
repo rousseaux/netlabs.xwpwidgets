@@ -8,48 +8,53 @@
 
 DLGTEMPLATE 1000 LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "REXX Scroller - Settings", 1000, -28, -74, 327, 195, , FCF_SYSMENU |
-            FCF_TITLEBAR | FCF_CLOSEBUTTON
+    DIALOG "REXX Scroller - Settings", 1000, 125, 63, 325, 195, , FCF_SYSMENU |
+           FCF_TITLEBAR | FCF_CLOSEBUTTON
     BEGIN
-        LTEXT           "Default ~title", -1, 6, 186, 65, 8, DT_MNEMONIC
-        MLE             "", 1004, 6, 165, 150, 20, MLS_WORDWRAP | WS_GROUP
-        RTEXT           "", 1013, 145, 151, 99, 8
-        LTEXT           "~Scroller script", -1, 6, 151, 77, 8, DT_MNEMONIC
-        MLE             "", 1001, 6, 92, 238, 58, MLS_HSCROLL |
-                        MLS_VSCROLL | WS_GROUP
-        RTEXT           "", 1014, 145, 80, 99, 8
-        LTEXT           "Double ~click action", -1, 6, 80, 99, 8, DT_MNEMONIC
-        MLE             "", 1002, 6, 39, 238, 40, MLS_HSCROLL |
-                        MLS_VSCROLL | WS_GROUP
-        CTEXT           "", 1005, 276, 128, 20, 16
+        LTEXT           "Default ~title", -1, 8, 186, 65, 8, NOT WS_GROUP | DT_MNEMONIC
+        MLE             "", 1004, 8, 165, 225, 20, NOT WS_GROUP | MLS_WORDWRAP
+        PUSHBUTTON      "Show Scroller Script", 1020, 8, 151, 108, 11, WS_GROUP
+        PUSHBUTTON      "Show Double Click Script", 1021, 125, 151, 107, 11
+        ENTRYFIELD      "", 1003, 252, 167, 34, 8, WS_GROUP |
+                        ES_RIGHT | ES_MARGIN
+        LTEXT           "ms", -1, 288, 164, 13, 11, NOT WS_GROUP
+        MLE             "", 1001, 8, 91, 225, 58, NOT WS_GROUP |
+                        MLS_VSCROLL | MLS_HSCROLL
+        MLE             "", 1002, 8, 91, 225, 58, NOT WS_GROUP |
+                        MLS_VSCROLL | MLS_HSCROLL
+        RTEXT           "", 1013, 127, 78, 107, 11, NOT WS_GROUP
+        RTEXT           "", 1014, 127, 78, 107, 11, NOT WS_GROUP
+        LTEXT           "1", -1, 254, 124, 14, 11, NOT WS_GROUP | DT_VCENTER
+        LTEXT           "2", -1, 254, 108, 14, 11, NOT WS_GROUP | DT_VCENTER
+        LTEXT           "3", -1, 254, 92, 14, 11, NOT WS_GROUP | DT_VCENTER
+        CTEXT           "", 1005, 274, 122, 20, 16, NOT WS_GROUP
                         PRESPARAMS PP_BACKGROUNDCOLOR, 0x0000FF00L
-        CTEXT           "", 1006, 276, 112, 20, 16
+        CTEXT           "", 1006, 274, 106, 20, 16, NOT WS_GROUP
                         PRESPARAMS PP_BACKGROUNDCOLOR, 0x00FFFF00L
-        CTEXT           "", 1007, 276, 96, 20, 16
+        CTEXT           "", 1007, 274, 90, 20, 16, NOT WS_GROUP
                         PRESPARAMS PP_BACKGROUNDCOLOR, 0x00FF0000L
-        LTEXT           "Refresh rate", -1, 253, 186, 58, 8
-        LTEXT           "ms", -1, 297, 175, 13, 8
-        ENTRYFIELD      "", 1003, 260, 175, 32, 8, ES_RIGHT | ES_MARGIN
-        LTEXT           "Scroller colors", -1, 253, 151, 54, 8
-        LTEXT           "1", -1, 258, 132, 14, 8
-        LTEXT           "2", -1, 258, 116, 14, 8
-        LTEXT           "3", -1, 258, 100, 14, 8
-        LTEXT           "Scroller width", -1, 253, 80, 53, 8
-        AUTORADIOBUTTON "Re~sizeable", 1008, 258, 65, 65, 10, WS_TABSTOP
-        AUTORADIOBUTTON "~Fixed", 1009, 258, 53, 37, 10, WS_TABSTOP
-        LTEXT           "pixels", -1, 297, 42, 27, 8
-        ENTRYFIELD      "", 1010, 260, 42, 32, 8, ES_RIGHT | ES_MARGIN
-        GROUPBOX        "", 65603, 6, 20, 238, 20
-        LTEXT           "Scroller graph", -1, 11, 24, 55, 9
-        AUTORADIOBUTTON "Filled", 1015, 105, 24, 33, 10, WS_TABSTOP
-        AUTORADIOBUTTON "Line", 1016, 69, 24, 33, 10, WS_TABSTOP
-        AUTOCHECKBOX    "Averaging", 1017, 140, 24, 50, 10
-        AUTOCHECKBOX    "Baseline Mode", 1018, 190, 24, 52, 10
-        PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14
+        AUTOCHECKBOX    "Autoscale", 1019, 15, 55, 42, 12, WS_GROUP
+        AUTOCHECKBOX    "Averaging", 1017, 15, 43, 42, 12
+        AUTOCHECKBOX    "Baseline Mode", 1018, 15, 31, 58, 12
+        AUTORADIOBUTTON "Line", 1016, 102, 53, 34, 11, WS_GROUP
+        AUTORADIOBUTTON "Filled", 1015, 102, 37, 34, 11
+        AUTORADIOBUTTON "Scaled", 1022, 175, 53, 51, 11, WS_GROUP
+        AUTORADIOBUTTON "Clipped", 1023, 175, 37, 51, 11
+        AUTORADIOBUTTON "Resizeable", 1008, 251, 56, 55, 11, WS_GROUP
+        AUTORADIOBUTTON "Fixed", 1009, 251, 45, 38, 11
+        ENTRYFIELD      "", 1010, 252, 35, 34, 8, ES_RIGHT | ES_MARGIN
+        LTEXT           "pixels", -1, 288, 32, 19, 11, NOT WS_GROUP
+        PUSHBUTTON      "OK", DID_OK, 6, 4, 40, 14, WS_GROUP
         PUSHBUTTON      "~Apply", 1011, 49, 4, 40, 14
         PUSHBUTTON      "~Reset", 1012, 92, 4, 40, 14
         PUSHBUTTON      "Cancel", DID_CANCEL, 135, 4, 40, 14
         PUSHBUTTON      "Help", 97, 178, 4, 40, 14
+        GROUPBOX        "Refresh rate", -1, 241, 159, 67, 30
+        GROUPBOX        "Scroller colors", -1, 241, 86, 67, 61
+        GROUPBOX        "Graph options", -1, 8, 28, 67, 46
+        GROUPBOX        "Scroller graph", -1, 85, 28, 67, 46
+        GROUPBOX        "Bitmap", -1, 163, 28, 67, 46
+        GROUPBOX        "Scroller width", -1, 241, 28, 67, 46
     END
 END
 

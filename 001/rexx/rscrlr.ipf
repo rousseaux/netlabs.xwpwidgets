@@ -54,11 +54,14 @@ characters though.
 
 :p.The :hp2.Scroller script:ehp2. field is the actual REXX program
 that will be run at regular intervals.  If no script is defined,
-nothing happens.
+nothing happens. This field is shown by default when the settings
+dialog is opened.
 
-:p.The :hp2.Double click action:ehp2. field is the actual REXX
+:p.The :hp2.Double click script:ehp2. field is only shown if you press
+the button :hp2.Show Double Click Script:ehp2..  It is the actual REXX
 program that will run whenever you double click on the widget.  The
-script is run in the XCenter thread.
+script is run in the XCenter thread.  You can get back to the Scroller
+script by pressing the button :hp2.Show Scroller Script:ehp2..
 
 :p.The :hp2.Refresh rate:ehp2. defines how often the scroller script should
 be run.  The value is in milliseconds, and cannot be lower than 500ms.
@@ -69,18 +72,30 @@ graph.  To change a color, drop a color over the corresponding area.
 :p.The :hp2.Scroller width:ehp2. area defines the width of the scroller.
 The scroller is either of a fixed width or resizeable, interactively.
 
-:p.The :hp2.Scroller graph:ehp2. defines the look of the graphs in the
-widget. If :hp2.Line:ehp2. is selected, the graph will look like a thin
+:p.The :hp2.Scroller graph:ehp2. area defines the look of the graphs in
+the widget. If :hp2.Line:ehp2. is selected, the graph will look like a thin
 line. If :hp2.Filled:ehp2. is selected, it will look like a filled curve.
 If :hp2.Averaging:ehp2. is checked, the last two values will be averaged
 to give a smoother curve (not yet implemented).
 
+:p.The :hp2.Graph options:ehp2. area defines other aspects of the graphs.
+If :hp2.Autoscale:ehp2. is checked, the graph will autoscale based on the
+current maximum displayed value.  If it is :hp1.not:ehp1. checked, the graph
+will represent values between 0 and 100 (or -100 and 100... see below).
+If :hp2.Averaging:ehp2. is checked, the last two collected values will be
+averaged to give a smoother curve (not yet implemented).
 :p.Finally, if :hp2.Baseline Mode:ehp2. is checked, the scroller will be split
-vertically in two. You can have graphs extending from the baseline up
-(positive values), or from the baseline down (negative values). Note that
+vertically in two.  You can have graphs extending from the baseline up
+(positive values), or from the baseline down (negative values).  Note that
 if you input negative values in the scroller while Baseline Mode is :hp1.not:ehp1.
-enabled, they will be changed to positive. See the screenshot below:
+enabled, they will be changed to positive.  See the screenshot below:
 :p.:artwork runin name='scrlr003.bmp'.
+
+:p.The :hp2.Bitmap:ehp2. area defines how the background bitmap (provided
+there is one) is represented inside the widget. If :hp2.Scaled:ehp2. is
+selected, the bitmap will be stretched or compressed to fit exactly in the
+widget area. If :hp2.Clipped:ehp2. is selected, the bitmap will be left
+alone, and eventually clipped if it doesn't fit in the widget.
 
 :p.The :hp2.OK:ehp2. button saves the changes and closes the dialog.
 The :hp2.Apply:ehp2. button saves the changes but does not close the
@@ -114,11 +129,12 @@ possibly a tooltip and a bitmap.  The three values must be integers.
 They are stored in :hp2.SCRLR.1:ehp2., :hp2.SCRLR.2:ehp2.,
 and :hp2.SCRLR.3:ehp2..  The text and tooltip are stored in
 :hp2.SCRLR.TEXT:ehp2. and :hp2.SCRLR.TOOLTIP:ehp2. respectively.
-The full path to the bitmap is stored in :hp2.SCRLR.BITMAP:ehp2..
+The full path to the bitmap is stored in :hp2.SCRLR.BITMAP:ehp2., and
+it is limited to 250 characters.
 
-:p.The bottom of the scroller area corresponds to 0 and the top to
-the current maximum value.  The scroller will dynamically rescale
-the graph as the maximum value changes.
+:p.The bottom of the scroller area corresponds to 0.  The top of the
+scroller corresponds to either 100 or to the current maximum displayed
+value, based on the setting of :hp2.Baseline mode:ehp2..
 
 :p.The scroller will draw one to three graphs based on the values you supply.
 If :hp2.Filled:ehp2. is selected in the scroller properties, the graphs are
@@ -135,8 +151,7 @@ scroller.  If no text is defined, no text is painted over the scroller.
 is defined by the script, the default tooltip (if any) is used.
 
 :p.The bitmap is painted as backround, and it is :hp1.not:ehp1. scrolled
-with the graph.  If it is smaller/bigger than the widget window, it is
-stretched to exactly fit in the window.
+with the graph.
 
 :p.Additionally, the script may access the widget's user data area.
 This area contains up to one hundred bytes.  Its use is not

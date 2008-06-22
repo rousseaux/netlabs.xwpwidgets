@@ -6,14 +6,14 @@ reldir = 'bin\widgets'
 outdir = 'bin'
 
 packages.0 = 8
-packages.1 = 'spacer.*'
-packages.2 = 'rbutton.*'
-packages.3 = 'rgauge.*'
-packages.4 = 'rscrlr.*'
-packages.5 = 'rmenu.*'
-packages.6 = 'rmonitor.*'
-packages.7 = 'popper.*'
-packages.8 = 'irmon.*'
+packages.1 = 'spacer.?l? spacer.sym'
+packages.2 = 'rbutton.?l? rbutton.sym'
+packages.3 = 'rgauge.?l? rgauge.sym'
+packages.4 = 'rscrlr.?l? rscrlr.sym'
+packages.5 = 'rmenu.?l? rmenu.sym'
+packages.6 = 'rmonitor.?l? rmonitor.sym'
+packages.7 = 'popper.?l? popper.sym'
+packages.8 = 'irmon.?l? irmon.sym'
 /**/
 call RxFuncAdd 'SysLoadFuncs', 'RexxUtil', 'SysLoadFuncs'
 call SysLoadFuncs

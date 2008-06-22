@@ -214,7 +214,7 @@ $(OUTPUTDIR)\rmenu.res: \
     @cd $(MAKEDIR)
 
 $(OUTPUTDIR)\rscrlr.res: \
-    $(NLS)\rmenu.rc $(NLS)\rscrlr.dlg \
+    $(NLS)\rscrlr.rc $(NLS)\rscrlr.dlg \
     $(INC)\rexx\w_rscrlr.h \
     # RCINCLUDE is stupid in that it requires its arg to be in the current dir
     @cd $(NLS)
