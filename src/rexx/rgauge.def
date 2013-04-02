@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RGAUGE INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ Rexx gauge plugin DLL'
+LIBRARY RGAUGE INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ Rexx gauge plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

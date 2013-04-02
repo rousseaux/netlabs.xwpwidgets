@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RMONITOR INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ Rexx monitor plugin DLL'
+LIBRARY RMONITOR INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ Rexx monitor plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

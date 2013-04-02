@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY IRMON INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ IR Monitor plugin DLL'
+LIBRARY IRMON INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ IR Monitor plugin DLL'
 PROTMODE
 
 DATA              MULTIPLE READWRITE LOADONCALL NONSHARED

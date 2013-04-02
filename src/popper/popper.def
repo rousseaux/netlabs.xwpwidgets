@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY POPPER INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ Popper plugin DLL'
+LIBRARY POPPER INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ Popper plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

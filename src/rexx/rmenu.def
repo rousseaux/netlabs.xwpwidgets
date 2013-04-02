@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RMENU INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ Rexx menu plugin DLL'
+LIBRARY RMENU INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ Rexx menu plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED

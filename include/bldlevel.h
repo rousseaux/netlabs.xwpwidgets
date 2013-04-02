@@ -16,7 +16,7 @@
  */
 
 #define BLDLEVEL_VENDOR         "Netlabs"
-#define BLDLEVEL_VERSION        "0.7.3"
+#define BLDLEVEL_VERSION        "0.7.4"
 #define BLDLEVEL_INFO           "to be overridden"
 
 

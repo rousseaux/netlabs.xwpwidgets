@@ -16,8 +16,8 @@
 ;       GNU General Public License for more details.
 ;
 
-LIBRARY RBUTTON INITGLOBAL TERMGLOBAL
-Description '@#Netlabs:0.7.3#@ Spacer plugin DLL'
+LIBRARY RBUTTON INITINSTANCE TERMINSTANCE
+Description '@#Netlabs:0.7.4#@ Spacer plugin DLL'
 PROTMODE
 
 DATA              SINGLE READWRITE LOADONCALL SHARED
