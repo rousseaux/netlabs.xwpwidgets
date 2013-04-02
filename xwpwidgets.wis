@@ -1,7 +1,7 @@
 <WARPIN>
 <HEAD>
 <PCK INDEX=1
-     PACKAGEID="Netlabs\XWorkplace\Spacer widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\Spacer widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="Spacer widget"
      SELECT
@@ -9,49 +9,49 @@
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the spacer widget.</PCK>
 <PCK INDEX=2
-     PACKAGEID="Netlabs\XWorkplace\REXX button widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\REXX button widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX button widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX button widget.</PCK>
 <PCK INDEX=3
-     PACKAGEID="Netlabs\XWorkplace\REXX gauge widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\REXX gauge widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX gauge widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX gauge widget.</PCK>
 <PCK INDEX=4
-     PACKAGEID="Netlabs\XWorkplace\REXX scroller widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\REXX scroller widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX scroller widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX scroller widget.</PCK>
 <PCK INDEX=5
-     PACKAGEID="Netlabs\XWorkplace\REXX menu widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\REXX menu widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX menu widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX menu widget.</PCK>
 <PCK INDEX=6
-     PACKAGEID="Netlabs\XWorkplace\REXX monitor widget\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\REXX monitor widget\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="REXX monitor widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the REXX monitor widget.</PCK>
 <PCK INDEX=7
-     PACKAGEID="Netlabs\XWorkplace\Popper\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\Popper\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="Popper widget"
      SELECT
      REQUIRES="Ulrich M”ller\XWorkplace\Kernel\0\9\12"
      >This package contains the Popper widget.</PCK>
 <PCK INDEX=8
-     PACKAGEID="Netlabs\XWorkplace\IRmon\0\7\3"
+     PACKAGEID="Netlabs\XWorkplace\IRmon\0\7\4"
      TARGET="$(Ulrich M”ller\XWorkplace\Kernel)\plugins\xcenter"
      TITLE="IRmon widget"
      SELECT
@@ -72,9 +72,9 @@ Select "Cancel" to abort installation.</TEXT>
 
 <README FORMAT=PLAIN>
 
-XWorkplace Widget Library 0.7.3 README
+XWorkplace Widget Library 0.7.4 README
 (W) Martin Lafaix, Feb 5, 2001
-Last updated June 19, 2008 by Gregg Young
+Last updated 2 April 2013 by Paul Ratcliffe
 
 
 0. CONTENTS OF THIS FILE
@@ -89,7 +89,7 @@ Last updated June 19, 2008 by Gregg Young
 1. INTRODUCTION
 ===============
 
-    Welcome to XWorkplace Widget Library V0.7.3.
+    Welcome to XWorkplace Widget Library V0.7.4.
 
     XWorkplace Widget Library is a set of XCenter widgets for
     use with XWorkplace.

@@ -1,6 +1,6 @@
 /**/
-wpistem = 'xwpwidgets-0-7-3'
-filetime = '00:07:30'
+wpistem = 'xwpwidgets-0-7-4'
+filetime = '00:07:40'
 wisfile = 'xwpwidgets.wis'
 reldir = 'bin\widgets'
 outdir = 'bin'
