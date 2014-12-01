@@ -1,5 +1,6 @@
 /* Make XWorkplace Widget Library */
 "@echo off"
+"setlocal"
 
 /*
     This will call nmake to (re)build XWP Widgets Library completely.
@@ -30,8 +31,8 @@
     can comment these lines out.
 */
 
-"call envicc.cmd"
-"call envproject.cmd"
+"if exist envicc.cmd call envicc.cmd"
+"if exist envproject.cmd call envproject.cmd"
 
 /*  Set other required environment variables for the built
     process. YOU MUST SET THESE, or building will fail.
@@ -56,14 +57,7 @@ mydir = directory();
 Say "***********************************************"
 Say "*  Making XWP Widget Library     (./MAIN/)... *"
 Say "***********************************************"
-"nmake -nologo all" opts
-
-Say "***********************************************"
-Say "*  Making NLS files...                        *"
-Say "***********************************************"
-"cd 001"
-"nmake -nologo all"
-"cd .."
+"nmake -nologo" opts
 
 /* show elapsed time */
 seconds = time("e"); /* in seconds */
@@ -72,6 +66,4 @@ seconds2 = trunc(seconds - (minutes*60));
 Say;
 Say "Done!"
 Say "Elapsed time: "minutes" minutes, "seconds2" seconds."
-"pause"
-
-
+"endlocal"

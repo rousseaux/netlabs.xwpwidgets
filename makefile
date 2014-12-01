@@ -123,11 +123,11 @@ BLDLEVEL_CMD = $(XWP_BASE)\tools\buildlevel.cmd
 # PSEUDOTARGETS
 # -------------
 
-all: cpl_main link
+all: cpl_main link nls
     @echo ----- Leaving $(MAKEDIR)
 
 # "really_all" references "all".
-really_all: all nls
+really_all: all
     @echo ----- Leaving $(MAKEDIR)
 
 # If you add a subdirectory to SRC\, add a target to
@@ -361,4 +361,3 @@ wpi: really_all
 
 clean:
 	if exist bin\widgets\* del bin\widgets\* /n
-
