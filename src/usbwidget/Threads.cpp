@@ -167,7 +167,7 @@ void    _Optlink WmQuitMonitorThread(void* p) {
         return;
     }
 
-    __debug("WmQuitMonitorThread", "**STARTING**", DBG_MLE | DBG_AUX);
+
 
     /* Initialize the PM sub-system for this thread */
     hab_thread = WinInitialize(NULL);
@@ -176,6 +176,8 @@ void    _Optlink WmQuitMonitorThread(void* p) {
     hmq_thread = WinCreateMsgQueue(hab_thread, NULL);
     hmq_thread2 = WinCreateMsgQueue(hab_thread, NULL);
     hmq_thread3 = WinCreateMsgQueue(myhab, NULL);
+
+    __debug("WmQuitMonitorThread", "**STARTING**", DBG_MLE | DBG_AUX);
 
     while (wmquit_monitor_thread_working) {
 
@@ -305,10 +307,15 @@ void    _Optlink DriveMonitorThread(void* p) {
         /* Go to sleep for a while */
         ulrc = DosWaitEventSem(hevDMthread, 3000);
         //~ DosBeep(5000, 50);
-
+        //~ __debug("DriveMonitorThread", "EventSem Expired", DBG_MLE | DBG_AUX);
 
         if (!drive_monitor_thread_working) {
+            __debug("************* DriveMonitorThread", "Working=FALSE -- Breaking out of loop", DBG_MLE | DBG_AUX);
             break;
+            //~ continue;
+            //! Enable or Disable MyDosSleep() below does not changes UUID of DLL ??
+            //! Beam me down Scotty...
+            //~ MyDosSleep(1000);
         }
 
         /* Get a new drivemap */
@@ -403,9 +410,10 @@ void    _Optlink DriveMonitorThread(void* p) {
         hevDMthread = NULL;
     }
 
-    __debug("DriveMonitorThread", "== ENDING B ==", DBG_AUX);
-    __debug("DriveMonitorThread", "**ENDING**", DBG_MLE | DBG_AUX);
-    __debug("DriveMonitorThread", "== ENDING E ==", DBG_AUX);
+    //~ __debug("DriveMonitorThread", "== ENDING B ==", DBG_AUX);
+    //~ __debug("DriveMonitorThread", "**ENDING**", DBG_MLE | DBG_AUX);
+    //~ __debug("DriveMonitorThread", "**ENDING**", DBG_AUX);
+    //~ __debug("DriveMonitorThread", "== ENDING E ==", DBG_AUX);
 
     //~ while (WinGetMsg(hab_thread, &qmsg_thread, NULL, NULL, NULL))
         //~ WinDispatchMsg(hab_thread, &qmsg_thread);
@@ -536,7 +544,8 @@ void    _Optlink LVMthread (void* p) {
         __debug(NULL, "=====> LVM-MONITOR-thread ** going2sleep **", DBG_AUX);
     }
 
-    __debug("LVM-Thread", "**ENDING**", DBG_MLE | DBG_AUX);
+    //~ __debug("LVM-Thread", "**ENDING**", DBG_MLE | DBG_AUX);
+    __debug("LVM-Thread", "**ENDING**", DBG_AUX);
 
     //!: Monitor Thread End Beep
     //~ DosBeep(750, 200);
@@ -764,8 +773,7 @@ void    _Optlink MonitorUSBDevices (void* p) {
     rc = DosCloseEventSem(hevEventInserted);
     rc = DosCloseEventSem(hevEventRemoved);
 
-    /// should be post ?
-    __debug(NULL, "=====> MONITOR-thread ended", DBG_AUX);
+    __debug(NULL, "=====> MONITOR-thread **ENDING**", DBG_AUX);
 
     /* Destroy the message-queue */
     brc = WinDestroyMsgQueue(hmq_thread);
@@ -1187,7 +1195,7 @@ void    _Optlink ZipDriveMonitor(void* p) {
 
     /* SendMessage werkt hier niet !! */
     //~ WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) "=====> ZIP-thread ended");
-    __debug(NULL, "=====> ZIP-thread ended", DBG_AUX);
+    __debug(NULL, "=====> ZIP-thread **ENDING**", DBG_AUX);
 
     /* Destroy the message-queue */
     brc = WinDestroyMsgQueue(hmq_thread);
@@ -1253,7 +1261,8 @@ void    StartThreads() {
             NULL
         );
         ulrc = DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 10, tid_wmquit_monitor);
-
+        sprintf(buf, "ulrc: %d", ulrc);
+        __debug("DosSetPriority(WmQuitMonitor-thread)[TC]", buf, DBG_MLE | DBG_AUX);
 
         //!: ----------------------------------------- [ Start LVM-thread ]
         /**
@@ -1465,60 +1474,58 @@ void    StopThreads() {
          * variable and if cleared the thread ends.
          */
 
-        /* Break loop */
-        lvm_thread_working = FALSE;
+        if (tid_lvm != -1 ) {
 
-        /* Unblock thread */
-        ulrc = DosPostEventSem(hevPushLVMthread);
+             /* Break loop */
+            lvm_thread_working = FALSE;
 
-        sprintf(buf, "-- waiting for lvm_thread: tid_lvm=%08X", tid_lvm);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Unblock thread */
+            ulrc = DosPostEventSem(hevPushLVMthread);
 
+            sprintf(buf, "-- waiting for lvm_thread: tid_lvm=%08X", tid_lvm);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                //~ ulrc = DosWaitThread(&tid_lvm, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                //~ ___debug(NULL, buf, DBG_AUX);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    ulrc = DosWaitThread(&tid_lvm, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            //~ if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+            if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- lvm_thread stopped: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- lvm_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                /* Kill the thread */
+                ulrc = DosKillThread(tid_lvm);
+                sprintf(buf, "-- lvm_thread   killed: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+            }
+
+            /* Close the event-semaphore and reset its global handle */
+            DosCloseEventSem(hevPushLVMthread);
+            hevPushLVMthread = NULL;
+
+            /* Reset thread-id to not running */
+            tid_lvm =-1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        //~ if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-        if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- lvm_thread stopped: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- lvm_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
-            ___debug(NULL, buf, DBG_AUX);
-
-            /* Kill the thread */
-            ulrc = DosKillThread(tid_lvm);
-            sprintf(buf, "-- lvm_thread   killed: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
-            ___debug(NULL, buf, DBG_AUX);
-        }
-
-        /* Close the event-semaphore and reset its global handle */
-        DosCloseEventSem(hevPushLVMthread);
-        hevPushLVMthread = NULL;
-
-        /* Reset thread-id to not running */
-        tid_lvm =-1;
-
-        ___debug(NULL, "", DBG_AUX);
-
-
-
-
 
 
         //!: ------------------------------------------ [ Stop USB-thread ]
@@ -1528,63 +1535,65 @@ void    StopThreads() {
          * variable and if cleared the thread ends.
          */
 
-        /* Break loop */
-        monitor_thread_working = FALSE;
+        if (tid_monitor != -1 ) {
 
-        /* Unblock thread */
-        ulrc = DosPostEventSem(hevEventInserted);
-        ulrc = DosPostEventSem(hevEventRemoved);
+            /* Break loop */
+            monitor_thread_working = FALSE;
 
-        sprintf(buf, "-- waiting for monitor_thread: tid_monitor=%08X", tid_monitor);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Unblock thread */
+            ulrc = DosPostEventSem(hevEventInserted);
+            ulrc = DosPostEventSem(hevEventRemoved);
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_monitor, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            sprintf(buf, "-- waiting for monitor_thread: tid_monitor=%08X", tid_monitor);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    ulrc = DosWaitThread(&tid_monitor, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- monitor_thread stopped: ulrc=%ld, tid_monitor=%08X", ulrc, tid_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                /* Kill the thread */
+                ulrc = DosKillThread(tid_monitor);
+                sprintf(buf, "-- monitor_thread  killed: ulrc=%ld, tid_monitor=%08X", ulrc, tid_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+
+
+            //DosSleep(100);
+
+
+            /* Close the event-semaphores and reset their global handle */
+            DosCloseEventSem(hevEventInserted);
+            hevEventInserted = NULL;
+            DosCloseEventSem(hevEventRemoved);
+            hevEventRemoved = NULL;
+            // MUTEX !!
+
+            /* Reset thread-id to not running */
+            tid_monitor = -1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- monitor_thread stopped: ulrc=%ld, tid_monitor=%08X", ulrc, tid_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_lvm);
-            ___debug(NULL, buf, DBG_AUX);
-
-            /* Kill the thread */
-            ulrc = DosKillThread(tid_monitor);
-            sprintf(buf, "-- monitor_thread  killed: ulrc=%ld, tid_monitor=%08X", ulrc, tid_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-
-
-        //DosSleep(100);
-
-
-        /* Close the event-semaphores and reset their global handle */
-        DosCloseEventSem(hevEventInserted);
-        hevEventInserted = NULL;
-        DosCloseEventSem(hevEventRemoved);
-        hevEventRemoved = NULL;
-        // MUTEX !!
-
-        /* Reset thread-id to not running */
-        tid_monitor = -1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
 
 
@@ -1596,48 +1605,56 @@ void    StopThreads() {
          * variable and if cleared the thread ends.
          */
 
-        /* Break loop */
-        zipdrive_thread_working = FALSE;
+        if (tid_zipdrive != -1 ) {
 
-        sprintf(buf, "-- waiting for zipdrive_thread: tid_zipdrive=%08X", tid_zipdrive);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Break loop */
+            zipdrive_thread_working = FALSE;
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_zipdrive, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            sprintf(buf, "-- waiting for zipdrive_thread: tid_zipdrive=%08X", tid_zipdrive);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    /*
+                    // This thread is not running.
+                    // So DosWaitThread would return no thread ended, causing the
+                    // complete loop to run
+                    // DWT also disabled here.
+                    */
+                    //~ ulrc = DosWaitThread(&tid_zipdrive, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- zipdrive_thread stopped: ulrc=%ld, tid_zipdrive=%08X", ulrc, tid_zipdrive);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- zipdrive_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_zipdrive);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                ulrc = DosKillThread(tid_zipdrive);
+                sprintf(buf, "-- zipdrive_thread killed: ulrc=%ld, tid_zipdrive=%08X", ulrc, tid_zipdrive);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+
+
+            /* Reset thread-id to not running */
+            tid_zipdrive = -1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- zipdrive_thread stopped: ulrc=%ld, tid_zipdrive=%08X", ulrc, tid_zipdrive);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- zipdrive_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_zipdrive);
-            ___debug(NULL, buf, DBG_AUX);
-
-            ulrc = DosKillThread(tid_zipdrive);
-            sprintf(buf, "-- zipdrive_thread killed: ulrc=%ld, tid_zipdrive=%08X", ulrc, tid_zipdrive);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-
-
-        /* Reset thread-id to not running */
-        tid_zipdrive = -1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
 
         //!: --------------------------------------- [ Stop SLAYER-thread ]
@@ -1647,55 +1664,57 @@ void    StopThreads() {
          * variable and if cleared the thread ends.
          */
 
-        /* Break loop */
-        phantom_slayer_thread_working = FALSE;
-        ulrc = DosPostEventSem(hevPSthread);
+        if (tid_phantom_slayer != -1 ) {
 
-        sprintf(buf, "-- waiting for phantom_slayer_thread: tid_phantom_slayer=%08X", tid_phantom_slayer);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Break loop */
+            phantom_slayer_thread_working = FALSE;
+            ulrc = DosPostEventSem(hevPSthread);
 
-        //~ DosSleep(1000);
+            sprintf(buf, "-- waiting for phantom_slayer_thread: tid_phantom_slayer=%08X", tid_phantom_slayer);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_phantom_slayer, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            //~ DosSleep(1000);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    ulrc = DosWaitThread(&tid_phantom_slayer, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- phantom_slayer_thread stopped: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- phantom_slayer_thread not stopped in time, gonna kill it: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                ulrc = DosKillThread(tid_phantom_slayer);
+                sprintf(buf, "-- phantom_slayer_thread killed: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+
+
+            /* Close the event-semaphore and reset its global handle */
+            DosCloseEventSem(hevPSthread);
+            hevPSthread = NULL;
+
+            /* Reset thread-id to not running */
+            tid_phantom_slayer = -1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- phantom_slayer_thread stopped: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- phantom_slayer_thread not stopped in time, gonna kill it: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
-            ___debug(NULL, buf, DBG_AUX);
-
-            ulrc = DosKillThread(tid_phantom_slayer);
-            sprintf(buf, "-- phantom_slayer_thread killed: ulrc=%ld, tid_phantom_slayer=%08X", ulrc, tid_phantom_slayer);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-
-
-        /* Close the event-semaphore and reset its global handle */
-        DosCloseEventSem(hevPSthread);
-        hevPSthread = NULL;
-
-        /* Reset thread-id to not running */
-        tid_phantom_slayer = -1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
 
 
@@ -1706,55 +1725,67 @@ void    StopThreads() {
          * variable and if cleared the thread ends.
          */
 
-        /* Break loop */
-        drive_monitor_thread_working = FALSE;
-        ulrc = DosPostEventSem(hevDMthread);
+        if (tid_drive_monitor != -1 ) {
 
-        sprintf(buf, "-- waiting for drive_monitor_thread: tid_drive_monitor=%08X", tid_drive_monitor);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Break loop */
+            drive_monitor_thread_working = FALSE;
+            //~ DosSleep(1000);
+            ulrc = DosPostEventSem(hevDMthread);
+            //~ DosSleep(1000);
+            sprintf(buf, "-- waiting for drive_monitor_thread: tid_drive_monitor=%08X, pes-ulrc=%d", tid_drive_monitor, ulrc);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-        DosSleep(1000);
+            //~ DosSleep(1000);
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_drive_monitor, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    /*
+                    // Waiting for the Drives Monitor thread to end actually keeps
+                    // the thread from ending. When setting working to FALSE and
+                    // then posting the semaphore should cause the thread to break
+                    // out of it's working loop and end. But it does not even post
+                    // the message it breaking out of the loop. So some deadlock
+                    // occurs here. Other threads behave as expected when ended
+                    // this way. So waiting for it disabled for now.
+                    */
+                    //~ ulrc = DosWaitThread(&tid_drive_monitor, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(100);
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- drive_monitor_thread stopped: ulrc=%ld, tid_drive_monitor=%08X", ulrc, tid_drive_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- drive_monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_drive_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                ulrc = DosKillThread(tid_drive_monitor);
+                sprintf(buf, "-- drive_monitor_thread killed: ulrc=%ld, tid_drive_monitor=%08X", ulrc, tid_drive_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+
+
+            /* Close the event-semaphore and reset its global handle */
+            DosCloseEventSem(hevDMthread);
+            hevDMthread = NULL;
+
+            /* Reset thread-id to not running */
+            tid_drive_monitor = -1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- drive_monitor_thread stopped: ulrc=%ld, tid_drive_monitor=%08X", ulrc, tid_drive_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- drive_monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_drive_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-            ulrc = DosKillThread(tid_drive_monitor);
-            sprintf(buf, "-- drive_monitor_thread killed: ulrc=%ld, tid_drive_monitor=%08X", ulrc, tid_drive_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-
-
-        /* Close the event-semaphore and reset its global handle */
-        DosCloseEventSem(hevDMthread);
-        hevDMthread = NULL;
-
-        /* Reset thread-id to not running */
-        tid_drive_monitor = -1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
 
 
@@ -1764,48 +1795,50 @@ void    StopThreads() {
          * running anymore when we terminate.
          */
 
-        sprintf(buf, "-- waiting for eject_thread: tid_eject=%08X", tid_eject);
-        ___debug(NULL, buf, DBG_AUX);
+        if (tid_eject != -1 ) {
+
+            sprintf(buf, "-- waiting for eject_thread: tid_eject=%08X", tid_eject);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_eject, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    ulrc = DosWaitThread(&tid_eject, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
-        }
 
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- eject_thread stopped: ulrc=%ld, tid_eject=%08X", ulrc, tid_eject);
-            ___debug(NULL, buf, DBG_AUX);
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- eject_thread stopped: ulrc=%ld, tid_eject=%08X", ulrc, tid_eject);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
+                tid_eject = -1;
+            }
+            else {
+                sprintf(buf, "-- eject_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_eject);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                ulrc = DosKillThread(tid_eject);
+                sprintf(buf, "-- eject_eject    killed: ulrc=%ld, tid_eject=%08X", ulrc, tid_eject);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+
+            //DosSleep(100);
+
+            /* Reset thread-id to not running */
             tid_eject = -1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-        else {
-            sprintf(buf, "-- eject_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_eject);
-            ___debug(NULL, buf, DBG_AUX);
-
-            ulrc = DosKillThread(tid_eject);
-            sprintf(buf, "-- eject_eject    killed: ulrc=%ld, tid_eject=%08X", ulrc, tid_eject);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-
-        //DosSleep(100);
-
-        /* Reset thread-id to not running */
-        tid_eject = -1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
 
         //!: -------------------------------- [ Stop WmQuitMonitor-thread ]
@@ -1813,56 +1846,58 @@ void    StopThreads() {
          * This stops the WmQuit Monitr thread.
          */
 
-        /* Break loop */
-        wmquit_monitor_thread_working = FALSE;
+        if (tid_wmquit_monitor != -1 ) {
 
-        /* Unblock thread */
-        //~ ulrc = DosPostEventSem(hevPushLVMthread);
+            /* Break loop */
+            wmquit_monitor_thread_working = FALSE;
 
-        sprintf(buf, "-- waiting for wmquit_monitor_thread: tid_lvm=%08X", tid_wmquit_monitor);
-        ___debug(NULL, buf, DBG_AUX);
+            /* Unblock thread */
+            //~ ulrc = DosPostEventSem(hevPushLVMthread);
+
+            sprintf(buf, "-- waiting for wmquit_monitor_thread: tid_lvm=%08X", tid_wmquit_monitor);
+            ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
 
-        /* Wait for thread to end */
-        {
-            for (int i=0; i<50; i++) {
-                ulrc = DosWaitThread(&tid_wmquit_monitor, DCWW_NOWAIT);
-                sprintf(buf, "    ... %d (%d)", i, ulrc);
-                ___debug(NULL, buf, DBG_AUX);
+            /* Wait for thread to end */
+            {
+                for (int i=0; i<50; i++) {
+                    ulrc = DosWaitThread(&tid_wmquit_monitor, DCWW_NOWAIT);
+                    sprintf(buf, "    ... %d (%d)", i, ulrc);
+                    ___debug(NULL, buf, DBG_MLE|DBG_AUX);
 
-                if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
-                    break;
-                //~ DosBlock(10);
-                MyDosSleep(10);
+                    if (ulrc == NO_ERROR || ulrc == ERROR_INVALID_THREADID)
+                        break;
+                    //~ DosBlock(10);
+                    MyDosSleep(10);
+                }
             }
+
+
+            /* Kill the thread if waiting for it to end was unsuccessful */
+            if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
+                sprintf(buf, "-- wmquit-monitor_thread stopped: ulrc=%ld, tid_lvm=%08X", ulrc, tid_wmquit_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+            }
+            else {
+                sprintf(buf, "-- wmquit-monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_wmquit_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+
+                /* Kill the thread */
+                ulrc = DosKillThread(tid_wmquit_monitor);
+                sprintf(buf, "-- wmquit-monitor   killed: ulrc=%ld, tid_lvm=%08X", buf, ulrc, tid_wmquit_monitor);
+                ___debug(NULL, buf, DBG_MLE|DBG_AUX);
+            }
+
+            /* Close the event-semaphore and reset its global handle */
+            //~ DosCloseEventSem(hevPushLVMthread);
+            //~ hevPushLVMthread = NULL;
+
+            /* Reset thread-id to not running */
+            tid_wmquit_monitor =-1;
+
+            ___debug(NULL, "", DBG_AUX);
         }
-
-
-        /* Kill the thread if waiting for it to end was unsuccessful */
-        if (ulrc == NO_ERROR || ERROR_INVALID_THREADID) {
-            sprintf(buf, "-- wmquit-monitor_thread stopped: ulrc=%ld, tid_lvm=%08X", ulrc, tid_wmquit_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-        }
-        else {
-            sprintf(buf, "-- wmquit-monitor_thread not stopped in time, gonna kill it: ulrc=%ld, tid_lvm=%08X", ulrc, tid_wmquit_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-
-            /* Kill the thread */
-            ulrc = DosKillThread(tid_wmquit_monitor);
-            sprintf(buf, "-- wmquit-monitor   killed: ulrc=%ld, tid_lvm=%08X", buf, ulrc, tid_wmquit_monitor);
-            ___debug(NULL, buf, DBG_AUX);
-        }
-
-        /* Close the event-semaphore and reset its global handle */
-        //~ DosCloseEventSem(hevPushLVMthread);
-        //~ hevPushLVMthread = NULL;
-
-        /* Reset thread-id to not running */
-        tid_wmquit_monitor =-1;
-
-        ___debug(NULL, "", DBG_AUX);
-
 
     }
 
@@ -1905,7 +1940,6 @@ int     Thread::fire() {
                     40000,
                     this
                 );
-    this->stopped = true;
     return this->tid;
 }
 
@@ -2007,6 +2041,7 @@ void    Thread::threadOneshotProc(void* toi) {
     Thread*     this_thread = (Thread*) toi;
 
     this_thread->threadProc();
+    this_thread->stopped = true;
 
     _endthread();
 

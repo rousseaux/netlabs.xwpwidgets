@@ -39,8 +39,8 @@
 #define     BLDLVL_MINOR_VERSION    "0"
 // Build date
 #define     BLDLVL_YEAR             "2014"
-#define     BLDLVL_MONTH            "07"
-#define     BLDLVL_DAY              "13"
+#define     BLDLVL_MONTH            "08"
+#define     BLDLVL_DAY              "01"
 // Build time
 #define     BLDLVL_HOURS            "02"
 #define     BLDLVL_MINUTES          "20"

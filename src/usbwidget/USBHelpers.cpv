@@ -604,21 +604,6 @@ int usb_query_device_report( USBHANDLE dh, unsigned char *ucData, int dataLen )
 
 
     /*
-     * Fast comment.
-     * This can be used to quickly describe something.
-     */
-
-    /*
-    // Block comment.
-    // Describe the code-block below.
-    // Or should we use below-code notation ?
-    */
-
-
-
-
-
-    /*
     // Wat zijn dit voor parameters ?
     // usbcalls.h, mapped dus op een control-message.
 

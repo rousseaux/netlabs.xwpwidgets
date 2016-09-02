@@ -42,7 +42,7 @@ do i = 1 to files.0
 end
 
 /* Copy DFSVOS2.BIN executable */
-'@copy dfsvos2.bin '||dllpath||' > nul';
+/*'@copy dfsvos2.bin '||dllpath||' > nul';*/
 
 /* Copy Language Resource */
 '@copy '||widget||'.nls '||osdir||'\lang > nul';
