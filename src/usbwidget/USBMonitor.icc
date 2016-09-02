@@ -1,0 +1,28 @@
+   option     link(linkwithsharedlib, "no"),
+              link(linkwithmultithreadlib),
+              link(map, "Yes"),
+                        incl(searchpath, "h"),
+                        incl(searchpath, "xworkplace/include"),
+                        incl(searchpath, "xwphelpers/include"),
+           link(export, "USBwgtInitModule",,1,NONAME),
+           link(export, "USBwgtUnInitModule",,2,NONAME),
+           link(export, "USBwgtQueryVersion",,3,NONAME),
+                       gen(call, cdecl)
+
+   {
+target "usbshold.dll"
+{
+  source type(cpp) "usbshold.c"
+  source type(cpp) "usbwidget.c"
+  source type(lib) "ecolange.lib"
+  source type(rc)  "usbwidget.rc"
+
+              source type(cpp) "wi-usb.c"
+
+              source type(lib) "lvm.lib"
+              source type(lib) "usbcalls.lib"
+              source type(lib) "ecomedia.lib"
+
+              source "clist.cpp"
+}
+}

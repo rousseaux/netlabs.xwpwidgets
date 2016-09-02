@@ -1,0 +1,31 @@
+--- I:\sla_dev2\usbwidget-ben\src\.saved\Makefile-20130318-0907	2013-03-18 09:07:42.000000000 -0700
++++ I:\sla_dev2\usbwidget-ben\src\Makefile	2013-03-18 12:47:02.000000000 -0700
+@@ -229,8 +229,12 @@
+ 	@echo.
+ 	@echo $(ARROW) [ Linking modules ]
+ 	$(LNK) -NOlogo -NOE -EXE -OUT:$*.EXE -MAP:$*.map $*.obj $*.def
+-	@exehdr $*.EXE > $*.exh
+-	@exehdr -V $*.EXE > $*.exh-v
++# 2013-03-18 SHL
++	mapsym $*.map
++	exehdr $*.EXE > $*.exh
++# 2013-03-18 SHL
++#	@exehdr -V $*.EXE > $*.exh-v
++	-exehdr -V $*.EXE > $*.exh-v
+ 	@rem exemap $*.EXE > $*.exm
+ 	@echo:
+ 	@echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@ -261,8 +265,12 @@
+ 	@echo.
+ 	@echo $(ARROW) [ Embedding Resources ]
+ 	$(RC) $(RCFLAGS) $*.res $*.DLL
++# 2013-03-18 SHL
++	mapsym $*.map
+ 	@exehdr $*.DLL > $*.exh
+-	@exehdr -V $*.DLL > $*.exh-v
++# 2013-03-18 SHL
++#	@exehdr -V $*.DLL > $*.exh-v
++	-exehdr -V $*.DLL > $*.exh-v
+ 	@rem exemap $*.DLL > $*.exm
+ 	@echo:
+ 	@echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

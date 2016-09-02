@@ -1,0 +1,43 @@
+[LANGE]
+Eject properties=Einstellungen
+
+Rediscover PRM=Aktualisieren
+Eject %c:   %s=Auswerfen %c:   %s
+Drive %s=Laufwerk %s
+can be removed=kann entfernt werden
+DosDevIOCtl error, rc = %d=DosDevIOCtl Fehler, rc = %d
+
+USB Stick Holder Settings=USB Stickhalter Einstellungen
+
+Undo=Rckg„ngig
+Default=Standard
+Close=Schliessen
+
+Enable Beeps on attach/eject=T”ne einschalten beim Hinzufgen/Auswerfen
+
+New USB Device=Neues USB Ger„t
+A new device has been inserted.=Ein neues Ger„t wurde eingefgt.
+
+Safe Eject %c:=Sicheres Auswerfen von %c:
+You can now safely remove=Sie k”nnen nun sicher entfernen
+
+Forced Removal -- Possible Data Loss !=Erzwungenes entfernen -- m”glicher Datenverlust!
+A device has been removed without proper eject !=Ein Ger„t wurde ohne sicheren Auswurf entfernt!
+Please reinsert it and do a proper eject to prevent=Bitte nochmals einfgen und richtig entfernen damit
+the system from becoming unstable.=das System nicht instabil wird.
+
+Drives Removed=Laufwerk entfernt
+Drives Added=Laufwerk hinzugefgt
+Phantoms Recovered=Phantoms wiederhergestellt
+
+ and also %s=und auch %s
+
+Mass Storage Device=Massenspeicherger„t
+
+Model=Model
+
+USB widget Settings=USB Widget Einstellungen
+You can report problems to:=Sie k”nnen Probleme melden an:
+Get the laters version at:=Neuere Versionen gibt es unter:
+
+is a Phantom Drive !=ist ein Phantom Laufwerk !

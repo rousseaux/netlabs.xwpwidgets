@@ -1,0 +1,93 @@
+/*****************************************************************************\
+* USBWidget.rc -- NeoWPS * USB Widget                                         *
+*                                                                             *
+* Copyright (c) 2014 RDP Engineering                                          *
+* Portions Copyright (c) eCoSoft                                              *
+* Portions Copyright (c) 2000-2001 Ulrich Möller                              *
+*                                                                             *
+* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+*                                                                             *
+*   This program is free software; you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License as published by      *
+*   the Free Software Foundation; either version 2 of the License, or         *
+*   (at your option) any later version.                                       *
+*                                                                             *
+*   This program is distributed in the hope that it will be useful,           *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+*   GNU General Public License for more details.                              *
+*                                                                             *
+*   You should have received a copy of the GNU General Public License         *
+*   along with this program; if not, write to the Free Software               *
+*   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,                *
+*   MA 02110-1301, USA.                                                       *
+*                                                                             *
+\*****************************************************************************/
+
+
+/**
+ * This file holds the resource definitions for the Widget.
+ */
+
+
+#include    "Debug.h"
+#include    "dialogids.h"
+#include    <os2.h>
+
+/* When UNIX-paths are accepted these are preferred */
+ICON    ID_ICO_USB_WIDGET   PRELOAD "icons/usb_01.ico"
+
+BITMAP  USB_THUMB PRELOAD       "icons/00000000-128.bmp"
+BITMAP  ICON_INFO PRELOAD       "icons/icon_info.bmp"
+//BITMAP    ICON_WARNING PRELOAD    "Icons/south-pure-yellow.bmp"
+BITMAP  ICON_WARNING PRELOAD    "icons/attentions-pure-yellow.bmp"
+
+
+ICON    ID_ICO_CD           "icons/cd.ico"
+ICON    ID_ICO_HDD          "icons/hdd.ico"
+ICON    ID_ICO_HDDBAD       "icons/hddbad.ico"
+ICON    ID_ICO_HDDPHANTOM   "icons/hddphantom.ico"
+ICON    ID_ICO_ZIP          "icons/zip.ico"
+
+
+MENU ID_POP_MENU
+BEGIN
+    MENUITEM "", ID_MENU_REDISCOVER
+#if     DEBUG
+    SUBMENU "Debug", ID_SUBMENU_DEBUG
+    BEGIN
+        MENUITEM "Debug Dialog",                ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG
+        MENUITEM SEPARATOR
+        MENUITEM "Connect Pipe",                ID_SUBMENU_DEBUG_CONNECT_PIPE
+        MENUITEM "DisConnect Pipe",             ID_SUBMENU_DEBUG_DISCONNECT_PIPE
+#else
+    MENUITEM SEPARATOR      // Temporary disabled to allow sub-menu (fixed items; fix the code)
+#endif
+
+/*
+        MENUITEM "Show Insert Notification",    ID_SHOW_INSERT_NOTIFICATION
+        MENUITEM "Hide Insert Notification",    ID_HIDE_INSERT_NOTIFICATION
+        MENUITEM "Show Eject Notification",     ID_SHOW_EJECT_NOTIFICATION
+        MENUITEM "Hide Eject Notification",     ID_HIDE_EJECT_NOTIFICATION
+        MENUITEM SEPARATOR
+        MENUITEM "DQCD Drive Map",              ID_SUBMENU_DEBUG_SHOW_DRIVE_MAP
+        MENUITEM "LVM Drive Map2",              ID_SUBMENU_DEBUG_SHOW_DRIVE_MAP2
+        MENUITEM "Show Volumes",                ID_SUBMENU_DEBUG_SHOW_VOLUMES
+        MENUITEM "Show Volumes2",               ID_SUBMENU_DEBUG_SHOW_VOLUMES2
+        MENUITEM SEPARATOR
+
+        MENUITEM "Hide Dialogs",                ID_SUBMENU_DEBUG_HIDE_DIALOGS
+        MENUITEM "Show Windows",                ID_SUBMENU_DEBUG_SHOW_WINDOWS
+        MENUITEM "Hide Windows",                ID_SUBMENU_DEBUG_HIDE_WINDOWS
+*/
+
+#if     DEBUG
+    END
+#endif
+
+END
+
+
+
+rcinclude   "dialogs.rc"
+rcinclude   "images.rc"

@@ -1,0 +1,123 @@
+
+      DFSee version 11.5 19-09-2012  (c) 1994-2012: Jan van Wijk
+ =========================[ www.dfsee.com ]==========================
+
+DFSee OS/2   11.5 : executing: runscript K:\TOOLS\dfsee\bin\proftemp.dfs 
+Profile template! : Update + rename to profile.dfs to setup DFSee to your liking
+
+ UI TxWindows : 2.62 11-09-2012 (c) 1995-2012: Fsys Software
+ OS   version : OS/2       4.50     Internal : 20.45 on drive K:
+
+ OEM Engine use only, licensed for SVISTA Disk Utility and eComStation
+
+DFSee OS/2   11.5 : executing: help
+
+ Batch mode can be forced with the '-B' option on the cmd as in 'FDISK -B'
+ Any command not recognized will be passed to the operating system
+
+ The DISK, FDISK, PART and VOL commands can select a specific mode wich
+ makes more specific commands available, use '?' and '???' for details
+
+ mcs-number       = Analyse & display sector, SN using mcs-number sector LSN
+ ? or /?          = Show current FS (mode), specific commands and help info
+ ??               = Show list of all generic commands with short description
+ ???              = Show all recognized sector-types for current filesystem
+ <Enter>, u, x    = Show next with <Enter>, up with 'u' or extra LSN with 'x'
+
+ .NNN             = Display numbered FS-entity marked .NNN from sector list
+ A|a  sSN  [size] = ASCII-dump (half)sector, at sSN, 'size' sectors or bytes
+ ABOUT            = Show version and registration information for DFSee/TPlib
+ ALLOC  [options] = Display allocation map in various size, show RESIZE limits
+ BASE   [options] = Show (and set) base start and end values in several ways
+ BATCH  [on |off] = Set batch-mode, no confirmation or locking-error reporting
+ BPS      secsize = Force sector size to specified value (decimal, bytes)
+ BSFIND [type][a] = Find MBR/EBR/boot/LVM-sectors, on cylinders or ALL sectors
+ CD        [path] = Change current directory and current drive
+ CL               = Translate and display 'this' LSN as a cluster number
+ CL   clust [cmd] = Translate cluster number to hex LSN, display using cmd
+ CL2S clust       = Translate cluster number to hex LSN, display LSN value
+ CS          [sn] = Calculate 32-bit checksum for 'this' sector; HPFS aware
+ CHECK    [dr/nr] = Report all detected filesystem errors using SLT info
+ CHS c  h  s      = Analyse & display sector, using CHS (cylinder head sector)
+ CLONE  [options] = Copy sectors from other (disk/part/vol) to current store
+ CMD    [command] = Force execution of command by Operating System, not DFSee
+ COMP   [options] = Compare sectors from other (disk/part/vol) to current store
+ CONFIRM [-y] msg = Show a notification, or a confirmation message [-y]
+ DELSHOW [sel]    = Show delfind list, with selection wildcard and threshold
+ DFSCHECK[part|*] = Run DOxxx analysis for one or all partitions => DFSC*.P*
+ DFSDISK [disk|*] = Run DFSDISK analysis for one or all disks => dfsdiski.*
+ DIRFIND [l][dir] = Put [l] levels of filenames from [dir] in the sector list
+ DISK   [disk-nr] = Select a physical disk and show the MBR, [-r] = reset geo
+ DISPLAY          = Show current display size in rows and columns
+ EDIT  [-a -h -u] = String replacement edit, using Ascii, Hex or Unicode string
+ EDIT   [options] = Start HEX sector-editor on current or specified location
+ EDIT    filename = Start HEX sector-editor on specified file (binary edit)
+ EXPAND [options] = EXPAND FS to a new LARGER  size, incl. part-table update
+ EXPORT      [fn] = Export  LSNs in the sector list, to file [fn]
+ FDISK [FdiskCmd] = Activate the FDISK fs (mode) and optionally execute cmd
+ FI         [sSN] = File information on specified symbolic-SN, default 'this'
+ FIND options [s] = Find sectors based on options, and optional string [s]
+ FINDPATH   path  = Find and show file/directory specified by path-spec
+ FIXPBR [options] = Fix HiddenSectors and Geometry bootsector to match p-table
+ FS fsys-name     = Force analysis mode for filesystem 'fsys-name'
+ GB    [distance] = Go backwards 'distance'; an mcs-number, default is 1 sector
+ GF    [distance] = Go forward   'distance'; an mcs-number, default is 1 sector
+ GEO  ?|c h s f b = Set/Display specified geometry on opened object, ?=adjust
+ HELP         [*] = Show list of generic commands with short description
+ H|h   SSN [size] = Hex-dump   (half)sector, at sSN, 'size' sectors or bytes
+ ID  [ SSN | -L ] = Identify 'this', specified sSN or LAST sector, using SLT
+ IM   img         = Open a file with a FS-image (.img) for display & analysis
+ IMAGE file [opt] = Save an object to imagefile(s) using specified options
+ IMZ2RAW  imz raw = Create uncompressed (RAW) image from an IMZ compressed one
+ IMPORT      [fn] = Import  LSNs to the sector list, from file [fn]
+ LIST [opt] [str] = Display LSNs in the sector list, using options/string
+ LOCK             = Lock physical disk or logical partition to avoid conflicts
+ LOG   [file | .] = Start, stop or resume logging, (appending) to a file
+ MAP [disknr opt] = Display graphical map of partitions on a disk
+ MEDIA            = Display mapping for Partinionable Media to phys/virt ...
+ MEM  lsn   [pos] = Store sectornumber LSN in the sector list at [pos]
+ MENU [pd-letter] = Activate the menu, opening default or selected pulldown
+ MODE [c,r] [-w-] = Set columns and rows for display, -w- is non-windowed
+ MOVE -b|-e | -f  = Move towards Begin or End, or move/copy to Freespace area
+ PART [pid|drive] = Show partitions,  or select one using nr or drive-letter
+ PRITEMS x [name] = Set number of items/passes for the progress indicators
+ PSN    xx        = Analyse & display sector xx, using physical sector-number
+ PT   [pid|drive] = Display partition-table for current or specified pid/drive
+ PTE   [xx | pid] = Show & edit partition-table at sector [xx] or part [pid]
+ QUERY   item [n] = Query specified item value for disk/partition/freesp [n]
+ RAW2IMZ  raw imz = Create a compressed imagefile (IMZ) from a RAW image file
+ RECOVER path sel = Recover files from sector list to a path, using selection
+ REPEAT [command] = Repeat a (multi) command string, counted or forever ...
+ RESIZE [options] = RESIZE FS to a new SMALLER size, incl. part-table update
+ RESTORE    file  = Restore an imagefile to the currently selected object
+ RUN [script] [p] = Run a DFSee script, with optional parameters and options
+ S2CL lsn         = Translate hex LSN to hex cluster number and display that
+ SAVETO [d][l][n] = Save filedata for current file to new file, opt. rename
+ SCAN [wr [NoId]] = Scan bad-sectors; use read/Write verify; No automatic id
+ SCL       clsize = Force cluster size to specified value (decimal, sectors)
+ SCRFILE [fn] [l] = Save screen buffer to file [fn], last [l] lines
+ SERIAL  [serial] = Set new Volume Serial Number in the bootsector for a FS
+ SET [prop value] = Set DFSee property to a value, 'SET' lists all properties
+ SHIFTL [options] = Shift data inside sectors towards begining (aka LEFT)
+ SHIFTR [options] = Shift data inside sectors towards the end (aka RIGHT)
+ SLT  [type i ln] = Display SLT for sectors of 'type' at index i, ln lines
+ SLEEP  [seconds] = Sleep for specified number of seconds, default is 1
+ SORT   [-d] [-u] = Sort sector list; [-d] = descending [-u] = no duplicates
+ STORE [store-nr] = Select store to be the current store; or display stores
+ SYNCLVM vol [dr] = Sync LVM engine to use [dr] letter for volume, or HIDE it
+ t  [sector-type] = Display 'this' sector as Hex or specified sector-type
+ TRACE [lvl-opts] = Set trace level/options for DFSee functional tracing
+ TRANS [-type] xx = Translate and display value 'xx' as Lsn, I13, Chs and Psn
+ TXDIR fn [o] [a] = List files for wildcard selection 'fn' and several options
+ u  [sector-type] = Display 'up'   sector as Hex or specified sector-type
+ UNLOCK           = Unlock physical disk or logical partition
+ VOL      [drive] = Show all volumes, or select one using drive-letter
+ WIPE   pat [f s] = Wipe disk/vol/part area with pattern at LSN [f], size [s]
+ WIPEFREE  [part] = Wipe freespace in a filesystem to all zeroes (wipe -f)
+ WIPELST [sel][p] = Wipe [sel]ected sectors in list with specified [p]attern
+ WIPESECURE  [-f] = Wipe disk/vol/part area in a SECURE way (DoD spec, slow!)
+ WRITE [ . | sn ] = Write sector back to current or specified sector number
+ x  [sector-type] = Display 'xtra' sector as Hex or specified sector-type
+ q                = Quit DFSee OS/2  11.5 19-09-2012 (c) 1994-2012: Jan van Wijk
+
+Based on TXlibrary: 2.62 11-09-2012 (c) 1995-2012: Fsys Software

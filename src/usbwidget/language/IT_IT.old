@@ -1,0 +1,19 @@
+[LANGE]
+Eject properties=Impostazioni espulsione
+Close=Chiudi
+Rediscover PRM=Ricerca unit… rimovibili...
+Eject %c:   %s=Espelli %c:   %s
+Drive %s=L'unit… %s
+can be removed=si pu• rimuovere
+DosDevIOCtl error, rc = %d=Errore DosDevIOCtl, rc = %d
+
+USB Stick Holder Settings=Impostazioni USB Stick Holder
+
+Undo=Regredisci
+Default=Valore assunto
+Cancel=Annulla
+
+Enable Beeps on attach/eject=Enable Beeps on attach/eject
+You can now safely remove the device=You can now safely remove the device
+Safe Eject %c=Safe Eject %c
+

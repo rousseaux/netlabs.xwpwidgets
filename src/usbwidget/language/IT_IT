@@ -1,0 +1,43 @@
+[LANGE]
+Eject properties=Eject properties
+
+Rediscover PRM=Refresh...
+Eject %c:   %s=Eject %c:   %s
+Drive %s=Drive %s
+can be removed=can be removed
+DosDevIOCtl error, rc = %d=DosDevIOCtl error, rc = %d
+
+USB Stick Holder Settings=USB Stick Holder Settings
+
+Undo=Undo
+Default=Default
+Close=Close
+
+Enable Beeps on attach/eject=Enable Beeps on attach/eject
+
+New USB Device=New USB Device
+A new device has been inserted.=A new device has been inserted.
+
+Safe Eject %c:=Safe Eject %c:
+You can now safely remove=You can now safely remove
+
+Forced Removal -- Possible Data Loss !=Forced Removal -- Possible Data Loss !
+A device has been removed without proper eject !=A device has been removed without proper eject !
+Please reinsert it and do a proper eject to prevent=Please reinsert it and do a proper eject to prevent
+the system from becoming unstable.=the system from becoming unstable.
+
+Drives Removed=Drives Removed
+Drives Added=Drives Added
+Phantoms Recovered=Phantoms Recovered
+
+ and also %s=and also %s
+
+Mass Storage Device=Mass Storage Device
+
+Model=Model
+
+USB widget Settings=USB widget Settings
+You can report problems to:=You can report problems to:
+Get the laters version at:=Get the laters version at:
+
+is a Phantom Drive !=is a Phantom Drive !

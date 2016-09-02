@@ -1,0 +1,4 @@
+/* REXX */
+
+sysdrivemap();
+

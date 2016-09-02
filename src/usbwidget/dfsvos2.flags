@@ -1,0 +1,51 @@
+
+Usage: D:\BIN\DFSVOS2.EXE 
+  Switch character for dfsee switches is '-' or '/'. All single letter
+  switches are case-sensitive, long switchnames like 'query' are not.
+
+  [global-dfsee-switches]  [DFSee multi-command]
+
+ -123[t][s][l][r][dxx] = trace level 123, [t]stamp; [s]creen; No [l]ogging;                                          [r]e-open [d]elay xx ms per line
+
+ -?            = help on DFSee commandline switches (this text)
+ -7            = use 7-bit ASCII only (no 'graphic' characters)
+ -$-           = switch off variable/expression substitution in commands
+ -a            = switch off usage of ANSI escape characters for color
+ -A:nr         = number of sector read attempts, default 1 (no retries)
+ -b            = batch option, automatic 'batch on' command at startup
+ -B-           = suppress the version/copyright banner on DFSee startup
+ -c:[1|2]      = CHS dummy style: 1=PQmagic, 2=MS, default 0=IBM/DFSee
+ -dir:progpath = Explicit program install path to find key and scripts
+ -d:[max]      = show at most 'max' physical disks at startup (mounted)
+ -D:letter     = linux device letter, default is IDE, use 's' for SCSI
+ -e[-]         = include or suppress (-e-) command echo before each cmd
+ -E:[c|i|q]    = default error strategy Confirm, Ignore or Quit
+ -f[-]         = force or suppress borderframe on text-window and desktop
+ -g            = Display specific information to STDOUT only (Engine mode)
+ -G            = Display progress percentage to STDOUT only, every second
+ -geocalc-     = Do NOT calculate disk geometry from contents, use OS geo
+ -gptauto-     = Do NOT interpret GPT database, but show protective MBR
+ -h:[1|2|3]    = PTE use hex SN+Size fields (1), CHS fields (2) or both (3)
+ -H            = Set default input radix for SECTOR and TYPE values to HEX
+ -H:mask       = Set HEX input radix for selected classes (see dfscmds.txt)
+ -i-           = do not ignore lock-errors, with extra pop-up,  (OS/2 only)
+ -L-           = do not use large-file for > 2 GiB file support (OS/2 only)
+ -l:logfile    = start logging immediately to 7bit ascii file 'logfile.log'
+ -l-           = do NOT present dialog at startup to start logging to a file
+ -logauto      = automatically number logfiles when started from dialog
+ -m[:autoshow] = use 'map' or user defined cmd for 'autoshow' in FDISK mode
+ -O:[n|v|q|m]  = default output verbosity Normal, Verbose, Quiet, Maximum
+ -p            = pedantic, allow all warnings and more low level details
+ -P-           = don't use prompting and input dialog windows by default
+ -Q[-]         = quit or do NOT quit automatically after last command
+ -q            = quiet option, automatic 'screen off' command at startup
+ -query        = execute a query command with logfile, quit automatically
+ -R            = start in Read-only operation, no write back to disk/volumes
+ -S            = shell mode, do not allow quit from DFSee (use as OS shell)
+ -s:separator  = specify a command separator character, default is '#'
+ -synclvm      = Try to synchronize the LVM Engine on driveletter changes
+ -t[-]         = include or suppress (-t-) timestamp before each command
+ -simulate:nnn = simulate a BAD-SECTOR error on every modulo 'nnn' PSN read
+ -skipfs:name  = skip filesystems of type 'name' when matching driveletters
+
+ For help use the '?' and '??' commands, use the <F1> key or read DFSCMDS.TXT

@@ -1,0 +1,65 @@
+;******************************************************************************
+;* usbshold.def -- NeoWPS * USB Widget                                        *
+;*                                                                            *
+;* Copyright (c) 2014 RDP Engineering                                         *
+;*                                                                            *
+;* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                          *
+;*                                                                            *
+;*   This program is free software; you can redistribute it and/or modify     *
+;*   it under the terms of the GNU General Public License as published by     *
+;*   the Free Software Foundation; either version 2 of the License, or        *
+;*   (at your option) any later version.                                      *
+;*                                                                            *
+;*   This program is distributed in the hope that it will be useful,          *
+;*   but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+;*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+;*   GNU General Public License for more details.                             *
+;*                                                                            *
+;*   You should have received a copy of the GNU General Public License        *
+;*   along with this program; if not, write to the Free Software              *
+;*   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,               *
+;*   MA 02110-1301, USA.                                                      *
+;*                                                                            *
+;******************************************************************************
+
+
+;
+; This is the Module Definition file for the USBSHOLD.DLL target.
+; It declares the entrypoints called by eCenter.
+; Note that these entrypoints are even called, and the module loaded, when the
+; Widget is not active in the eCenter. Adding and removing the Widget involves
+; Widget Window creation and destruction, not DLL loading / unloading.
+;
+
+
+LIBRARY USBSHOLD INITGLOBAL TERMGLOBAL
+Description 'NeoWPS * USB Widget -- [test-build]'
+PROTMODE
+
+DATA    MULTIPLE READWRITE LOADONCALL NONSHARED
+;       doesn't really matter, because the widget is only ever used
+;       in the WPS process; we use MULTIPLE NONSHARED here to reduce
+;       the amount of shared memory that is needed for the DLL
+
+CODE    LOADONCALL
+
+EXPORTS
+;   ALIAS           =   REALNAME                ORDINAL
+;   -----               --------                -------
+
+;
+; These three are are invoked by the eCenter.
+; They actually forward to the functions that do the actual work, so to
+; activate a different code-path, the forwarding can be changed.
+;
+                        UsbWgtInitModule        @1
+                        UsbWgtUnInitModule      @2
+                        UsbWgtQueryVersion      @3
+
+;
+; This is some testing with aliases
+;
+;                       DummyExport             @20
+;   Alias_01        =   WgtInitModule           @1000
+;   Alias_02        =   WgtUnInitModule         @2000
+;   Alias_03        =   WgtQueryVersion         @65533

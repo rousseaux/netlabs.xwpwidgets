@@ -1,0 +1,42 @@
+/*****************************************************************************\
+* Images.rc -- NeoWPS * USB Widget                                            *
+*                                                                             *
+* Copyright (c) 2014 RDP Engineering                                          *
+*                                                                             *
+* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+*                                                                             *
+*   This program is free software; you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License as published by      *
+*   the Free Software Foundation; either version 2 of the License, or         *
+*   (at your option) any later version.                                       *
+*                                                                             *
+*   This program is distributed in the hope that it will be useful,           *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+*   GNU General Public License for more details.                              *
+*                                                                             *
+*   You should have received a copy of the GNU General Public License         *
+*   along with this program; if not, write to the Free Software               *
+*   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,                *
+*   MA 02110-1301, USA.                                                       *
+*                                                                             *
+\*****************************************************************************/
+
+
+/**
+ * This file defines references to images in the PNG format.
+ * They are bound to the DLL or EXE target as custom resources.
+ */
+
+
+#include    "dialogids.h"
+
+resource    RT_PNG  ID_PNG_USBDEV           "images/png/usbdev_64.png"
+resource    RT_PNG  ID_PNG_USBDEV2          "images/png/usbdev_64-2.png"
+resource    RT_PNG  ID_PNG_INFORMATION      "images/png/information_64.png"
+resource    RT_PNG  ID_PNG_WARNING          "images/png/warning_64.png"
+resource    RT_PNG  ID_PNG_WIRELESS         "images/png/wireless_64.png"
+resource    RT_PNG  ID_PNG_BLUETOOTH        "images/png/bluetooth_64.png"
+resource    RT_PNG  ID_PNG_ATTENTIONS       "images/png/attentions_64.png"
+resource    RT_PNG  ID_PNG_TRANSPORTATION   "images/png/transportation_64.png"
+resource    RT_PNG  ID_PNG_EJECT_BUTTON     "images/png/eject_button_22.png"

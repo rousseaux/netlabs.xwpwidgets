@@ -1,0 +1,57 @@
+/*****************************************************************************\
+* usbshlpr.lvl -- USB Widget for eComStation eCenter                          *
+*                                                                             *
+* Copyright (c) 2014 RDP Engineering                                          *
+*                                                                             *
+* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+*                                                                             *
+*   This program is free software; you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License as published by      *
+*   the Free Software Foundation; either version 2 of the License, or         *
+*   (at your option) any later version.                                       *
+*                                                                             *
+*   This program is distributed in the hope that it will be useful,           *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+*   GNU General Public License for more details.                              *
+*                                                                             *
+*   You should have received a copy of the GNU General Public License         *
+*   along with this program; if not, write to the Free Software               *
+*   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,                *
+*   MA 02110-1301, USA.                                                       *
+*                                                                             *
+\*****************************************************************************/
+
+
+/**
+ * This file hold the module specific BLDLEVEL information.
+ * The generic date/time part is in the Buildlevel.h file.
+ */
+
+
+/* Include the date/time information for this build */
+#include    "Bldlevel.h"
+
+/* BLDLEVEL String to embed in the target */
+char    bldlevel[]  =   "@#"\
+                        BLDLVL_VENDOR":"\
+                        BLDLVL_MAJOR_VERSION"."\
+                        BLDLVL_MIDDLE_VERSION"."\
+                        BLDLVL_MINOR_VERSION"#@##1## "\
+                        BLDLVL_YEAR"/"\
+                        BLDLVL_MONTH"/"\
+                        BLDLVL_DAY" "\
+                        BLDLVL_HOURS":"\
+                        BLDLVL_MINUTES":"\
+                        BLDLVL_SECONDS"      "\
+                        BLDLVL_MACHINE"::"\
+                        BLDLVL_LANGUAGE"::"\
+                        BLDLVL_MINOR_VERSION"::@@"\
+                        "NeoWPS * USB Widget -- [testbuild-"BLDLVL_YEAR""BLDLVL_MONTH""BLDLVL_DAY"]\0 ";
+
+/*
+// FIXME: Incorrect BLDLEVEL string format
+// There is some kind of format error in this BLDLEVEL string.
+// Without the "\0 " tail, the BLDLEVEL utility prints an extra non-printable
+// char. Even a "\0\0" tail does not solve this.
+*/

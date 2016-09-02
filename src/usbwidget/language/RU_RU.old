@@ -1,0 +1,18 @@
+[LANGE]
+Eject properties=Параметры Eject
+Close=Закрыть
+Rediscover PRM=Найти флэшки
+Eject %c:   %s=Извлечь %c:   %s
+Drive %s=Устройство %s
+can be removed=может быть удалено
+DosDevIOCtl error, rc = %d=Ошибка DosDevIOCtl, rc = %d
+
+USB Stick Holder Settings=Настройки USB Stick Holder
+
+Undo=Отказ
+Default=По умолчанию
+Cancel=Отмена
+
+Enable Beeps on attach/eject=Пищать при операциях атач/выталкивание
+You can now safely remove the device=Теперь устройство может быть безопасно удалено из компьютера
+Safe Eject %c=Безопасное извлечение %c
