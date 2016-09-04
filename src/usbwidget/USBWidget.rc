@@ -3,7 +3,7 @@
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 * Portions Copyright (c) eCoSoft                                              *
-* Portions Copyright (c) 2000-2001 Ulrich MÃ¶ller                              *
+* Portions Copyright (c) 2000-2001 Ulrich M”ller                              *
 *                                                                             *
 * Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
 *                                                                             *

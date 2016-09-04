@@ -3,7 +3,7 @@
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 * Portions Copyright (c) eCoSoft                                              *
-* Portions Copyright (c) 2000-2001 Ulrich MÃ¶ller                              *
+* Portions Copyright (c) 2000-2001 Ulrich M”ller                              *
 *                                                                             *
 * Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
 *                                                                             *
@@ -28,7 +28,7 @@
 /**
  * This module is based on the original sources created by eCoSoft.
  * These original sources are in turn based on the Widget Template sources
- * created by Ulrich MÃ¶ller that accompany the XWorkplace source package.
+ * created by Ulrich M”ller that accompany the XWorkplace source package.
  */
 
 
@@ -42,7 +42,7 @@
  */
 
 /**
- * Copyright (C) 2000-2001 Ulrich MÃ¶ller.
+ * Copyright (C) 2000-2001 Ulrich M”ller.
  * This file is part of the XWorkplace binary release.
  * XWorkplace is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
