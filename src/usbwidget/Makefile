@@ -69,17 +69,12 @@ SOURCES=\
 	Threads.cpp\
 	CList.cpp\
 	USBHelpers.cpp\
-	USBHelpers.cpv\
 	LVMHelpers.cpp\
-	LVMHelpers.cpv\
 	APIHelpers.cpp\
-	APIHelpers.cpv\
 	GUIHelpers.cpp\
-	GUIHelpers.cpv\
 	ModuleGlobals.cpp\
 	Testing123.cpp\
 	USBWidget.cpp\
-	USBWidget.cpv\
 	usbshold.lvl\
 	usbshold.cpp\
 
@@ -127,8 +122,7 @@ OBJECTS=\
 	CList.obj\
 	ModuleGlobals.obj\
 	Testing123.obj\
-	USBWidgetPUB.obj\
-	USBWidgetPRV.obj\
+	USBWidget.obj\
 	usbshold.obj\
 
 #
@@ -275,99 +269,99 @@ usbshold.res: $(RESDEPS)
 #USBWidget.obj: USBWidget.c USBWidget.h USBWidget.ih $(DEPS)
 #	$(CC) $(CCFLAGS) -Fo$*.obj $*.c
 
-USBWidgetPUB.obj: USBWidget.cpp USBWidget.hpp $(DEPS)
+USBWidget.obj: USBWidget.cpp USBWidget.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpp
 
-USBWidgetPRV.obj: USBWidget.cpv USBWidget.hpv $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpv
+#~ USBWidgetPRV.obj: USBWidget.cpv USBWidget.hpv $(DEPS)
+#~ 	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpv
 
 #
 # USB SubSystem Interface
 #
-USBHelpers.lib: USBHelpersPUB.obj USBHelpersPRV.obj
+USBHelpers.lib: USBHelpers.obj
 	@echo $(ARROW) [ USBHelpers.lib ]
 !if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*PUB.obj -+$*PRV.obj; 2>nul
+	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
 !else
 !if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*PUB.obj $*PRV.obj
+	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
 !else
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
 !endif
 	@echo.
 
-USBHelpersPUB.obj: USBHelpers.cpp USBHelpers.hpp $(DEPS)
+USBHelpers.obj: USBHelpers.cpp USBHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpp
 
-USBHelpersPRV.obj: USBHelpers.cpv USBHelpers.hpv $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpv
+#~ USBHelpersPRV.obj: USBHelpers.cpv USBHelpers.hpv $(DEPS)
+#~ 	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpv
 
 #
 # LVM SubSystem Interface
 #
-LVMHelpers.lib: LVMHelpersPUB.obj LVMHelpersPRV.obj
+LVMHelpers.lib: LVMHelpers.obj
 	@echo $(ARROW) [ LVMHelpers.lib ]
 !if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*PUB.obj -+$*PRV.obj; 2>nul
+	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
 !else
 !if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*PUB.obj $*PRV.obj
+	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
 !else
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
 !endif
 	@echo.
 
-LVMHelpersPUB.obj: LVMHelpers.cpp LVMHelpers.hpp $(DEPS)
+LVMHelpers.obj: LVMHelpers.cpp LVMHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpp
 
-LVMHelpersPRV.obj: LVMHelpers.cpv LVMHelpers.hpv $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpv
+#~ LVMHelpersPRV.obj: LVMHelpers.cpv LVMHelpers.hpv $(DEPS)
+#~ 	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpv
 
 #
 # API SubSystem Interface
 #
-APIHelpers.lib: APIHelpersPUB.obj APIHelpersPRV.obj
+APIHelpers.lib: APIHelpers.obj
 	@echo $(ARROW) [ APIHelpers.lib ]
 !if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*PUB.obj -+$*PRV.obj; 2>nul
+	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
 !else
 !if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*PUB.obj $*PRV.obj
+	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
 !else
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
 !endif
 	@echo.
 
-APIHelpersPUB.obj: APIHelpers.cpp APIHelpers.hpp $(DEPS)
+APIHelpers.obj: APIHelpers.cpp APIHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpp
 
-APIHelpersPRV.obj: APIHelpers.cpv APIHelpers.hpv $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpv
+#~ APIHelpersPRV.obj: APIHelpers.cpv APIHelpers.hpv $(DEPS)
+#~ 	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpv
 
 #
 # GUI SubSystem Interface
 #
-GUIHelpers.lib: GUIHelpersPUB.obj GUIHelpersPRV.obj
+GUIHelpers.lib: GUIHelpers.obj
 	@echo $(ARROW) [ GUIHelpers.lib ]
 !if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*PUB.obj -+$*PRV.obj; 2>nul
+	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
 !else
 !if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*PUB.obj $*PRV.obj
+	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
 !else
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
 !endif
 	@echo.
 
-GUIHelpersPUB.obj: GUIHelpers.cpp GUIHelpers.hpp $(DEPS)
+GUIHelpers.obj: GUIHelpers.cpp GUIHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpp
 
-GUIHelpersPRV.obj: GUIHelpers.cpv GUIHelpers.hpv $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpv
+#~ GUIHelpersPRV.obj: GUIHelpers.cpv GUIHelpers.hpv $(DEPS)
+#~ 	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpv
 
 #
 # Module with globals
@@ -423,10 +417,11 @@ dist:
 # Cleanup
 #
 # Extensions to remove
-CLEANEXTS=obj lib dll exe dmn res map sym exh exh-v exm lst err
+CLEANEXTS=obj lib dll exe dmn res map sym exh exh-v exm lst err bak
 clean:
 	@echo.
 	@echo ## Cleaning up... ##
 	@for %%i in ($(CLEANEXTS)) do @if exist *.%%i dir /b *.%%i && del *.%%i
+	@if exist Makefile.bldenv del Makefile.bldenv
 #	@echo Cleaning code-store
 #	vacbld -CL "$(BASENAME).icc"

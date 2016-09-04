@@ -24,7 +24,8 @@
 
 
 /**
- * This is the public header file for it's correcponding source.
+ * This module contains a few several wrapper functions for the GUI System.
+ * It is used to simplify things.
  */
 
 

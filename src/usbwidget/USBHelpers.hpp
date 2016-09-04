@@ -24,7 +24,8 @@
 
 
 /**
- * This is the public header file for it's correcponding source.
+ * This module contains several helper functions for the USB System.
+ * It is used to simplify things.
  */
 
 
@@ -44,6 +45,7 @@
 */
 
 
+#include    "LVMHelpers.hpp"
 #include    "Master.hpp"
 #include    "ModuleGlobals.hpp"
 
@@ -150,8 +152,47 @@ VOID    RefreshBeep();
 //// RECURSIVITEIT.
 
 
-#include    "LVMHelpers.hpp"
 
+
+#define     INCL_DOSPROCESS
+#define     INCL_DOSMODULEMGR
+#define     INCL_DOSEXCEPTIONS
+#define     INCL_DOSSEMAPHORES
+#define     INCL_DOSDATETIME
+#define     INCL_DOSMISC
+#define     INCL_DOSERRORS
+#define     INCL_DOSFILEMGR
+#define     INCL_DOSDEVICES
+#define     INCL_DOSDEVIOCTL
+#define     INCL_DOSNMPIPES
+#define     INCL_GPI
+#define     INCL_WIN
+#define     INCL_WINWINDOWMGR
+#define     INCL_WINFRAMEMGR
+#define     INCL_WINDIALOGS
+#define     INCL_WININPUT
+#define     INCL_WINPOINTERS
+//#define   INCL_WINPROGRAMLIST
+//#define   INCL_WINSWITCHLIST
+#define     INCL_WINSYS
+#define     INCL_WINLISTBOXES
+#define     INCL_WINTIMER
+#define     INCL_WINMENUS
+#define     INCL_WINWORKPLACE
+
+// #define  INCL_WINMESSAGEMGR
+// #define  INCL_WINRECTANGLES
+// #define  INCL_WINLISTBOXES
+// #define  INCL_WINENTRYFIELDS
+
+#define     INCL_GPIPRIMITIVES
+#define     INCL_GPILOGCOLORTABLE
+#define     INCL_GPIREGIONS
+#include    <os2.h>
+
+
+#include    <stdio.h>
+#include    <string.h>
 
 
 

@@ -78,7 +78,87 @@ extern "C" {
 
 
 #include    "USBWidget.hpp"
-#include    "USBWidget.hpv"
+
+#include    "Apm.h"
+#include    "dialogids.h"
+#include    "lange.h"
+
+
+#include    "clist.hpp"
+
+// Rousseau:
+// When uncommented VAC40 (VACBLD) barks at multiple inclusion eventhough
+// the .h is protected with #ifndef (?)
+//#include  "ecomedia.h"
+
+#include    "usbcalls.h"
+
+
+// Rousseau: removed extern "C"
+//extern "C" {
+#include    "lvm_intr.h"
+//}
+
+
+#ifndef SETUP_HEADER_INCLUDED
+#include    "setup.h"
+#endif
+
+// disable wrappers, because we're not linking statically
+#ifdef WINH_STANDARDWRAPPERS
+    #undef WINH_STANDARDWRAPPERS
+#endif
+
+// headers in /helpers
+#include    "helpers\comctl.h"      // common controls (window procs)
+#include    "helpers\dosh.h"        // Control Program helper routines
+#include    "helpers\gpih.h"        // GPI helper routines
+#include    "helpers\prfh.h"        // INI file helper routines;
+// #include "helpers\standards.h"   // some standard macros
+                                    // this include is required for some
+                                    // of the structures in shared\center.h
+
+#include    "helpers\stringh.h"     // string helper routines
+// #include "helpers\threads.h"     // thread helpers
+#include    "helpers\timer.h"       // replacement PM timers
+#include    "helpers\winh.h"        // PM helper routines
+#include    "helpers\xstring.h"     // extended string helpers
+#include    "helpers\nls.h"         // PS++
+
+// XWorkplace implementation headers
+#include    "dlgids.h"              // all the IDs that are shared with NLS
+#include    "shared\center.h"       // public XCenter interfaces
+#include    "shared\common.h"       // the majestic XWorkplace include file
+
+
+VOID EXPENTRY WwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
+
+#include    "usbshold.hpp"
+
+#define     PIPE_NAME   "\\PIPE\\PIPE1"
+#define     PIPE_SIZE   256
+
+
+/*
+// Variables for the notification windows.
+// These should be moved to the window-objects.
+*/
+typedef struct _VARIABLES {
+    ULONG devinsert_banner_width;
+    ULONG devinsert_banner_height;
+    ULONG safeeject_banner_width;
+    ULONG safeeject_banner_height;
+    ULONG devremove_banner_width;
+    ULONG devremove_banner_height;
+    ULONG driveschanged_banner_width;
+    ULONG driveschanged_banner_height;
+} VARIABLES;
+
+
+/* Declare external so we can show the BLDLEVEL in the Debug Dialog */
+extern  char    bldlevel[];
+
+
 
 //#ifndef   SETUP_HEADER_INCLUDED
 //#include "setup.h"

@@ -24,7 +24,8 @@
 
 
 /**
- * This is the public header file for it's correcponding source.
+ * This module contains several wrapper functions around the OS/2 API.
+ * It is used to simplify things.
  */
 
 
@@ -129,6 +130,81 @@ APIRET  DosSubAllocMemEx(PVOID pbBase, PPVOID ppb, ULONG cb);
 APIRET  DosSubFreeMemEx(PVOID ppb);
 
 void    MyDosSleep(ULONG msecs);
+
+
+
+#define     INCL_DOSPROCESS
+#define     INCL_DOSMODULEMGR
+#define     INCL_DOSEXCEPTIONS
+#define     INCL_DOSSEMAPHORES
+#define     INCL_DOSDATETIME
+#define     INCL_DOSMISC
+#define     INCL_DOSERRORS
+#define     INCL_DOSFILEMGR
+#define     INCL_DOSDEVICES
+#define     INCL_DOSDEVIOCTL
+#define     INCL_DOSNMPIPES
+#define     INCL_GPI
+#define     INCL_WIN
+#define     INCL_WINWINDOWMGR
+#define     INCL_WINFRAMEMGR
+#define     INCL_WINDIALOGS
+#define     INCL_WININPUT
+#define     INCL_WINPOINTERS
+//#define   INCL_WINPROGRAMLIST
+//#define   INCL_WINSWITCHLIST
+#define     INCL_WINSYS
+#define     INCL_WINLISTBOXES
+#define     INCL_WINTIMER
+#define     INCL_WINMENUS
+#define     INCL_WINWORKPLACE
+
+// #define  INCL_WINMESSAGEMGR
+// #define  INCL_WINRECTANGLES
+// #define  INCL_WINLISTBOXES
+// #define  INCL_WINENTRYFIELDS
+
+#define     INCL_GPIPRIMITIVES
+#define     INCL_GPILOGCOLORTABLE
+#define     INCL_GPIREGIONS
+#include    <os2.h>
+
+
+#include    <stdio.h>
+#include    <string.h>
+
+/*
+// IOCtl Stuff
+*/
+typedef struct _BPB {
+    USHORT      usBytesPerSector;       // Number of bytes per sector
+    BYTE        bSectorsPerCluster;     // Number of sectors per cluster
+    USHORT      usReservedSectors;      // Number of reserved sectors
+    BYTE        cFATs;                  // Number of FATs
+    USHORT      cRootEntries;           // Number of root directory entries
+    USHORT      cSectors;               // Number of sectors
+    BYTE        bMedia;                 // Media descriptor
+    USHORT      usSectorsPerFAT;        // Number of secctors per FAT
+    USHORT      usSectorsPerTrack;      // Number of sectors per track
+    USHORT      cHeads;                 // Number of heads
+    ULONG       cHiddenSectors;         // Number of hidden sectors
+    ULONG       cLargeSectors;          // Number of large sectors
+    BYTE        abReserved[6];          // Reserved
+} BPB;
+
+
+typedef struct _IOCTLPAR {
+    UCHAR       command;
+    USHORT      unit;
+} IOCTLPAR;
+
+typedef struct _IOCTLDATA {
+    BPB         bpb;
+    USHORT      cylinders;
+    UCHAR       devtype;
+    USHORT      devattr;
+} IOCTLDATA;
+
 
 
 #ifdef      __cplusplus
