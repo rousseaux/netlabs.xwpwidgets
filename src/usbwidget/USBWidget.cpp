@@ -2728,7 +2728,7 @@ VOID MwgtDestroy(PXCENTERWIDGET pWidget)
     /*
     hdlgDebugDialog = WinLoadDlg(HWND_DESKTOP,
                             HWND_DESKTOP,
-                            MyDialogHandler_1,
+                            DebugDialogHandler,
                             hmodMe,
                             ID_DEBUG_DIALOG,
                             NULL);

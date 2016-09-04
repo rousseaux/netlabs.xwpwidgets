@@ -53,7 +53,6 @@ VOID    HideDialogs(VOID);
 VOID    ShowWindows(VOID);
 VOID    HideWindows(VOID);
 
-MRESULT EXPENTRY    MyDialogHandler_1(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 MRESULT EXPENTRY    MyDialogHandler_2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 #ifdef      __cplusplus

@@ -37,10 +37,14 @@
 
 #include    "ModuleGlobals.hpp"
 
+/* Declare external so we can show the BLDLEVEL in the Debug Dialog */
+extern  char    bldlevel[];
+
 /* Prototypes */
 void    CreateDebugDialog();
 void    DestroyDebugDialog();
 void    __debug(char* title, char* message, unsigned long flags);
+MRESULT EXPENTRY    DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 #ifdef      __cplusplus
     }
