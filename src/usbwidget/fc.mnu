@@ -1,0 +1,6 @@
+B:	Build
+	nmake -nologo
+D:	Distribute
+	nmake -nologo dist
+C:	Clean
+	nmake -nologo clean

@@ -272,9 +272,6 @@ usbshold.res: $(RESDEPS)
 USBWidget.obj: USBWidget.cpp USBWidget.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpp
 
-#~ USBWidgetPRV.obj: USBWidget.cpv USBWidget.hpv $(DEPS)
-#~ 	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpv
-
 #
 # USB SubSystem Interface
 #
@@ -293,9 +290,6 @@ USBHelpers.lib: USBHelpers.obj
 
 USBHelpers.obj: USBHelpers.cpp USBHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpp
-
-#~ USBHelpersPRV.obj: USBHelpers.cpv USBHelpers.hpv $(DEPS)
-#~ 	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpv
 
 #
 # LVM SubSystem Interface
@@ -316,9 +310,6 @@ LVMHelpers.lib: LVMHelpers.obj
 LVMHelpers.obj: LVMHelpers.cpp LVMHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpp
 
-#~ LVMHelpersPRV.obj: LVMHelpers.cpv LVMHelpers.hpv $(DEPS)
-#~ 	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpv
-
 #
 # API SubSystem Interface
 #
@@ -338,9 +329,6 @@ APIHelpers.lib: APIHelpers.obj
 APIHelpers.obj: APIHelpers.cpp APIHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpp
 
-#~ APIHelpersPRV.obj: APIHelpers.cpv APIHelpers.hpv $(DEPS)
-#~ 	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpv
-
 #
 # GUI SubSystem Interface
 #
@@ -359,9 +347,6 @@ GUIHelpers.lib: GUIHelpers.obj
 
 GUIHelpers.obj: GUIHelpers.cpp GUIHelpers.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpp
-
-#~ GUIHelpersPRV.obj: GUIHelpers.cpv GUIHelpers.hpv $(DEPS)
-#~ 	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpv
 
 #
 # Module with globals
