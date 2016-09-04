@@ -1,11 +1,11 @@
 /*****************************************************************************\
 * USBWidget.cpp -- NeoWPS * USB Widget                                        *
 *                                                                             *
-* Copyright (c) 2014 RDP Engineering                                          *
+* Copyright (c) RDP Engineering                                               *
 * Portions Copyright (c) eCoSoft                                              *
 * Portions Copyright (c) 2000-2001 Ulrich Möller                              *
 *                                                                             *
-* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+* Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
 *                                                                             *
 *   This program is free software; you can redistribute it and/or modify      *
 *   it under the terms of the GNU General Public License as published by      *
@@ -1535,14 +1535,14 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd, ULONG msg0, MPARAM mp1, MPARAM mp2) 
 
                 case ID_FF_NEOWPS: {
                     //StartFireFoxAsProgram("http://en.ecomstation.ru/projects/neowps");
-                    StartFireFoxAsSession("http://en.ecomstation.ru/projects/neowps");
+                    StartFireFoxAsSession("http://rousseaux.github.io/netlabs.xwpwidgets");
                     WinPostMsg(hwnd, WM_COMMAND, (MPARAM) CLOSE_BUTTON, (MPARAM) NULL);
                 }
                 break;
 
                 case ID_FF_BENSBITS: {
                     //StartFireFoxAsProgram("http://www.bensbits.nl");
-                    StartFireFoxAsSession("http://www.bensbits.nl");
+                    StartFireFoxAsSession("http://github.com/rousseaux/netlabs.xwpwidgets/releases");
                     WinPostMsg(hwnd, WM_COMMAND, (MPARAM) CLOSE_BUTTON, (MPARAM) NULL);
                 }
                 break;

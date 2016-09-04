@@ -1,9 +1,9 @@
 /*****************************************************************************\
 * Bldlevel.h -- OS/2 BLDLEVEL Information (Date/Time)                         *
 *                                                                             *
-* Copyright (c) 2014 RDP Engineering                                          *
+* Copyright (c) RDP Engineering                                               *
 *                                                                             *
-* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+* Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
 *                                                                             *
 *   This program is free software; you can redistribute it and/or modify      *
 *   it under the terms of the GNU General Public License as published by      *
@@ -36,15 +36,18 @@
 // Version
 #define     BLDLVL_MAJOR_VERSION    "2"
 #define     BLDLVL_MIDDLE_VERSION   "2"
-#define     BLDLVL_MINOR_VERSION    "0"
+#define     BLDLVL_MINOR_VERSION    "3"
 // Build date
-#define     BLDLVL_YEAR             "2014"
-#define     BLDLVL_MONTH            "08"
-#define     BLDLVL_DAY              "01"
+#define     BLDLVL_YEAR             "2016"
+#define     BLDLVL_MONTH            "09"
+#define     BLDLVL_DAY              "04"
 // Build time
-#define     BLDLVL_HOURS            "02"
-#define     BLDLVL_MINUTES          "20"
-#define     BLDLVL_SECONDS          "00"
+//~ #define     BLDLVL_HOURS            "02"
+//~ #define     BLDLVL_MINUTES          "20"
+//~ #define     BLDLVL_SECONDS          "03"
+#define     BLDLVL_HOURS            "99"
+#define     BLDLVL_MINUTES          "99"
+#define     BLDLVL_SECONDS          "99"
 // Build machine
 //~ #define     BLDLVL_MACHINE          "ECS-DEVBOX"
 #define     BLDLVL_MACHINE          "*UNKNOWN*"

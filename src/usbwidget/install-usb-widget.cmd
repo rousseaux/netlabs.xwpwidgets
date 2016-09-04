@@ -58,4 +58,4 @@ end
 '@echo Please restart the Workplace Shell to activate the new Widget version.';
 '@echo Then right click on the Widget Button and choose Properties to verify the build info.';
 '@echo:';
-'@echo Please report problems with the Widget to: rousseau.ecsdev@gmail.com or use the bug-tracker.';
+'@echo Please report problems with the Widget to: rousseau.os2dev@gmx.com.';

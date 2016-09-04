@@ -1,9 +1,9 @@
 /*****************************************************************************\
 * Debug.cpp -- NeoWPS * USB Widget                                            *
 *                                                                             *
-* Copyright (c) 2014 RDP Engineering                                          *
+* Copyright (c) RDP Engineering                                               *
 *                                                                             *
-* Author: Ben Rietbroek <rousseau.ecsdev@gmail.com>                           *
+* Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
 *                                                                             *
 *   This program is free software; you can redistribute it and/or modify      *
 *   it under the terms of the GNU General Public License as published by      *

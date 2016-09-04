@@ -15,7 +15,7 @@ BEGIN
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000AAL
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans.Bold"
-        ENTRYFIELD      "NeoWPS: http://ecomstation.ru/neowps", ENTRY_NEOWPS,
+        ENTRYFIELD      "http://rousseaux.github.io/netlabs.xwpwidgets", ENTRY_NEOWPS,
                         34, 80, 170, 8, ES_CENTER | ES_READONLY | WS_GROUP |
                         NOT WS_VISIBLE
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000050L
@@ -29,10 +29,10 @@ BEGIN
         PUSHBUTTON      "Default", DEFAULT_BUTTON, 112, 4, 50, 14
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
         PUSHBUTTON      "Close", CLOSE_BUTTON, 166, 4, 50, 14
-        RTEXT           "test-build 20140801", ID_DEBUG_DIALOG, 156, 22, 60,
+        RTEXT           "test-build 20160904", ID_DEBUG_DIALOG, 156, 22, 60,
                         8, DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C00000L
-        RTEXT           "v2.2.0", ID_WIDGET_VERSION, 186, 82, 30, 8,
+        RTEXT           "v2.2.3", ID_WIDGET_VERSION, 186, 82, 30, 8,
                         DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
         LTEXT           "3f11e440-f3f5-4d80-8da9-33d70dda483b",
@@ -48,7 +48,7 @@ BEGIN
         AUTOCHECKBOX    "Automount Zipdisks", ID_MONITOR_ZIP, 0, 0, 160, 8,
                         WS_GROUP | NOT WS_VISIBLE
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
-        ENTRYFIELD      "rousseau.ecsdev@gmail.com", 106, 40, 51, 148, 8,
+        ENTRYFIELD      "rousseau.os2dev@gmx.com", 106, 40, 51, 148, 8,
                         ES_CENTER | ES_READONLY | WS_GROUP
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
@@ -56,17 +56,17 @@ BEGIN
         CTEXT           "Get the latest version at:", ID_WIDGET_UPDATES, 40,
                         41, 148, 8, DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
-        ENTRYFIELD      "http://www.bensbits.nl", 108, 64, 81, 148,
+        ENTRYFIELD      "http://github.com/rousseaux/netlabs.xwpwidgets/releases", 108, 64, 81, 148,
                         8, ES_CENTER | ES_READONLY | WS_GROUP | NOT
                         WS_VISIBLE
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
-        PUSHBUTTON      "NeoWPS: http://ecomstation.ru/neowps", ID_FF_NEOWPS,
-                        56, 68, 121, 8, BS_NOBORDER
+        PUSHBUTTON      "http://rousseaux.github.io/netlabs.xwpwidgets", ID_FF_NEOWPS,
+                        38, 68, 158, 8, BS_NOBORDER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
-        PUSHBUTTON      "http://www.bensbits.nl", ID_FF_BENSBITS,
-                        42, 34, 144, 8, BS_NOBORDER
+        PUSHBUTTON      "http://github.com/rousseaux/netlabs.xwpwidgets/releases", ID_FF_BENSBITS,
+                        18, 34, 194, 8, BS_NOBORDER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
     END
 END
