@@ -41,12 +41,12 @@
 
 /* Prototypes */
 void    GUIHelpers(void);
-MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-class   WidgetSettings : public Window {
+class   WidgetSettingsDialog : public Dialog {
     public:
-    WidgetSettings();
-    virtual ~WidgetSettings();
+    WidgetSettingsDialog();
+    virtual ~WidgetSettingsDialog();
     virtual int create(void);
     virtual int process(void);
     virtual int destroy(void);

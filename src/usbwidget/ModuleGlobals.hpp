@@ -88,7 +88,7 @@ class   Window;
 class   USBWidget;
 class   DebugDialog;
 class   ProblemFixerDialog;
-class   WidgetSettings;
+class   WidgetSettingsDialog;
 
 extern  void*   g_usbdev;
 
@@ -96,10 +96,10 @@ extern  bool            g_debug;
 extern  bool            g_the_very_first_time;
 extern  bool            g_use_new_implementation;
 
-extern  USBWidget*          g_myUSBWidget;
-extern  DebugDialog*        g_myDebugDialog;
-extern  ProblemFixerDialog* g_ProblemFixerDialog;
-extern  WidgetSettings*     g_WidgetSettings;
+extern  USBWidget*              g_myUSBWidget;
+extern  DebugDialog*            g_myDebugDialog;
+extern  ProblemFixerDialog*     g_ProblemFixerDialog;
+extern  WidgetSettingsDialog*   g_WidgetSettingsDialog;
 
 extern  char            drvletter_safeeject;
 extern  ULONG           drivemap_safeeject;

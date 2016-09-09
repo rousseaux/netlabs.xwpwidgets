@@ -142,7 +142,7 @@ class   Dialog : public Window {
 
     public:
     Dialog();
-    ~Dialog();
+    virtual ~Dialog();
 };
 
 /**

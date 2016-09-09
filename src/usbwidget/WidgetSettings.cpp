@@ -36,24 +36,24 @@ void    WidgetSettings(void) {
 }
 
 /*
-// WidgetSettings
+// WidgetSettingsDialog
 */
-WidgetSettings::WidgetSettings() {
-    MessageBox("WidgetSettings","CONSTRUCTOR");
+WidgetSettingsDialog::WidgetSettingsDialog() {
+    MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
 }
 
-WidgetSettings::~WidgetSettings() {
-    MessageBox("WidgetSettings","DESTRUCTOR");
+WidgetSettingsDialog::~WidgetSettingsDialog() {
+    MessageBox("WidgetSettingsDialog","DESTRUCTOR");
 }
 
-int WidgetSettings::create() {
-    MessageBox("WidgetSettings","CREATE");
+int WidgetSettingsDialog::create() {
+    MessageBox("WidgetSettingsDialog","CREATE");
     this->handle = WinLoadDlg(
                     HWND_DESKTOP,
                     NULL,
-                    //~ (PFNWP) WidgetSettings::classMessageHandler,
+                    //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
                     //~ (PFNWP) MyDialogHandler_1,
-                    (PFNWP) WidgetSettingsHandler,
+                    (PFNWP) WidgetSettingsDialogHandler,
                     hmodMe,
                     DLG_ID_WIDGETSETTINGS,
                     //~ ID_DEBUG_DIALOG,
@@ -69,20 +69,15 @@ int WidgetSettings::create() {
     return NULL;
 }
 
-//~ int WidgetSettings::show() {
-    //~ MessageBox("Widget Settings #1","Widget Settings #2");
-    //~ return NULL;
-//~ }
-
-int WidgetSettings::process() {
-    MessageBox("WidgetSettings","PROCESS");
+int WidgetSettingsDialog::process() {
+    MessageBox("WidgetSettingsDialog","PROCESS");
     int reply = NULL;
     reply = WinProcessDlg(this->handle);
     return reply;
 }
 
-int WidgetSettings::destroy() {
-    MessageBox("WidgetSettings","DESTROY");
+int WidgetSettingsDialog::destroy() {
+    MessageBox("WidgetSettingsDialog","DESTROY");
     WinDestroyWindow(this->handle);
     this->handle = NULL;
     return NULL;
@@ -91,8 +86,8 @@ int WidgetSettings::destroy() {
 
 
 
-//~ ulong   WidgetSettings::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
-MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+//~ ulong   WidgetSettingsDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
+MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     MRESULT mresReply = 0;
     HWND    hwndNB = NULL;

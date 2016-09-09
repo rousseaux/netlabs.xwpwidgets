@@ -220,10 +220,10 @@ bool            g_debug                     = true;
 bool            g_the_very_first_time       = true;
 bool            g_use_new_implementation    = false;
 
-USBWidget*          g_myUSBWidget           = NULL;
-DebugDialog*        g_myDebugDialog         = NULL;
-ProblemFixerDialog* g_ProblemFixerDialog    = NULL;
-WidgetSettings*     g_WidgetSettings        = NULL;
+USBWidget*               g_myUSBWidget           = NULL;
+DebugDialog*             g_myDebugDialog         = NULL;
+ProblemFixerDialog*      g_ProblemFixerDialog    = NULL;
+WidgetSettingsDialog*    g_WidgetSettingsDialog  = NULL;
 
 void*           g_usbdev                = NULL;
 

@@ -3066,22 +3066,23 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     break;
                 }
 
-                //! Widget Settings
+                //! WidgetSettings Dialog
                 case ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK: {
                     BOOL    brc = FALSE;
                     ULONG   ulReply = NULL;
-                    HWND    hwndWidgetSettings = NULL;
-                    WidgetSettings* lws = NULL;
+                    HWND    hwndWidgetSettingsDialog = NULL;
+                    WidgetSettingsDialog* lwsd = NULL;
 
-                    lws = new WidgetSettings;
-                    if (lws) {
-                        lws->create();
-                        lws->show();
-                        lws->process();
-                        lws->hide();
-                        lws->destroy();
-                        delete lws;
-                        lws = NULL;
+                    /* Test new WidgetSettings Dialog */
+                    lwsd = new WidgetSettingsDialog;
+                    if (lwsd) {
+                        lwsd->create();
+                        lwsd->show();
+                        lwsd->process();
+                        lwsd->hide();
+                        lwsd->destroy();
+                        delete lwsd;
+                        lwsd = NULL;
                     }
 
                     mrc = 0;
