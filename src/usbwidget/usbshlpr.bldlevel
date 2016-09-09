@@ -1,10 +1,10 @@
 Build Level Display Facility Version 6.12.675 Sep 25 2001
 (C) Copyright IBM Corporation 1993-2001
-Signature:       @#*UNKNOWN*:2.2.3#@##1## 2016/09/04 99:99:99      *UNKNOWN*::ML::3::@@Support DAEMON for the NeoWPS * USB Widget -- [testbuild-20160904]
+Signature:       @#*UNKNOWN*:2.3.0#@##1## 2016/09/09 99:99:99      *UNKNOWN*::ML::0::@@Support DAEMON for the NeoWPS * USB Widget -- [testbuild-20160909]
 Vendor:          *UNKNOWN*
-Revision:        2.02.3
-Date/Time:       2016/09/04 99:99:99    
+Revision:        2.03.0
+Date/Time:       2016/09/09 99:99:99    
 Build Machine:   *UNKNOWN*
 Language Code:   ML
-File Version:    2.2.3
-Description:     Support DAEMON for the NeoWPS * USB Widget -- [testbuild-20160904]
+File Version:    2.3
+Description:     Support DAEMON for the NeoWPS * USB Widget -- [testbuild-20160909]

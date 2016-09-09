@@ -1,0 +1,6 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+DLGINCLUDE 1 "Notebookids.h"
+
+// From Dialogs.dlg

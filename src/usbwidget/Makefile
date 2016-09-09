@@ -74,6 +74,7 @@ SOURCES=\
 	GUIHelpers.cpp\
 	ModuleGlobals.cpp\
 	Testing123.cpp\
+	WidgetSettings.cpp\
 	USBWidget.cpp\
 	usbshold.lvl\
 	usbshold.cpp\
@@ -95,6 +96,7 @@ DEPS=\
 	GUIHelpers.hpp\
 	ModuleGlobals.hpp\
 	Testing123.hpp\
+	WidgetSettings.hpp\
 	USBWidget.hpp\
 
 #
@@ -106,7 +108,9 @@ RESDEPS=\
 	Dialogs.rc\
 	Dialogs.dlg\
 	Dialogids.h\
-	Dialogs.dlg\
+	Notebooks.rc\
+	Notebooks.dlg\
+	Notebookids.h\
 	usbshold.rc\
 	USBWidget.rc\
 	Images.rc\
@@ -122,6 +126,7 @@ OBJECTS=\
 	CList.obj\
 	ModuleGlobals.obj\
 	Testing123.obj\
+	WidgetSettings.obj\
 	USBWidget.obj\
 	usbshold.obj\
 
@@ -370,6 +375,12 @@ AllocMem.obj: $*.cpp $*.hpp $(DEPS)
 # Module containing stuff to fix LVM hostile disk lauouts
 #
 ProblemFixer.obj: $*.cpp $*.hpp $(DEPS)
+	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
+
+#
+# Module containing the new Widget Setting NoteBook
+#
+WidgetSettings.obj: $*.cpp $*.hpp $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #

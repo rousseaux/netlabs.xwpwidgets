@@ -223,6 +223,7 @@ bool            g_use_new_implementation    = false;
 USBWidget*          g_myUSBWidget           = NULL;
 DebugDialog*        g_myDebugDialog         = NULL;
 ProblemFixerDialog* g_ProblemFixerDialog    = NULL;
+WidgetSettings*     g_WidgetSettings        = NULL;
 
 void*           g_usbdev                = NULL;
 

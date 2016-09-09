@@ -3064,6 +3064,21 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     break;
                 }
 
+                //! Widget Settings
+                case ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK: {
+                    BOOL    brc = FALSE;
+                    ULONG   ulReply = NULL;
+                    HWND    hwndWidgetSettings = NULL;
+                    MessageBox("Widget Settings #1","Widget Settings #2");
+                    mrc = 0;
+
+                    //~ WinShowWindow(hdlgDebugDialog, TRUE);
+                    //~ WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
+                    return 0;
+                    break;
+                }
+
+                //! Debug Dialog
                 case ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG: {
                     BOOL    brc = FALSE;
                     ULONG   ulReply = NULL;

@@ -8,7 +8,7 @@
 
 
 /* Some variables */
-build="testbuild-20140713";
+build="testbuild-20160909";
 widget="usbshold";
 daemon="usbshlpr";
 files.0=2;
@@ -36,10 +36,15 @@ do i = 1 to files.0
     '@if not exist 'dllpath||'\'||files.i||'.bu copy 'dllpath||'\'||files.i||' 'dllpath||'\'||files.i||'.bu';
     '@unlock /v '||dllpath||'\'||files.i;
     '@md5sum '||dllpath||'\'||files.i;
+    '@del '||dllpath||'\'||files.i||' 2>nul > nul';
     '@copy '||files.i||' '||dllpath||'\'||files.i||' > nul';
     '@md5sum '||dllpath||'\'||files.i;
     '@copy '||files.i||' '||dllpath||'\'||files.i||'.'build||' > nul';
 end
+
+/* Show the build-level of the Widget */
+say'';
+'@bldlevel '||dllpath||'\'||widget||'.dll';
 
 /* Copy DFSVOS2.BIN executable */
 /*'@copy dfsvos2.bin '||dllpath||' > nul';*/
@@ -48,9 +53,10 @@ end
 '@copy '||widget||'.nls '||osdir||'\lang > nul';
 
 /* Copy symbol files */
+'@del '||dllpath||'\'||widget||'.sym 2>nul > nul';
 '@copy '||widget||'.sym '||dllpath||' > nul';
+'@del '||dllpath||'\'||daemon||'.sym 2>nul > nul';
 '@copy '||daemon||'.sym '||dllpath||'> nul';
-
 
 /* Done */
 '@echo:';
@@ -58,4 +64,4 @@ end
 '@echo Please restart the Workplace Shell to activate the new Widget version.';
 '@echo Then right click on the Widget Button and choose Properties to verify the build info.';
 '@echo:';
-'@echo Please report problems with the Widget to: rousseau.os2dev@gmx.com.';
+'@echo Please report problems with the Widget to: rousseau.os2dev@gmx.com';

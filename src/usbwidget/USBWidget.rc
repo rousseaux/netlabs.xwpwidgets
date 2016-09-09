@@ -56,6 +56,7 @@ BEGIN
 #if     DEBUG
     SUBMENU "Debug", ID_SUBMENU_DEBUG
     BEGIN
+        MENUITEM "Widget Settings",             ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK
         MENUITEM "Debug Dialog",                ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG
         MENUITEM SEPARATOR
         MENUITEM "Connect Pipe",                ID_SUBMENU_DEBUG_CONNECT_PIPE
@@ -90,4 +91,5 @@ END
 
 
 rcinclude   "dialogs.rc"
+rcinclude   "notebooks.rc"
 rcinclude   "images.rc"

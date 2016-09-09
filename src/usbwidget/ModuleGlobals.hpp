@@ -84,9 +84,11 @@ extern  PVOID           shmem;
 
 
 /* Needed because of cyclic dependancies; fix later */
+class   Window;
 class   USBWidget;
 class   DebugDialog;
 class   ProblemFixerDialog;
+class   WidgetSettings;
 
 extern  void*   g_usbdev;
 
@@ -97,6 +99,7 @@ extern  bool            g_use_new_implementation;
 extern  USBWidget*          g_myUSBWidget;
 extern  DebugDialog*        g_myDebugDialog;
 extern  ProblemFixerDialog* g_ProblemFixerDialog;
+extern  WidgetSettings*     g_WidgetSettings;
 
 extern  char            drvletter_safeeject;
 extern  ULONG           drivemap_safeeject;
