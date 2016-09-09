@@ -29,3 +29,7 @@
  * It is used by other resource files.
  */
 #define DLG_ID_WIDGETSETTINGS       9001
+#define DLG_ID_WIDGETSETTINGS_NOTEBOOK 9010
+#define NB_PAGE_1                   9501
+#define NB_PAGE_2                   9502
+#define NB_PAGE_3                   9503

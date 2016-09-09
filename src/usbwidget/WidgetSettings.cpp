@@ -84,6 +84,7 @@ int WidgetSettings::process() {
 int WidgetSettings::destroy() {
     MessageBox("WidgetSettings","DESTROY");
     WinDestroyWindow(this->handle);
+    this->handle = NULL;
     return NULL;
 }
 
@@ -94,11 +95,14 @@ int WidgetSettings::destroy() {
 MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     MRESULT mresReply = 0;
+    HWND    hwndNB = NULL;
 
     switch (msg) {
 
         //!: Init dialog (Debug)
         case WM_INITDLG: {
+            hwndNB = WinWindowFromID(hwnd, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
+
             mresReply = FALSE;
             break;
         }
@@ -106,9 +110,9 @@ MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM 
         case WM_COMMAND: {
             switch (SHORT1FROMMP(mp1)) {
 
-                /* Close Dialog */
-                case DID_OK: {
-                    mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
+                /* Close Button */
+                case 9003: {
+                    mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
                     break;
                 }
 
