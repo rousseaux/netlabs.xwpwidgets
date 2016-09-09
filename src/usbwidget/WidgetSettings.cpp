@@ -48,6 +48,24 @@ WidgetSettings::~WidgetSettings() {
 
 int WidgetSettings::create() {
     MessageBox("WidgetSettings","CREATE");
+    this->handle = WinLoadDlg(
+                    HWND_DESKTOP,
+                    NULL,
+                    //~ (PFNWP) WidgetSettings::classMessageHandler,
+                    //~ (PFNWP) MyDialogHandler_1,
+                    (PFNWP) WidgetSettingsHandler,
+                    hmodMe,
+                    DLG_ID_WIDGETSETTINGS,
+                    //~ ID_DEBUG_DIALOG,
+                    NULL);
+
+    if (this->handle) {
+        MessageBox("WinLoadDlg", "OK");
+    } else {
+        MessageBox("WinLoadDlg", "NULL");
+    }
+
+
     return NULL;
 }
 
@@ -58,10 +76,57 @@ int WidgetSettings::create() {
 
 int WidgetSettings::process() {
     MessageBox("WidgetSettings","PROCESS");
-    return NULL;
+    int reply = NULL;
+    reply = WinProcessDlg(this->handle);
+    return reply;
 }
 
 int WidgetSettings::destroy() {
     MessageBox("WidgetSettings","DESTROY");
+    WinDestroyWindow(this->handle);
     return NULL;
+}
+
+
+
+
+//~ ulong   WidgetSettings::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
+MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+
+    MRESULT mresReply = 0;
+
+    switch (msg) {
+
+        //!: Init dialog (Debug)
+        case WM_INITDLG: {
+            mresReply = FALSE;
+            break;
+        }
+
+        case WM_COMMAND: {
+            switch (SHORT1FROMMP(mp1)) {
+
+                /* Close Dialog */
+                case DID_OK: {
+                    mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
+                    break;
+                }
+
+                /* Default */
+                default: {
+                    mresReply = 0;
+                    //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+                    break;
+                }
+
+            } // switch
+            break;
+        }
+        //~: Handle default message (debug dialog)
+        default: {
+            mresReply = 0;
+            mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
+        }
+    }
+    return mresReply;
 }

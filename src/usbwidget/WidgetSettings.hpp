@@ -41,14 +41,19 @@
 
 /* Prototypes */
 void    GUIHelpers(void);
+MRESULT EXPENTRY WidgetSettingsHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   WidgetSettings : public Window {
     public:
     WidgetSettings();
     virtual ~WidgetSettings();
-    int create(void);
-    int process(void);
-    int destroy(void);
+    virtual int create(void);
+    virtual int process(void);
+    virtual int destroy(void);
+
+// The _System qualifier can not be applied... (when a static method ?)
+    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
+    //~ static MRESULT EXPENTRY classMessageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
 
 

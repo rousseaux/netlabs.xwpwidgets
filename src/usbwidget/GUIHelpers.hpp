@@ -122,13 +122,13 @@ class   Window : public Root {
 
     public:
     Window();
-    ~Window();
-    int     show();
-    void    center();
-    void    centerToDesktop();
-    void    centerToOther(ulong toCenterTo);
-    int     hide();
-    ulong   getHandle();
+    virtual ~Window();
+    virtual int     show();
+    virtual void    center();
+    virtual void    centerToDesktop();
+    virtual void    centerToOther(ulong toCenterTo);
+    virtual int     hide();
+    virtual ulong   getHandle();
 };
 
 

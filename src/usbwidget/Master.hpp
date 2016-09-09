@@ -200,7 +200,8 @@ typedef FSDTYPE*    PFSDTYPE;
 
 #include    "ecomedia.h"
 #include    "CList.hpp"
-#include    "dialogids.h"
+#include    "Dialogids.h"
+#include    "Notebookids.h"
 //#include  "Testing123.hpp"
 #include    "lange.h"
 
