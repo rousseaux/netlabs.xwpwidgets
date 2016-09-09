@@ -85,6 +85,7 @@ SOURCES=\
 DEPS=\
 	Debug.h\
 	Dialogids.h\
+	Notebookids.h\
 	Master.hpp\
 	Debug.hpp\
 	AllocMem.hpp\
@@ -266,6 +267,7 @@ usbshold.res: $(RESDEPS)
 	@set INCLUDE=$(RCINCLUDE)
 !endif
 	$(RC) -r Dialogs.rc
+	$(RC) -r Notebooks.rc
 	$(RC) -r $*.rc $@
 
 #

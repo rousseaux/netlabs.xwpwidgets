@@ -39,9 +39,29 @@ void    WidgetSettings(void) {
 // WidgetSettings
 */
 WidgetSettings::WidgetSettings() {
-
+    MessageBox("WidgetSettings","CONSTRUCTOR");
 }
 
 WidgetSettings::~WidgetSettings() {
+    MessageBox("WidgetSettings","DESTRUCTOR");
+}
 
+int WidgetSettings::create() {
+    MessageBox("WidgetSettings","CREATE");
+    return NULL;
+}
+
+//~ int WidgetSettings::show() {
+    //~ MessageBox("Widget Settings #1","Widget Settings #2");
+    //~ return NULL;
+//~ }
+
+int WidgetSettings::process() {
+    MessageBox("WidgetSettings","PROCESS");
+    return NULL;
+}
+
+int WidgetSettings::destroy() {
+    MessageBox("WidgetSettings","DESTROY");
+    return NULL;
 }

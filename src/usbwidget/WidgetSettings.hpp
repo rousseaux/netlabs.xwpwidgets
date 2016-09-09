@@ -46,6 +46,9 @@ class   WidgetSettings : public Window {
     public:
     WidgetSettings();
     virtual ~WidgetSettings();
+    int create(void);
+    int process(void);
+    int destroy(void);
 };
 
 

@@ -123,11 +123,11 @@ class   Window : public Root {
     public:
     Window();
     ~Window();
-    ulong   show();
+    int     show();
     void    center();
     void    centerToDesktop();
     void    centerToOther(ulong toCenterTo);
-    ulong   hide();
+    int     hide();
     ulong   getHandle();
 };
 

@@ -54,7 +54,7 @@ Window::~Window() {
     __debug(NULL, this->buf, DBG_LBOX);
 }
 
-ulong   Window::show() {
+int     Window::show() {
     if (this->handle) {
         WinSetWindowPos(this->handle, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
         WinShowWindow(this->handle, true);
@@ -81,7 +81,7 @@ void    Window::centerToOther(ulong toCenterTo) {
     }
 }
 
-ulong   Window::hide() {
+int     Window::hide() {
     if (this->handle) {
         WinShowWindow(this->handle, false);
     }

@@ -77,6 +77,8 @@ extern "C" {
  */
 
 
+#include    "WidgetSettings.hpp"
+
 #include    "USBWidget.hpp"
 
 #include    "Apm.h"
@@ -3069,7 +3071,19 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     BOOL    brc = FALSE;
                     ULONG   ulReply = NULL;
                     HWND    hwndWidgetSettings = NULL;
-                    MessageBox("Widget Settings #1","Widget Settings #2");
+                    WidgetSettings* lws = NULL;
+
+                    lws = new WidgetSettings;
+                    if (lws) {
+                        lws->create();
+                        lws->show();
+                        lws->process();
+                        lws->hide();
+                        lws->destroy();
+                        delete lws;
+                        lws = NULL;
+                    }
+
                     mrc = 0;
 
                     //~ WinShowWindow(hdlgDebugDialog, TRUE);

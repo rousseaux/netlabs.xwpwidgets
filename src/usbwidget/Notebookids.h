@@ -28,3 +28,4 @@
  * This is a public header file that defines all notebook id's.
  * It is used by other resource files.
  */
+#define DLG_ID_WIDGETSETTINGS       9001
