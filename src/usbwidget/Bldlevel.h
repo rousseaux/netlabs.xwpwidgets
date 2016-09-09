@@ -35,12 +35,12 @@
 #define     BLDLVL_VENDOR           "*UNKNOWN*"
 // Version
 #define     BLDLVL_MAJOR_VERSION    "2"
-#define     BLDLVL_MIDDLE_VERSION   "2"
-#define     BLDLVL_MINOR_VERSION    "3"
+#define     BLDLVL_MIDDLE_VERSION   "3"
+#define     BLDLVL_MINOR_VERSION    "0"
 // Build date
 #define     BLDLVL_YEAR             "2016"
 #define     BLDLVL_MONTH            "09"
-#define     BLDLVL_DAY              "04"
+#define     BLDLVL_DAY              "09"
 // Build time
 //~ #define     BLDLVL_HOURS            "02"
 //~ #define     BLDLVL_MINUTES          "20"
