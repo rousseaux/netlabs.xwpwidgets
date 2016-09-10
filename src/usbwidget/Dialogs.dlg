@@ -29,7 +29,7 @@ BEGIN
         PUSHBUTTON      "Default", DEFAULT_BUTTON, 112, 4, 50, 14
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
         PUSHBUTTON      "Close", CLOSE_BUTTON, 166, 4, 50, 14
-        RTEXT           "test-build 20160909", ID_DEBUG_DIALOG, 156, 22, 60,
+        RTEXT           "test-build 20160910", ID_DEBUG_DIALOG, 156, 22, 60,
                         8, DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C00000L
         RTEXT           "v2.3.0", ID_WIDGET_VERSION, 186, 82, 30, 8,

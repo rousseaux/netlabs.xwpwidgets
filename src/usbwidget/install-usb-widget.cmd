@@ -8,7 +8,7 @@
 
 
 /* Some variables */
-build="testbuild-20160909";
+build="testbuild-20160910";
 widget="usbshold";
 daemon="usbshlpr";
 files.0=2;

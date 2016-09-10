@@ -889,9 +889,7 @@ CARDINAL32  DumpDrives(PCHAR txtbuf) {
         strcat(txtbuf, buf);
 
         /* Iterate over the drive-control-data structures */
-        //!: TEMP DISABLE DISK 0 AND LAST DISK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //~ for (i=0; i<dca.Count; i++) {
-        for (i=1; i<2; i++) {
+        for (i=0; i<dca.Count; i++) {
             sprintf(buf, "DCR%02d: num=%02d, size=%d, sn=%08X, h=%08X, cyls=%05d, heads=%03d, secs=%02d, prm=%d%s",
                 i,
                 dca.Drive_Control_Data[i].Drive_Number,         // this is the disk index-number
