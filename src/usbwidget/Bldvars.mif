@@ -1,0 +1,40 @@
+###############################################################################
+# Bldvars.mif -- Build Variables                                              #
+# --------------------------------------------------------------------------- #
+# This file defines various build-variables.                                  #
+# It is included from the Makefile and used to generate Bldvars.h, which then #
+# holds the values in C/C++ syntax. Bldvars.h is then included by Bldlevel.h  #
+# to compose the BLDLEVEL information for the Daemon and the Widget modules.  #
+# Modifying this file will cause the Daemon and Widget modules to be rebuilt. #
+###############################################################################
+
+# Vendor used for 'user' builds
+VENDOR=*UNKNOWN*
+# Vendor used for 'official' builds
+#~ VENDOR=RDPe
+
+# Version -- if VERSION_MIDDLE is ODD then it is a testbuild (pre-release)
+VERSION_MAJOR=2
+VERSION_MIDDLE=3
+VERSION_MINOR=0
+
+# Date and Time of the build
+BLD_YEAR=2016
+BLD_MONTH=09
+BLD_DAY=10
+BLD_HOURS=99
+BLD_MINUTES=99
+BLD_SECONDS=99
+
+# Machine name for 'user' builds
+BLD_MACHINE=*UNKNOWN*
+# Machine name for 'official' builds
+#~ BLD_MACHINE=rdped530
+
+# Multi Language (currently broken at source level, so indicate EN for now)
+BLD_LANGUAGE=EN
+#~ BLD_LANGUAGE=ML
+
+# Module Descriptions
+DAEMON_DESCRIPTION=Support DAEMON for the NeoWPS * USB Widget
+WIDGET_DESCRIPTION=NeoWPS * USB Widget

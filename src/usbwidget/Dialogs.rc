@@ -28,5 +28,6 @@
  * uses the .dlg extension. This file is rcincluded by the main .rc file.
  */
 
+#include    "Bldvars.h"
 #include    "dialogids.h"
 rcinclude   "dialogs.dlg"

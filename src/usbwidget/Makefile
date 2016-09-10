@@ -24,9 +24,12 @@
 
 
 #
-# This is the main Makefile (ICC v3.6 NMake).
+# This is the main Makefile.
 # It builds the USB Widget and it accompanying DAEMON.
 #
+
+# Include Build Variables
+!include Bldvars.mif
 
 BLDENV=vac3
 #BLDENV=icc36
@@ -83,6 +86,7 @@ SOURCES=\
 # ------------------------------------------------------------ [ DEPENDENCIES ]
 #
 DEPS=\
+	Bldvars.h\
 	Debug.h\
 	Dialogids.h\
 	Notebookids.h\
@@ -143,7 +147,7 @@ LIBRARIES=\
 #
 # --------------------------------------------------------[ PSEUDO ALL TARGET ]
 #
-all:
+all: Bldvars.h
 	@echo ##############################################################
 	@echo ## Building the NeoWPS * USB Widget and it's support Daemon ##
 	@echo ##############################################################
@@ -157,9 +161,45 @@ all:
 #	@$(MAKE) status
 
 #
+# ------------------------------------------------ [ GENERATE BUILD VARIABLES ]
+#
+Bldvars.h: Bldvars.mif
+	@echo $(ARROW) [ Generating Build Variables ]
+	@type nul > $@
+	@echo /* $@ -- Build Variables generated from $? */ >> $@
+	@echo #define VENDOR_STR "$(VENDOR)" >> $@
+	@echo #define VERSION_MAJOR $(VERSION_MAJOR) >> $@
+	@echo #define VERSION_MAJOR_STR "$(VERSION_MAJOR)" >> $@
+	@echo #define VERSION_MIDDLE $(VERSION_MIDDLE) >> $@
+	@echo #define VERSION_MIDDLE_STR "$(VERSION_MIDDLE)" >> $@
+	@echo #define VERSION_MINOR $(VERSION_MINOR) >> $@
+	@echo #define VERSION_MINOR_STR "$(VERSION_MINOR)" >> $@
+	@echo #define BLD_YEAR $(BLD_YEAR) >> $@
+	@echo #define BLD_YEAR_STR "$(BLD_YEAR)" >> $@
+	@echo #define BLD_MONTH $(BLD_MONTH) >> $@
+	@echo #define BLD_MONTH_STR "$(BLD_MONTH)" >> $@
+	@echo #define BLD_DAY $(BLD_DAY) >> $@
+	@echo #define BLD_DAY_STR "$(BLD_DAY)" >> $@
+	@echo #define BLD_HOURS $(BLD_HOURS) >> $@
+	@echo #define BLD_HOURS_STR "$(BLD_HOURS)" >> $@
+	@echo #define BLD_MINUTES $(BLD_MINUTES) >> $@
+	@echo #define BLD_MINUTES_STR "$(BLD_MINUTES)" >> $@
+	@echo #define BLD_SECONDS $(BLD_SECONDS) >> $@
+	@echo #define BLD_SECONDS_STR "$(BLD_SECONDS)" >> $@
+	@echo #define BLD_MACHINE_STR "$(BLD_MACHINE)" >> $@
+	@echo #define BLD_LANGUAGE_STR "$(BLD_LANGUAGE)" >> $@
+	@echo #define BLD_VERSION_STR "v$(VERSION_MAJOR).$(VERSION_MIDDLE).$(VERSION_MINOR)" >> $@
+	@echo #define BLD_INFO_STR "testbuild-$(BLD_YEAR)$(BLD_MONTH)$(BLD_DAY)" >> $@
+	@echo #define DAEMON_DESCRIPTION_STR "$(DAEMON_DESCRIPTION)" >> $@
+	@echo #define WIDGET_DESCRIPTION_STR "$(WIDGET_DESCRIPTION)" >> $@
+	@type nul > $*.rexx
+	@echo /* $*.rexx -- Build Info generated from $? */ >> $*.rexx
+	@echo return "testbuild-$(BLD_YEAR)$(BLD_MONTH)$(BLD_DAY)" >> $*.rexx
+
+#
 # -------------------------------------------------- [ DUMP BUILD ENVIRONMENT ]
 #
-dump-bldenv:
+dump-bldenv: Bldvars.h
 	@echo $(ARROW) [ Dumping Build Environment ]
 	@if exist Makefile.bldenv del Makefile.bldenv
 	@echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >> Makefile.bldenv
@@ -183,7 +223,7 @@ dummy:
 #
 # ----------------------------------------------- [ SUPPORT DAEMON EXECUTABLE ]
 #
-support-daemon:
+support-daemon: Bldvars.h
 	@echo $(ARROW) [ Building the Support Daemon ]
 	@$(MAKE) -nologo usbshlpr.exe
 	@echo.
@@ -191,16 +231,39 @@ support-daemon:
 #
 # -------------------------------------------------------------- [ WIDGET DLL ]
 #
-usb-widget:
+usb-widget: Bldvars.h
 	@echo $(ARROW) [ Building the NeoWPS * USB Widget ]
 	@$(MAKE) -nologo usbshold.dll
 	@echo.
 
 #
+# ----------------------------------------- [ GENERATE MODULE DEFINITION FILE ]
+#
+usbshlpr.def: Bldvars.h
+	@echo.
+	@echo $(ARROW) [ Generating $@ ]
+	@type nul> $@
+	@echo ;##############################################################################>> $@
+	@echo ;# usbshlpr.def -- Module Definition generated from Bldvars.mif               #>> $@
+	@echo ;# -------------------------------------------------------------------------- #>> $@
+	@echo ;# This is the Module Definition file for the USBSHLPR.EXE DAEMON.            #>> $@
+	@echo ;# The DAEMON provides named shared memory to the Widget.                     #>> $@
+	@echo ;# It's .EXE extension is renamed to .DMN to prevent simple user execution.   #>> $@
+	@echo ;##############################################################################>> $@
+	@echo.>> $@
+	@echo NAME $* WINDOWCOMPAT>> $@
+	@echo Description '$(DAEMON_DESCRIPTION) [testbuild-$(BLD_YEAR)$(BLD_MONTH)$(BLD_DAY)]'>> $@
+	@echo PROTMODE>> $@
+	@echo.>> $@
+	@echo DATA    MULTIPLE READWRITE LOADONCALL NONSHARED>> $@
+	@echo CODE    LOADONCALL>> $@
+
+
+#
 # This is the DAEMON target.
 # It supplies the named shared memory for the widget.
 #
-usbshlpr.exe:	usbshlpr.obj Debug.obj AllocMem.obj
+usbshlpr.exe: $*.obj Debug.obj AllocMem.obj $*.def
 	@echo.
 	@echo $(ARROW) [ Linking modules ]
 	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.def $*.obj
@@ -224,8 +287,54 @@ usbshlpr.exe:	usbshlpr.obj Debug.obj AllocMem.obj
 	@md5sum $@ > $*.md5
 	@copy $@ $*.dmn
 
-usbshlpr.obj:	usbshlpr.cpp usbshlpr.hpp usbshlpr.lvl Bldlevel.h ModuleGlobals.hpp Master.hpp Debug.hpp AllocMem.hpp
+usbshlpr.obj: usbshlpr.cpp usbshlpr.hpp ModuleGlobals.hpp Master.hpp Debug.hpp AllocMem.hpp usbshlpr.lvl Bldvars.h
 	$(CC) $(CCFLAGS) -Ge+ -Fo$*.obj $*.cpp
+
+#
+# ----------------------------------------- [ GENERATE MODULE DEFINITION FILE ]
+#
+usbshold.def: Bldvars.h
+	@echo.
+	@echo $(ARROW) [ Generating $@ ]
+	@type nul> $@
+	@echo ;##############################################################################>> $@
+	@echo ;# usbshold.def -- Module Definition generated from Bldvars.mif               #>> $@
+	@echo ;# -------------------------------------------------------------------------- #>> $@
+	@echo ;# This is the Module Definition file for the USBSHOLD.DLL target.            #>> $@
+	@echo ;# It declares the entrypoints called by eCenter.                             #>> $@
+	@echo ;# Note that this module is loaded, and these entrypoints called, even when   #>> $@
+	@echo ;# the Widget is not active in the eCenter. Adding and removing the Widget    #>> $@
+	@echo ;# causes Widget Window creation and destruction, not DLL loading / unloading.#>> $@
+	@echo ;##############################################################################>> $@
+	@echo.>> $@
+	@echo LIBRARY $* INITGLOBAL TERMGLOBAL>> $@
+	@echo Description '$(WIDGET_DESCRIPTION) [testbuild-$(BLD_YEAR)$(BLD_MONTH)$(BLD_DAY)]'>> $@
+	@echo PROTMODE>> $@
+	@echo.>> $@
+	@echo DATA    MULTIPLE READWRITE LOADONCALL NONSHARED>> $@
+	@echo ;       Doesn't really matter, because the widget is only ever used>> $@
+	@echo ;       in the WPS process; we use MULTIPLE NONSHARED here to reduce>> $@
+	@echo ;       the amount of shared memory that is needed for the DLL.>> $@
+	@echo.>> $@
+	@echo CODE    LOADONCALL>> $@
+	@echo.>> $@
+	@echo EXPORTS>> $@
+	@echo ; ALIAS             =   REALNAME                ORDINAL>> $@
+	@echo ; -----                 --------                ------->> $@
+	@echo.>> $@
+	@echo ; These three are are invoked by the eCenter.>> $@
+	@echo ; They actually forward to the functions that do the actual work, so to>> $@
+	@echo ; activate a different code-path, the forwarding can be changed.>> $@
+	@echo.>> $@
+	@echo                         UsbWgtInitModule        @1>> $@
+	@echo                         UsbWgtUnInitModule      @2>> $@
+	@echo                         UsbWgtQueryVersion      @3>> $@
+	@echo.>> $@
+	@echo ; This is some testing with aliases>> $@
+	@echo ;                        DummyExport             @20>> $@
+	@echo ;Alias_01            =   WgtInitModule           @1000>> $@
+	@echo ;Alias_02            =   WgtUnInitModule         @2000>> $@
+	@echo ;Alias_03            =   WgtQueryVersion         @65533>> $@
 
 #
 # This is the WIDGET target.
@@ -257,7 +366,7 @@ usbshold.dll: $(OBJECTS) $(LIBRARIES) $*.res $*.def
 	@md5sum $@
 	@md5sum $@ > $*.md5
 
-usbshold.obj: usbshold.cpp usbshold.hpp $(DEPS) usbshold.lvl Bldlevel.h
+usbshold.obj: usbshold.cpp usbshold.hpp $(DEPS) usbshold.lvl Bldvars.h
 	$(CC) $(CCFLAGS) -Ge- -Fo$*.obj $*.cpp
 	@echo.
 
@@ -423,3 +532,4 @@ clean:
 	@if exist Makefile.bldenv del Makefile.bldenv
 #	@echo Cleaning code-store
 #	vacbld -CL "$(BASENAME).icc"
+	@touch Bldvars.mif

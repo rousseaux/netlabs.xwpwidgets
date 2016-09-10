@@ -6,9 +6,10 @@
 // ############################################################################
 */
 
+/* Call the generated Rexx Function to provide the Build Information */
+build=Bldvars.rexx();
 
-/* Some variables */
-build="testbuild-20160910";
+/* Names of modules and destination location */
 widget="usbshold";
 daemon="usbshlpr";
 files.0=2;
@@ -18,9 +19,9 @@ osdir=Value("OSDIR",,"ENVIRONMENT");
 dllpath=osdir||"\System\eWPS\Plugins\XCenter";
 
 '@echo:';
-'@echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
-'@echo :: Installing new eCenter USB Widget -- ('||build||')               ::';
-'@echo :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
+'@echo ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
+'@echo :: Installing new eCenter USB Widget -- ('||build||')          ::';
+'@echo ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::';
 
 /* Stop the Daemon */
 '@echo:';

@@ -47,7 +47,7 @@ char    bldlevel[]  =   "@#"\
                         BLDLVL_MACHINE"::"\
                         BLDLVL_LANGUAGE"::"\
                         BLDLVL_MINOR_VERSION"::@@"\
-                        "Support DAEMON for the NeoWPS * USB Widget -- [testbuild-"BLDLVL_YEAR""BLDLVL_MONTH""BLDLVL_DAY"]\0 ";
+                        DAEMON_DESCRIPTION_STR" ["BLD_INFO_STR"]\0 ";
 
 /*
 // FIXME: Incorrect BLDLEVEL string format

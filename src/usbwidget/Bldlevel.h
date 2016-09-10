@@ -29,27 +29,27 @@
  * the Daemon use. Module specific parts are in *.lvl files.
  */
 
+/* Include the generated build variables */
+#include    "Bldvars.h"
 
-// Vendor
-//~ #define     BLDLVL_VENDOR           "RDPe"
-#define     BLDLVL_VENDOR           "*UNKNOWN*"
-// Version
-#define     BLDLVL_MAJOR_VERSION    "2"
-#define     BLDLVL_MIDDLE_VERSION   "3"
-#define     BLDLVL_MINOR_VERSION    "0"
-// Build date
-#define     BLDLVL_YEAR             "2016"
-#define     BLDLVL_MONTH            "09"
-#define     BLDLVL_DAY              "10"
-// Build time
-//~ #define     BLDLVL_HOURS            "02"
-//~ #define     BLDLVL_MINUTES          "20"
-//~ #define     BLDLVL_SECONDS          "03"
-#define     BLDLVL_HOURS            "99"
-#define     BLDLVL_MINUTES          "99"
-#define     BLDLVL_SECONDS          "99"
-// Build machine
-//~ #define     BLDLVL_MACHINE          "ECS-DEVBOX"
-#define     BLDLVL_MACHINE          "*UNKNOWN*"
-// Build language
-#define     BLDLVL_LANGUAGE         "ML"
+/* Vendor (publisher) of the software */
+#define     BLDLVL_VENDOR           VENDOR_STR
+
+/* WarpIN-like version number */
+#define     BLDLVL_MAJOR_VERSION    VERSION_MAJOR_STR
+#define     BLDLVL_MIDDLE_VERSION   VERSION_MIDDLE_STR
+#define     BLDLVL_MINOR_VERSION    VERSION_MINOR_STR
+
+/* Date and Time of build */
+#define     BLDLVL_YEAR             BLD_YEAR_STR
+#define     BLDLVL_MONTH            BLD_MONTH_STR
+#define     BLDLVL_DAY              BLD_DAY_STR
+#define     BLDLVL_HOURS            BLD_HOURS_STR
+#define     BLDLVL_MINUTES          BLD_MINUTES_STR
+#define     BLDLVL_SECONDS          BLD_SECONDS_STR
+
+/* Machine that was used to build the software */
+#define     BLDLVL_MACHINE          BLD_MACHINE_STR
+
+/* Language(s) this software supports */
+#define     BLDLVL_LANGUAGE         BLD_LANGUAGE_STR

@@ -1,6 +1,25 @@
-B:	Build
+A:	Build All
 	nmake -nologo
+B:	Build
+{
+D:	Daemon
+	nmake -nologo support-daemon
+W:	Widget
+	nmake -nologo usb-widget
+}
 D:	Distribute
 	nmake -nologo dist
 C:	Clean
 	nmake -nologo clean
+-:	-----------------------------
+V:	Generate Bldvars (.h & .rexx)
+	if exist Bldvars.h del Bldvars.h
+	nmake -nologo bldvars.h
+-:	-----------------------------
+L:	Git Log (last 5 commits)
+	git log -5
+S:	Git Status
+	git status
+-:	-----------------------------
+T:	Touch Bldvars.mif
+	touch Bldvars.mif
