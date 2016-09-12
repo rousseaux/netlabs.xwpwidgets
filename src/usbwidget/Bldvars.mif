@@ -1,5 +1,5 @@
 ###############################################################################
-# Bldvars.mif -- Build Variables                                              #
+# Bldvars.mif -- Build Variables                                  [usbwidget] #
 # --------------------------------------------------------------------------- #
 # This file defines various build-variables.                                  #
 # It is included from the Makefile and used to generate Bldvars.h, which then #

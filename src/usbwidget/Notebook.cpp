@@ -37,8 +37,7 @@
 */
 Notebook::Notebook() {
     MessageBox("Notebook","CONSTRUCTOR");
-    //! FIXME: Enabling below breaks BLDLEVEL info !
-    //~ this->pages = NULL;
+    this->pages = NULL;
 }
 
 Notebook::~Notebook() {
