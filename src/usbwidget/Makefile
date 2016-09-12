@@ -22,7 +22,6 @@
 #                                                                             #
 ###############################################################################
 
-
 #
 # This is the main Makefile.
 # It builds the USB Widget and it accompanying DAEMON.
@@ -31,14 +30,12 @@
 # Include Build Variables
 !include Bldvars.mif
 
-BLDENV=vac3
-#BLDENV=icc36
-#BLDENV=vac4    # Not supported anymore
+BLDENV=vac3     # Current active toolchain
+#~ BLDENV=icc36    # Supported toolchain but not re-verified yet
 
 #
-# ------------------------------------------------------------------ [ MACROS ]
+# Macros for toolchains
 #
-ARROW=------*
 DLLPATH=$(OSDIR)\SYSTEM\eWPS\PLUGINS\XCENTER                    # Target path for the widget-dll
 RCINCLUDE=.;h;xworkplace\include;xwphelpers\include             # Dirs to search for rc includes
 INCLUDE=$(RCINCLUDE);$(INCLUDE)                                 # Dirs to search for headers
@@ -53,8 +50,6 @@ LIBTOOL=ilib                                                    # Librarian to u
 LNK=ilink                                                       # Linker to use
 RC=rc                                                           # Resource compiler to use
 
-#CCFLAGS=-L+ $(CCFLAGS)
-
 # Vac3 barks on _Optlink on static member function; disable test-threads when
 # compiling with vac3.
 !if "$(BLDENV)"=="vac3"
@@ -63,44 +58,37 @@ RCINCLUDE=$(CPPMAIN)\INCLUDE;$(CPPMAIN)\INCLUDE\OS2;$(RCINCLUDE)
 !endif
 
 #
-# ----------------------------------------------------------------- [ SOURCES ]
-#
-SOURCES=\
-	Debug.cpp\
-	AllocMem.cpp\
-	ProblemFixer.cpp\
-	Threads.cpp\
-	CList.cpp\
-	USBHelpers.cpp\
-	LVMHelpers.cpp\
-	APIHelpers.cpp\
-	GUIHelpers.cpp\
-	ModuleGlobals.cpp\
-	Testing123.cpp\
-	Notebook.cpp\
-	NotebookPage.cpp\
-	WidgetSettings.cpp\
-	USBWidget.cpp\
-	usbshold.lvl\
-	usbshold.cpp\
-
-#
-# ------------------------------------------------------------ [ DEPENDENCIES ]
+# Debug dependencies
 #
 DBGDEPS=\
 	Debug.h\
 	Debug.hpp\
 
 #
-# ------------------------------------------------------------ [ DEPENDENCIES ]
+# General dependencies
 #
-DEPS=\
+INCDEPS=\
 	Bldvars.h\
-	Debug.h\
 	Dialogids.h\
 	Notebookids.h\
 	Master.hpp\
-	Debug.hpp\
+	ModuleGlobals.hpp\
+
+#
+# Daemon dependencies
+#
+DMNDEPS=\
+	$(DBGDEPS)\
+	$(INCDEPS)\
+	AllocMem.hpp\
+	Master.hpp\
+
+#
+# Widget dependencies
+#
+WGTDEPS=\
+	$(DBGDEPS)\
+	$(INCDEPS)\
 	AllocMem.hpp\
 	ProblemFixer.hpp\
 	Threads.hpp\
@@ -108,33 +96,35 @@ DEPS=\
 	LVMHelpers.hpp\
 	APIHelpers.hpp\
 	GUIHelpers.hpp\
-	ModuleGlobals.hpp\
 	Testing123.hpp\
-	Notebook.hpp\
-	NotebookPage.hpp\
 	WidgetSettings.hpp\
 	USBWidget.hpp\
 
 #
-# --------------------------------------------------- [ RESOURCE DEPENDENCIES ]
+# Resource dependencies
 #
 RESDEPS=\
-	Debug.h\
-	Debug.hpp\
+	$(DBGDEPS)\
+	$(INCDEPS)\
 	Dialogs.rc\
 	Dialogs.dlg\
-	Dialogids.h\
 	Notebooks.rc\
 	Notebooks.dlg\
-	Notebookids.h\
 	usbshold.rc\
 	USBWidget.rc\
 	Images.rc\
 
 #
-# ------------------------------------------------- [ OBJECT MODULES TO BUILD ]
+# Objects to build the Daemon from
 #
-OBJECTS=\
+DMNOBJECTS=\
+	Debug.obj\
+	AllocMem.obj\
+
+#
+# Objects to build the Widget from
+#
+WGTOBJECTS=\
 	Debug.obj\
 	AllocMem.obj\
 	ProblemFixer.obj\
@@ -146,10 +136,9 @@ OBJECTS=\
 	NotebookPage.obj\
 	WidgetSettings.obj\
 	USBWidget.obj\
-	usbshold.obj\
 
 #
-# ---------------------------------------------- [ LIBRARIES TO BUILD AND USE ]
+# Libraries to cluster some stuff
 #
 LIBRARIES=\
 	APIHelpers.lib\
@@ -157,16 +146,33 @@ LIBRARIES=\
 	USBHelpers.lib\
 	GUIHelpers.lib\
 
-#
-# -------------------------------------------- [ RULES -- NOT IMPLEMENTED YET ]
-#
-#~ .cpp.obj:
-#~ 	@echo [$@]
-#~ 	@echo deps: $?
+# =============================================================================
+#                                                [ CPP TO OBJ INFERENCE RULES ]
+# =============================================================================
+.cpp.obj:
+	@echo [$@]
+	@echo Reason: $?
+	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
-#
-# ------------------------------------------------------- [ PSEUDO ALL TARGET ]
-#
+# =============================================================================
+#                                                [ OBJ TO LIB INFERENCE RULES ]
+# =============================================================================
+.obj.lib:
+	@echo [$@]
+	@echo Reason: $?
+!if "$(BLDENV)"=="vac3"
+	$(LIBTOOL) $(LIBFLAGS) $@ -+$*.obj; 2>nul
+!else
+!if "$(BLDENV)"=="icc36"
+	$(LIBTOOL) $(LIBFLAGS) -out:$@ $*.obj
+!else
+!error **** INVALID BUILD ENVIRONMENT ****
+!endif
+!endif
+
+# =============================================================================
+#                                                         [ PSEUDO ALL TARGET ]
+# =============================================================================
 all: Bldvars.h
 	@echo ##############################################################
 	@echo ## Building the NeoWPS * USB Widget and it's support Daemon ##
@@ -174,17 +180,12 @@ all: Bldvars.h
 	@$(MAKE) -nologo dump-bldenv
 	@$(MAKE) -nologo support-daemon
 	@$(MAKE) -nologo usb-widget
-#	@$(MAKE) clean
-#	@$(MAKE) map
-#	@$(MAKE) rename
-#	@$(MAKE) dist
-#	@$(MAKE) status
 
-#
-# ------------------------------------------------ [ GENERATE BUILD VARIABLES ]
-#
+# =============================================================================
+#                                                  [ GENERATE BUILD VARIABLES ]
+# =============================================================================
 Bldvars.h: Bldvars.mif
-	@echo $(ARROW) [ Generating Build Variables ]
+	@echo ## Generating Build Variables ##
 	@type nul > $@
 	@echo /* $@ -- Build Variables generated from $? */ >> $@
 	@echo #define VENDOR_STR "$(VENDOR)" >> $@
@@ -216,11 +217,11 @@ Bldvars.h: Bldvars.mif
 	@echo /* $*.rexx -- Build Info generated from $? */ >> $*.rexx
 	@echo return "testbuild-$(BLD_YEAR)$(BLD_MONTH)$(BLD_DAY)" >> $*.rexx
 
-#
-# -------------------------------------------------- [ DUMP BUILD ENVIRONMENT ]
-#
+# =============================================================================
+#                                                    [ DUMP BUILD ENVIRONMENT ]
+# =============================================================================
 dump-bldenv: Bldvars.h
-	@echo $(ARROW) [ Dumping Build Environment ]
+	@echo ## Dumping Build Environment ##
 	@if exist Makefile.bldenv del Makefile.bldenv
 	@echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >> Makefile.bldenv
 	@echo !! This file is generated by the Make utility !! >> Makefile.bldenv
@@ -235,33 +236,33 @@ dump-bldenv: Bldvars.h
 	$(MAKE) -nologo -p dummy 1>> Makefile.bldenv 2>> Makefile.bldenv.err
 	@echo.
 
-#
-# Used by dump-bldenv to dump the Make environment
-#
+# =============================================================================
+#                                     [DUMMY TARGET TO DUMP BUILD ENVIRONMENT ]
+# =============================================================================
 dummy:
 
-#
-# ----------------------------------------------- [ SUPPORT DAEMON EXECUTABLE ]
-#
+# =============================================================================
+#                                                 [ SUPPORT DAEMON EXECUTABLE ]
+# =============================================================================
 support-daemon: Bldvars.h
-	@echo $(ARROW) [ Building the Support Daemon ]
+	@echo ## Building the Support Daemon ##
 	@$(MAKE) -nologo usbshlpr.exe
 	@echo.
 
-#
-# -------------------------------------------------------------- [ WIDGET DLL ]
-#
+# =============================================================================
+#                                                                [ WIDGET DLL ]
+# =============================================================================
 usb-widget: Bldvars.h
-	@echo $(ARROW) [ Building the NeoWPS * USB Widget ]
+	@echo ## Building the NeoWPS * USB Widget ##
 	@$(MAKE) -nologo usbshold.dll
 	@echo.
 
-#
-# ----------------------------------------- [ GENERATE MODULE DEFINITION FILE ]
-#
+# =============================================================================
+#                                           [ GENERATE MODULE DEFINITION FILE ]
+# =============================================================================
 usbshlpr.def: Bldvars.h
 	@echo.
-	@echo $(ARROW) [ Generating $@ ]
+	@echo ## Generating '$@' ##
 	@type nul> $@
 	@echo ;##############################################################################>> $@
 	@echo ;# usbshlpr.def -- Module Definition generated from Bldvars.mif               #>> $@
@@ -279,13 +280,12 @@ usbshlpr.def: Bldvars.h
 	@echo CODE    LOADONCALL>> $@
 
 
-#
-# This is the DAEMON target.
-# It supplies the named shared memory for the widget.
-#
-usbshlpr.exe: $*.obj Debug.obj AllocMem.obj $*.def
+# =============================================================================
+#                                                          [ DAEMON EXECUTABLE]
+# =============================================================================
+usbshlpr.exe: $*.obj $(DMNOBJECTS) $*.def
 	@echo.
-	@echo $(ARROW) [ Linking modules ]
+	@echo ## Linking modules ##
 	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.def $*.obj
 	@mapsym $*.map > nul
 	@exehdr $*.exe > $*.exh
@@ -307,15 +307,20 @@ usbshlpr.exe: $*.obj Debug.obj AllocMem.obj $*.def
 	@md5sum $@ > $*.md5
 	@copy $@ $*.dmn
 
-usbshlpr.obj: usbshlpr.cpp usbshlpr.hpp ModuleGlobals.hpp Master.hpp Debug.hpp AllocMem.hpp usbshlpr.lvl Bldvars.h
+# =============================================================================
+#                                                   [ MAIN MODULE OBJECT FILE ]
+# =============================================================================
+usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DMNDEPS) Bldvars.h
+	@echo [$@]
+	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge+ -Fo$*.obj $*.cpp
 
-#
-# ----------------------------------------- [ GENERATE MODULE DEFINITION FILE ]
-#
+# =============================================================================
+#                                           [ GENERATE MODULE DEFINITION FILE ]
+# =============================================================================
 usbshold.def: Bldvars.h
 	@echo.
-	@echo $(ARROW) [ Generating $@ ]
+	@echo ## Generating '$@' ##
 	@type nul> $@
 	@echo ;##############################################################################>> $@
 	@echo ;# usbshold.def -- Module Definition generated from Bldvars.mif               #>> $@
@@ -356,17 +361,16 @@ usbshold.def: Bldvars.h
 	@echo ;Alias_02            =   WgtUnInitModule         @2000>> $@
 	@echo ;Alias_03            =   WgtQueryVersion         @65533>> $@
 
-#
-# This is the WIDGET target.
-# It is gets loaded by eCenter.
-#
-usbshold.dll: $(OBJECTS) $(LIBRARIES) $*.res $*.def
+# =============================================================================
+#                                                                [ WIDGET DLL ]
+# =============================================================================
+usbshold.dll: $*.obj $(WGTOBJECTS) $(LIBRARIES) $*.res $*.def
 	@echo.
-	@echo $(ARROW) [ Linking modules ]
-	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.def $(OBJECTS) $(LIBRARIES) $(LIBS)
+	@echo ## Linking modules ##
+	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.def $*.obj $(WGTOBJECTS) $(LIBRARIES) $(LIBS)
 	@mapsym $*.map > nul
 	@echo.
-	@echo $(ARROW) [ Embedding Resources ]
+	@echo ## Embedding Resources ##
 	$(RC) $(RCFLAGS) $*.res $*.dll
 	@exehdr $*.DLL > $*.exh
 # 2013-03-18 SHL
@@ -386,12 +390,20 @@ usbshold.dll: $(OBJECTS) $(LIBRARIES) $*.res $*.def
 	@md5sum $@
 	@md5sum $@ > $*.md5
 
-usbshold.obj: usbshold.cpp usbshold.hpp $(DBGDEPS) $(DEPS) usbshold.lvl Bldvars.h
+# =============================================================================
+#                                                   [ MAIN MODULE OBJECT FILE ]
+# =============================================================================
+usbshold.obj: $*.cpp $*.hpp $*.lvl $(DBGDEPS) $(WGTDEPS) Bldvars.h
+	@echo [$@]
+	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge- -Fo$*.obj $*.cpp
 	@echo.
 
+# =============================================================================
+#                                                 [ MAIN MODULE RESOURCE FILE ]
+# =============================================================================
 usbshold.res: $(RESDEPS)
-	@echo $(ARROW) [ Compiling Resources ]
+	@echo ## Compiling Resources ##
 !if "$(BLDENV)"=="vac3"
 	@set INCLUDE=$(RCINCLUDE)
 !endif
@@ -399,162 +411,44 @@ usbshold.res: $(RESDEPS)
 	$(RC) -r Notebooks.rc
 	$(RC) -r $*.rc $@
 
-#
-# The Widget code interfacing with eCenter
-#
-#USBWidget.obj: USBWidget.c USBWidget.h USBWidget.ih $(DBGDEPS) $(DEPS)
-#	$(CC) $(CCFLAGS) -Fo$*.obj $*.c
+# =============================================================================
+#                                    [ OBJECTS TO BUILD USING INFERENCE RULES ]
+# =============================================================================
+AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+CList.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+LVMHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+ModuleGlobals.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+ProblemFixer.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Testing123.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Threads.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+USBHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+USBWidget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+WidgetSettings.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 
-USBWidget.obj: USBWidget.cpp USBWidget.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpp
+# =============================================================================
+#                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
+# =============================================================================
+APIHelpers.lib: $*.obj
+GUIHelpers.lib: $*.obj
+LVMHelpers.lib: $*.obj
+USBHelpers.lib: $*.obj
 
-#
-# USB SubSystem Interface
-#
-USBHelpers.lib: USBHelpers.obj
-	@echo $(ARROW) [ USBHelpers.lib ]
-!if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
-!else
-!if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
-!else
-!error **** INVALID BUILD ENVIRONMENT ****
-!endif
-!endif
-	@echo.
-
-USBHelpers.obj: USBHelpers.cpp USBHelpers.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpp
-
-#
-# LVM SubSystem Interface
-#
-LVMHelpers.lib: LVMHelpers.obj
-	@echo $(ARROW) [ LVMHelpers.lib ]
-!if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
-!else
-!if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
-!else
-!error **** INVALID BUILD ENVIRONMENT ****
-!endif
-!endif
-	@echo.
-
-LVMHelpers.obj: LVMHelpers.cpp LVMHelpers.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpp
-
-#
-# API SubSystem Interface
-#
-APIHelpers.lib: APIHelpers.obj
-	@echo $(ARROW) [ APIHelpers.lib ]
-!if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
-!else
-!if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
-!else
-!error **** INVALID BUILD ENVIRONMENT ****
-!endif
-!endif
-	@echo.
-
-APIHelpers.obj: APIHelpers.cpp APIHelpers.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpp
-
-#
-# GUI SubSystem Interface
-#
-GUIHelpers.lib: GUIHelpers.obj
-	@echo $(ARROW) [ GUIHelpers.lib ]
-!if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $*.lib -+$*.obj; 2>nul
-!else
-!if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$*.lib $*.obj
-!else
-!error **** INVALID BUILD ENVIRONMENT ****
-!endif
-!endif
-	@echo.
-
-GUIHelpers.obj: GUIHelpers.cpp GUIHelpers.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpp
-
-#
-# Module with globals
-#
-ModuleGlobals.obj: ModuleGlobals.cpp ModuleGlobals.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing debug functions
-#
-Debug.obj: $*.cpp $*.hpp $(DBGDEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing memory allocation overrides
-#
-AllocMem.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing stuff to fix LVM hostile disk lauouts
-#
-ProblemFixer.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing Notebook Class
-#
-Notebook.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing NotebookPage Class
-#
-NotebookPage.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing the new WidgetSetting Dialog
-#
-WidgetSettings.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module containing memory allocation overrides
-#
-Threads.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# List to store attached usb devices
-#
-CList.obj: CList.cpp CList.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Module with testing-stuff
-#
-Testing123.obj: Testing123.cpp Testing123.hpp $(DBGDEPS) $(DEPS)
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-#
-# Distribute targets to system
-#
+# =============================================================================
+#                                                  [ DEPLOY TARGETS TO SYSTEM ]
+# =============================================================================
 dist:
 	@echo.
 	@echo ## Distributing Widget and Daemon to System ##
 	@call install-usb-widget.cmd
 
-#
-# Cleanup
-#
+# =============================================================================
+#                                                [ CLEANUP INTERMEDIATE FILES ]
+# =============================================================================
 # Extensions to remove
 CLEANEXTS=obj lib dll exe dmn res map sym exh exh-v exm lst err bak
 clean:
