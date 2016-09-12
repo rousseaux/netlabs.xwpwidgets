@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.hpp -- NeoWPS * USB Widget                                   *
+* Notebook.hpp -- NeoWPS * USB Widget                                         *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,15 +22,15 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.hpp
+// From NotebookPage.hpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module contains the Notebook Class Definition.
  */
 
 
-#ifndef     __WIDGETSETINGS_HPP__
-#define     __WIDGETSETINGS_HPP__
+#ifndef     __NOTEBOOK_HPP__
+#define     __NOTEBOOK_HPP__
 #ifdef      __cplusplus
     extern "C" {
 #endif
@@ -39,30 +39,25 @@
 #include    "ModuleGlobals.hpp"
 #include    "ecomedia.h"
 
-#include    "Notebook.hpp"
+#include    "NotebookPage.hpp"
 
 /* Prototypes */
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-class   WidgetSettingsDialog : public Dialog {
+class   Notebook {
     public:
-    Notebook*   settings;
-    WidgetSettingsDialog();
-    virtual ~WidgetSettingsDialog();
-    virtual int create(void);
-    virtual int process(void);
-    virtual int destroy(void);
-
-// The _System qualifier can not be applied... (when a static method ?)
-    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    //~ static MRESULT EXPENTRY classMessageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    /* Do these public for now */
+    NotebookPage*   pages;
+    /* Constructor and Destructor */
+    Notebook();
+    virtual ~Notebook();
+    virtual void    appendPage(NotebookPage*);
+    virtual void    appendPages();
 };
-
-
 
 
 #ifdef      __cplusplus
     }
 #endif
 
-#endif // __WIDGETSETINGS_HPP__
+#endif // __NOTEBOOK_HPP__

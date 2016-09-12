@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.hpp -- NeoWPS * USB Widget                                   *
+* NotebookPage.hpp -- NeoWPS * USB Widget                                     *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,15 +22,15 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.hpp
+// From WidgetSettings.hpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module contains the NotebookPage Class Definition.
  */
 
 
-#ifndef     __WIDGETSETINGS_HPP__
-#define     __WIDGETSETINGS_HPP__
+#ifndef     __NOTEBOOKPAGE_HPP__
+#define     __NOTEBOOKPAGE_HPP__
 #ifdef      __cplusplus
     extern "C" {
 #endif
@@ -39,30 +39,29 @@
 #include    "ModuleGlobals.hpp"
 #include    "ecomedia.h"
 
-#include    "Notebook.hpp"
-
 /* Prototypes */
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-class   WidgetSettingsDialog : public Dialog {
+class   NotebookPage {
     public:
-    Notebook*   settings;
-    WidgetSettingsDialog();
-    virtual ~WidgetSettingsDialog();
-    virtual int create(void);
-    virtual int process(void);
-    virtual int destroy(void);
-
-// The _System qualifier can not be applied... (when a static method ?)
-    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    //~ static MRESULT EXPENTRY classMessageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    /* Do these public for now */
+    ULONG   idPage;
+    ULONG   idResource;
+    PFNWP   dlgProc;
+    USHORT  pageStyle;
+    USHORT  pageOrder;
+    PSZ     tabTitle;
+    PSZ     statusText;
+    NotebookPage* prev;
+    NotebookPage* next;
+    /* Constructor and Destructor */
+    NotebookPage();
+    virtual ~NotebookPage();
 };
-
-
 
 
 #ifdef      __cplusplus
     }
 #endif
 
-#endif // __WIDGETSETINGS_HPP__
+#endif // __NOTEBOOKPAGE_HPP__

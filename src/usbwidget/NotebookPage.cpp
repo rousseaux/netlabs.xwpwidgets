@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.cpp -- NeoWPS * USB Widget                                   *
+* NotebookPage.cpp -- NeoWPS * USB Widget                                     *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,73 +22,28 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.cpp
+// From WidgetSettings.cpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module contains the NotebookPage Class Implementation.
  */
 
 
-#include    "WidgetSettings.hpp"
+#include    "NotebookPage.hpp"
 
 
 /*
-// WidgetSettingsDialog
+// NotebookPage
 */
-WidgetSettingsDialog::WidgetSettingsDialog() {
-    this->settings = NULL;
-    MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
+NotebookPage::NotebookPage() {
+    MessageBox("NotebookPage","CONSTRUCTOR");
 }
 
-WidgetSettingsDialog::~WidgetSettingsDialog() {
-    MessageBox("WidgetSettingsDialog","DESTRUCTOR");
+NotebookPage::~NotebookPage() {
+    MessageBox("NotebookPage","DESTRUCTOR");
 }
 
-int WidgetSettingsDialog::create() {
-    MessageBox("WidgetSettingsDialog","CREATE");
-    this->handle = WinLoadDlg(
-                    HWND_DESKTOP,
-                    NULL,
-                    //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
-                    //~ (PFNWP) MyDialogHandler_1,
-                    (PFNWP) WidgetSettingsDialogHandler,
-                    hmodMe,
-                    DLG_ID_WIDGETSETTINGS,
-                    //~ ID_DEBUG_DIALOG,
-                    NULL);
-
-    if (this->handle) {
-        MessageBox("WinLoadDlg", "OK");
-    } else {
-        MessageBox("WinLoadDlg", "NULL");
-    }
-
-    this->settings = new Notebook();
-
-    return NULL;
-}
-
-int WidgetSettingsDialog::process() {
-    MessageBox("WidgetSettingsDialog","PROCESS");
-    int reply = NULL;
-    reply = WinProcessDlg(this->handle);
-    return reply;
-}
-
-int WidgetSettingsDialog::destroy() {
-    MessageBox("WidgetSettingsDialog","DESTROY");
-    if (this->handle) WinDestroyWindow(this->handle);
-    this->handle = NULL;
-    if (this->settings) delete this->settings;
-    this->settings = NULL;
-    return NULL;
-}
-
-
-
-
-//~ ulong   WidgetSettingsDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     MRESULT mresReply = 0;
     HWND    hwndNB = NULL;

@@ -24,9 +24,11 @@
 
 
 /**
- * This is the public header for it's corresponding source.
+ * This module implements the overrides for the C malloc and free functions
+ * as well as the C++ new and delete overloads.
+ * This is needed to allocate from named shared memory using the standard
+ * C/C++ methods.
  */
-
 
 #ifndef     __ALLOCMEM_HPP__
 #define     __ALLOCMEM_HPP__

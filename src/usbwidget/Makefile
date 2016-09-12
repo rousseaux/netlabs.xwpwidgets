@@ -77,10 +77,19 @@ SOURCES=\
 	GUIHelpers.cpp\
 	ModuleGlobals.cpp\
 	Testing123.cpp\
+	Notebook.cpp\
+	NotebookPage.cpp\
 	WidgetSettings.cpp\
 	USBWidget.cpp\
 	usbshold.lvl\
 	usbshold.cpp\
+
+#
+# ------------------------------------------------------------ [ DEPENDENCIES ]
+#
+DBGDEPS=\
+	Debug.h\
+	Debug.hpp\
 
 #
 # ------------------------------------------------------------ [ DEPENDENCIES ]
@@ -101,6 +110,8 @@ DEPS=\
 	GUIHelpers.hpp\
 	ModuleGlobals.hpp\
 	Testing123.hpp\
+	Notebook.hpp\
+	NotebookPage.hpp\
 	WidgetSettings.hpp\
 	USBWidget.hpp\
 
@@ -131,12 +142,14 @@ OBJECTS=\
 	CList.obj\
 	ModuleGlobals.obj\
 	Testing123.obj\
+	Notebook.obj\
+	NotebookPage.obj\
 	WidgetSettings.obj\
 	USBWidget.obj\
 	usbshold.obj\
 
 #
-# -----------------------------------------------[ LIBRARIES TO BUILD AND USE ]
+# ---------------------------------------------- [ LIBRARIES TO BUILD AND USE ]
 #
 LIBRARIES=\
 	APIHelpers.lib\
@@ -145,7 +158,14 @@ LIBRARIES=\
 	GUIHelpers.lib\
 
 #
-# --------------------------------------------------------[ PSEUDO ALL TARGET ]
+# -------------------------------------------- [ RULES -- NOT IMPLEMENTED YET ]
+#
+#~ .cpp.obj:
+#~ 	@echo [$@]
+#~ 	@echo deps: $?
+
+#
+# ------------------------------------------------------- [ PSEUDO ALL TARGET ]
 #
 all: Bldvars.h
 	@echo ##############################################################
@@ -366,7 +386,7 @@ usbshold.dll: $(OBJECTS) $(LIBRARIES) $*.res $*.def
 	@md5sum $@
 	@md5sum $@ > $*.md5
 
-usbshold.obj: usbshold.cpp usbshold.hpp $(DEPS) usbshold.lvl Bldvars.h
+usbshold.obj: usbshold.cpp usbshold.hpp $(DBGDEPS) $(DEPS) usbshold.lvl Bldvars.h
 	$(CC) $(CCFLAGS) -Ge- -Fo$*.obj $*.cpp
 	@echo.
 
@@ -382,10 +402,10 @@ usbshold.res: $(RESDEPS)
 #
 # The Widget code interfacing with eCenter
 #
-#USBWidget.obj: USBWidget.c USBWidget.h USBWidget.ih $(DEPS)
+#USBWidget.obj: USBWidget.c USBWidget.h USBWidget.ih $(DBGDEPS) $(DEPS)
 #	$(CC) $(CCFLAGS) -Fo$*.obj $*.c
 
-USBWidget.obj: USBWidget.cpp USBWidget.hpp $(DEPS)
+USBWidget.obj: USBWidget.cpp USBWidget.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBWidget.cpp
 
 #
@@ -404,7 +424,7 @@ USBHelpers.lib: USBHelpers.obj
 !endif
 	@echo.
 
-USBHelpers.obj: USBHelpers.cpp USBHelpers.hpp $(DEPS)
+USBHelpers.obj: USBHelpers.cpp USBHelpers.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ USBHelpers.cpp
 
 #
@@ -423,7 +443,7 @@ LVMHelpers.lib: LVMHelpers.obj
 !endif
 	@echo.
 
-LVMHelpers.obj: LVMHelpers.cpp LVMHelpers.hpp $(DEPS)
+LVMHelpers.obj: LVMHelpers.cpp LVMHelpers.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ LVMHelpers.cpp
 
 #
@@ -442,7 +462,7 @@ APIHelpers.lib: APIHelpers.obj
 !endif
 	@echo.
 
-APIHelpers.obj: APIHelpers.cpp APIHelpers.hpp $(DEPS)
+APIHelpers.obj: APIHelpers.cpp APIHelpers.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ APIHelpers.cpp
 
 #
@@ -461,55 +481,67 @@ GUIHelpers.lib: GUIHelpers.obj
 !endif
 	@echo.
 
-GUIHelpers.obj: GUIHelpers.cpp GUIHelpers.hpp $(DEPS)
+GUIHelpers.obj: GUIHelpers.cpp GUIHelpers.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ GUIHelpers.cpp
 
 #
 # Module with globals
 #
-ModuleGlobals.obj: ModuleGlobals.cpp ModuleGlobals.hpp $(DEPS)
+ModuleGlobals.obj: ModuleGlobals.cpp ModuleGlobals.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # Module containing debug functions
 #
-Debug.obj: $*.cpp $*.hpp $(DEPS)
+Debug.obj: $*.cpp $*.hpp $(DBGDEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # Module containing memory allocation overrides
 #
-AllocMem.obj: $*.cpp $*.hpp $(DEPS)
+AllocMem.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # Module containing stuff to fix LVM hostile disk lauouts
 #
-ProblemFixer.obj: $*.cpp $*.hpp $(DEPS)
+ProblemFixer.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
-# Module containing the new Widget Setting NoteBook
+# Module containing Notebook Class
 #
-WidgetSettings.obj: $*.cpp $*.hpp $(DEPS)
+Notebook.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
+	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
+
+#
+# Module containing NotebookPage Class
+#
+NotebookPage.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
+	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
+
+#
+# Module containing the new WidgetSetting Dialog
+#
+WidgetSettings.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # Module containing memory allocation overrides
 #
-Threads.obj: $*.cpp $*.hpp $(DEPS)
+Threads.obj: $*.cpp $*.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # List to store attached usb devices
 #
-CList.obj: CList.cpp CList.hpp $(DEPS)
+CList.obj: CList.cpp CList.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
 # Module with testing-stuff
 #
-Testing123.obj: Testing123.cpp Testing123.hpp $(DEPS)
+Testing123.obj: Testing123.cpp Testing123.hpp $(DBGDEPS) $(DEPS)
 	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
 
 #
