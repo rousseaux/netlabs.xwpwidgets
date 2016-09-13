@@ -37,6 +37,9 @@
 */
 Notebook::Notebook() {
     MessageBox("Notebook","CONSTRUCTOR");
+    this->idResource = NULL;
+    this->hwndParent = NULL;
+    this->hwndSelf = NULL;
     this->pages = NULL;
 }
 
@@ -46,10 +49,112 @@ Notebook::~Notebook() {
 
 void    Notebook::appendPage(NotebookPage* page) {
     MessageBox("Notebook","appendPage");
+
+    /* Insert the page into the notebook */
+    page->idPage = (ULONG)   WinSendMsg(
+                                this->hwndSelf,
+                                BKM_INSERTPAGE,
+                                (MPARAM) NULL,
+                                MPFROM2SHORT(page->pageStyle, page->pageOrder)
+                            );
+
+    /* Set the tab-text for the page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETTABTEXT,
+        (MPARAM) page->idPage,
+        (MPARAM) page->tabTitle
+    );
+
+    /* Set the status-text for the page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETSTATUSLINETEXT,
+        (MPARAM) page->idPage,
+        (MPARAM) page->statusText
+    );
+
+    /* Load the page */
+    //~ page->hwndSelf =    WinLoadDlg(
+                            //~ this->hwndSelf,
+                            //~ this->hwndSelf,
+                            //~ WinDefDlgProc,
+                            //~ hmodMe,
+                            //~ page->idResource,
+                            //~ NULL
+                        //~ );
+
+    /* Associate page-dialog with notebook-page */
+    //~ WinSendMsg(
+        //~ this->hwndSelf,
+        //~ BKM_SETPAGEWINDOWHWND,
+        //~ MPFROMLONG(page->idPage),
+        //~ MPFROMHWND(page->hwndSelf)
+    //~ );
+
+    /* Append the page to the list */
+    if (this->pages == NULL) {
+        page->prev = NULL;      // Is first page so there is no previous
+        page->next = NULL;      // Is first page so there is no next
+        this->pages = page;     // Link the first page
+    } else {
+        NotebookPage*   tnbp = this->pages;     // Temporary ptr
+        while (tnbp->next) {                    // If there is a next page...
+            tnbp = tnbp->next;                  // point to it
+        }
+        /* Link the page */
+        tnbp->next = page;      // Create forward link on old last page
+        page->prev = tnbp;      // Create backward on new last page
+        page->next = NULL;      // Indicate last page
+    }
 }
 
 void    Notebook::appendPages() {
+    NotebookPage*   nbp = NULL;
     MessageBox("Notebook","appendPages");
+
+    /* Create and insert pages */
+    do {
+        nbp = new NotebookPage();
+        if (nbp == NULL) break;
+
+        /* Insert first page */
+        nbp->idPage = 0;
+        nbp->idResource = NB_PAGE_1;
+        nbp->dlgProc = WinDefDlgProc;
+        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
+        nbp->pageOrder = BKA_LAST;
+        nbp->tabTitle = "Page #1";
+        nbp->statusText = "This is the first page";
+        this->appendPage(nbp);
+
+        nbp = new NotebookPage();
+        if (nbp == NULL) break;
+
+        /* Insert second page */
+        nbp->idPage = 0;
+        nbp->idResource = NB_PAGE_2;
+        nbp->dlgProc = WinDefDlgProc;
+        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
+        nbp->pageOrder = BKA_LAST;
+        nbp->tabTitle = "Page #2";
+        nbp->statusText = "This is the second page";
+        this->appendPage(nbp);
+
+        nbp = new NotebookPage();
+        if (nbp == NULL) break;
+
+        /* Insert third page */
+        nbp->idPage = 0;
+        nbp->idResource = NB_PAGE_3;
+        nbp->dlgProc = WinDefDlgProc;
+        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
+        nbp->pageOrder = BKA_LAST;
+        nbp->tabTitle = "Page #3";
+        nbp->statusText = "This is the third page";
+        this->appendPage(nbp);
+
+    } while (0);
 }
 
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {

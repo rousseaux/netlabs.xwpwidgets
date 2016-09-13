@@ -47,6 +47,9 @@ MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 class   Notebook {
     public:
     /* Do these public for now */
+    ULONG           idResource;
+    HWND            hwndParent;
+    HWND            hwndSelf;
     NotebookPage*   pages;
     /* Constructor and Destructor */
     Notebook();

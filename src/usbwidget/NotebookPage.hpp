@@ -47,6 +47,8 @@ class   NotebookPage {
     /* Do these public for now */
     ULONG   idPage;
     ULONG   idResource;
+    HWND    hwndParent;
+    HWND    hwndSelf;
     PFNWP   dlgProc;
     USHORT  pageStyle;
     USHORT  pageOrder;

@@ -36,34 +36,73 @@
 // WidgetSettingsDialog
 */
 WidgetSettingsDialog::WidgetSettingsDialog() {
+    this->hwndParent = NULL;
+    this->hwndSelf = NULL;
     this->settings = NULL;
-    MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
+    //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
 }
 
 WidgetSettingsDialog::~WidgetSettingsDialog() {
-    MessageBox("WidgetSettingsDialog","DESTRUCTOR");
+    //~ MessageBox("WidgetSettingsDialog","DESTRUCTOR");
 }
 
 int WidgetSettingsDialog::create() {
-    MessageBox("WidgetSettingsDialog","CREATE");
-    this->handle = WinLoadDlg(
-                    HWND_DESKTOP,
-                    NULL,
-                    //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
-                    //~ (PFNWP) MyDialogHandler_1,
-                    (PFNWP) WidgetSettingsDialogHandler,
-                    hmodMe,
-                    DLG_ID_WIDGETSETTINGS,
-                    //~ ID_DEBUG_DIALOG,
-                    NULL);
+    //~ MessageBox("WidgetSettingsDialog","CREATE");
+
+    /* Load the WidgetSettings Dialog */
+    this->handle =  WinLoadDlg(
+                        HWND_DESKTOP,
+                        NULL,
+                        //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
+                        //~ (PFNWP) MyDialogHandler_1,
+                        (PFNWP) WidgetSettingsDialogHandler,
+                        hmodMe,
+                        DLG_ID_WIDGETSETTINGS,
+                        //~ ID_DEBUG_DIALOG,
+                        NULL
+                    );
 
     if (this->handle) {
-        MessageBox("WinLoadDlg", "OK");
+        this->hwndParent = HWND_DESKTOP;
+        this->hwndSelf = this->handle;
+        //~ MessageBox("WinLoadDlg", "OK");
     } else {
         MessageBox("WinLoadDlg", "NULL");
     }
 
+    /* Create a new Notebook to manage the Notebook Control */
     this->settings = new Notebook();
+
+    /* Populate the Notebook with Pages */
+    if (this->settings) {
+        this->settings->idResource = DLG_ID_WIDGETSETTINGS_NOTEBOOK;
+        this->settings->hwndParent = this->hwndSelf;
+        this->settings->hwndSelf = WinWindowFromID(this->hwndSelf, this->settings->idResource);
+
+        /* Set dimensions of Major Tabs -- can resize Notebook */
+        WinSendMsg(settings->hwndSelf,
+            BKM_SETDIMENSIONS,
+            MPFROM2SHORT(80, 40),
+            MPFROMLONG(BKA_MAJORTAB)
+        );
+
+        /* Set dimensions of Minor Tabs -- can resize Notebook */
+        //~ WinSendMsg(settings->hwndSelf,
+            //~ BKM_SETDIMENSIONS,
+            //~ MPFROM2SHORT(80, 25),
+            //~ MPFROMLONG(BKA_MINORTAB)
+        //~ );
+
+        /* Set dimensions of prev/next page button */
+        //~ WinSendMsg(settings->hwndSelf,
+            //~ BKM_SETDIMENSIONS,
+            //~ MPFROM2SHORT(30, 30),
+            //~ MPFROMLONG(BKA_PAGEBUTTON)
+        //~ );
+
+        /* Append the pages */
+        this->settings->appendPages();
+    }
 
     return NULL;
 }
@@ -77,10 +116,12 @@ int WidgetSettingsDialog::process() {
 
 int WidgetSettingsDialog::destroy() {
     MessageBox("WidgetSettingsDialog","DESTROY");
-    if (this->handle) WinDestroyWindow(this->handle);
-    this->handle = NULL;
     if (this->settings) delete this->settings;
     this->settings = NULL;
+    if (this->handle) WinDestroyWindow(this->handle);
+    this->handle = NULL;
+    this->hwndParent = NULL;
+    this->hwndSelf = NULL;
     return NULL;
 }
 

@@ -37,6 +37,17 @@
 */
 NotebookPage::NotebookPage() {
     MessageBox("NotebookPage","CONSTRUCTOR");
+    this->idPage = 0;
+    this->idResource = 0;
+    this->hwndParent = NULL;
+    this->hwndSelf = NULL;
+    this->dlgProc = WinDefDlgProc;
+    this->pageStyle = NULL;
+    this->pageOrder = NULL;
+    this->tabTitle = NULL;
+    this->statusText = NULL;
+    this->prev = NULL;
+    this->next = NULL;
 }
 
 NotebookPage::~NotebookPage() {
