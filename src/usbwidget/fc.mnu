@@ -1,5 +1,5 @@
 A:	Build All
-	nmake -nologo
+	nmake -nologo all
 B:	Build
 {
 D:	Daemon

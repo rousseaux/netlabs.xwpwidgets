@@ -56,6 +56,8 @@ class   Notebook {
     virtual ~Notebook();
     virtual void    appendPage(NotebookPage*);
     virtual void    appendPages();
+    virtual void    removePage(NotebookPage*);
+    virtual void    removePages();
 };
 
 

@@ -80,25 +80,45 @@ int WidgetSettingsDialog::create() {
         this->settings->hwndSelf = WinWindowFromID(this->hwndSelf, this->settings->idResource);
 
         /* Set dimensions of Major Tabs -- can resize Notebook */
-        WinSendMsg(settings->hwndSelf,
+        WinSendMsg(
+            settings->hwndSelf,
             BKM_SETDIMENSIONS,
             MPFROM2SHORT(80, 40),
             MPFROMLONG(BKA_MAJORTAB)
         );
 
         /* Set dimensions of Minor Tabs -- can resize Notebook */
-        //~ WinSendMsg(settings->hwndSelf,
+        //~ WinSendMsg(
+            //~ settings->hwndSelf,
             //~ BKM_SETDIMENSIONS,
             //~ MPFROM2SHORT(80, 25),
             //~ MPFROMLONG(BKA_MINORTAB)
         //~ );
 
         /* Set dimensions of prev/next page button */
-        //~ WinSendMsg(settings->hwndSelf,
+        //~ WinSendMsg(
+            //~ settings->hwndSelf,
             //~ BKM_SETDIMENSIONS,
             //~ MPFROM2SHORT(30, 30),
             //~ MPFROMLONG(BKA_PAGEBUTTON)
         //~ );
+
+
+        /* Set background color for page */
+        WinSendMsg(
+            settings->hwndSelf,
+            BKM_SETNOTEBOOKCOLORS,
+            MPFROMLONG(CLR_PALEGRAY),
+            MPFROMLONG(BKA_BACKGROUNDPAGECOLORINDEX)
+        );
+
+        /* Set background color for Major Tabs */
+        WinSendMsg(
+            settings->hwndSelf,
+            BKM_SETNOTEBOOKCOLORS,
+            MPFROMLONG(CLR_PALEGRAY),
+            MPFROMLONG(BKA_BACKGROUNDMAJORCOLORINDEX)
+        );
 
         /* Append the pages */
         this->settings->appendPages();

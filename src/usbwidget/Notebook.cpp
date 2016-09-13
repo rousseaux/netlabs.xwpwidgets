@@ -44,6 +44,7 @@ Notebook::Notebook() {
 }
 
 Notebook::~Notebook() {
+    this->removePages();
     MessageBox("Notebook","DESTRUCTOR");
 }
 
@@ -75,22 +76,22 @@ void    Notebook::appendPage(NotebookPage* page) {
     );
 
     /* Load the page */
-    //~ page->hwndSelf =    WinLoadDlg(
-                            //~ this->hwndSelf,
-                            //~ this->hwndSelf,
-                            //~ WinDefDlgProc,
-                            //~ hmodMe,
-                            //~ page->idResource,
-                            //~ NULL
-                        //~ );
+    page->hwndSelf =    WinLoadDlg(
+                            this->hwndSelf,
+                            this->hwndSelf,
+                            WinDefDlgProc,
+                            hmodMe,
+                            page->idResource,
+                            NULL
+                        );
 
     /* Associate page-dialog with notebook-page */
-    //~ WinSendMsg(
-        //~ this->hwndSelf,
-        //~ BKM_SETPAGEWINDOWHWND,
-        //~ MPFROMLONG(page->idPage),
-        //~ MPFROMHWND(page->hwndSelf)
-    //~ );
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETPAGEWINDOWHWND,
+        MPFROMLONG(page->idPage),
+        MPFROMHWND(page->hwndSelf)
+    );
 
     /* Append the page to the list */
     if (this->pages == NULL) {
@@ -155,6 +156,37 @@ void    Notebook::appendPages() {
         this->appendPage(nbp);
 
     } while (0);
+}
+
+void    Notebook::removePage(NotebookPage* page) {
+    NotebookPage*   tnbp = this->pages;     // Temporary ptr
+    MessageBox("Notebook","removePage");
+
+    //! NO NEED TO TRAVERSE !!
+    /* Traverse linked list and delete page */
+    while (tnbp) {
+        if (tnbp == page) {                     // Found page
+            if (page->prev == NULL) {           // Is first page ?
+                this->pages = page->next;       // Unlink it
+            } else {                            // Is not first page
+                page->prev->next = page->next;  // Unlink it
+            }
+            delete page;                        // Delete the page
+            tnbp = NULL;                        // Cause loop to end
+        } else {
+            tnbp = tnbp->next;                  // Try next page
+        }
+    }
+}
+
+void    Notebook::removePages() {
+    NotebookPage*   tnbp = this->pages;     // Temporary ptr
+    MessageBox("Notebook","removePages");
+    /* Traverse linked list and remove each page */
+    while (tnbp) {
+        this->removePage(tnbp);
+        tnbp = tnbp->next;
+    }
 }
 
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
