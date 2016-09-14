@@ -91,6 +91,7 @@ WGTDEPS=\
 	$(DBGDEPS)\
 	$(INCDEPS)\
 	AllocMem.hpp\
+	Dialog.hpp\
 	ProblemFixer.hpp\
 	Threads.hpp\
 	USBHelpers.hpp\
@@ -99,6 +100,7 @@ WGTDEPS=\
 	GUIHelpers.hpp\
 	Testing123.hpp\
 	WidgetSettings.hpp\
+	Window.hpp\
 	USBWidget.hpp\
 
 #
@@ -128,6 +130,7 @@ DMNOBJECTS=\
 WGTOBJECTS=\
 	Debug.obj\
 	AllocMem.obj\
+	Dialog.obj\
 	ProblemFixer.obj\
 	Threads.obj\
 	CList.obj\
@@ -136,6 +139,7 @@ WGTOBJECTS=\
 	Notebook.obj\
 	NotebookPage.obj\
 	WidgetSettings.obj\
+	Window.obj\
 	USBWidget.obj\
 
 #
@@ -162,10 +166,10 @@ LIBRARIES=\
 	@echo [$@]
 	@echo Reason: $?
 !if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $@ -+$*.obj; 2>nul
+	$(LIBTOOL) $(LIBFLAGS) $@ -+$?; 2>nul
 !else
 !if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$@ $*.obj
+	$(LIBTOOL) $(LIBFLAGS) -out:$@ $?
 !else
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
@@ -286,6 +290,7 @@ usbshold.res: $(RESDEPS)
 # =============================================================================
 AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 CList.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
@@ -299,11 +304,12 @@ Threads.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBWidget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 WidgetSettings.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-APIHelpers.lib: $*.obj
+APIHelpers.lib: $*.obj Dialog.obj Window.obj
 GUIHelpers.lib: $*.obj
 LVMHelpers.lib: $*.obj
 USBHelpers.lib: $*.obj
