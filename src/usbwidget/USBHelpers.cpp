@@ -29,6 +29,9 @@
  */
 
 #include    "Master.hpp"
+
+#include    "GUIHelpers.hpp"
+
 #include    "USBHelpers.hpp"
 
 

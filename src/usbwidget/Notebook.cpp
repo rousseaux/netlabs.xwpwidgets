@@ -28,6 +28,7 @@
  * This module contains the Notebook Class Implementation.
  */
 
+#include    "GUIHelpers.hpp"
 
 #include    "Notebook.hpp"
 

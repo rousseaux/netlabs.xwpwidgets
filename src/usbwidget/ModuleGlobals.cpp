@@ -411,27 +411,5 @@ BOOL    dlg_logging         = FALSE;
 //~ LOGICAL_DRIVE   ldrives[26];
 
 
-/*
-// This is where all other classes descend from.
-*/
-Root::Root() {}
-Root::~Root() {}
-
-bool    Root::debugMe() {
-    return this->debug;
-}
-
-bool    Root::debugMe(bool flag) {
-    this->debug = flag;
-    return this->debug;
-}
-
-int     Root::debugLevel() {
-    return this->level;
-
-}
-int     Root::debugLevel(int level) {
-    this->level = level;
-    return this->level;
-}
+// Root members were here
 

@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.hpp -- NeoWPS * USB Widget                                   *
+* Object.cpp -- NeoWPS * USB Widget                                           *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,62 +22,35 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.hpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module holds the top-level Object.
  */
 
+//~ #include    "GUIHelpers.hpp"
 
-#ifndef     __WIDGETSETINGS_HPP__
-#define     __WIDGETSETINGS_HPP__
-#ifdef      __cplusplus
-    extern "C" {
-#endif
+#include    "Object.hpp"
 
-#include    "Master.hpp"
-#include    "ModuleGlobals.hpp"
-#include    "ecomedia.h"
+/*
+// This is where all other classes descend from.
+*/
+Root::Root() {}
+Root::~Root() {}
 
-#include    "GUIHelpers.hpp"
+bool    Root::debugMe() {
+    return this->debug;
+}
 
-#include    "Notebook.hpp"
+bool    Root::debugMe(bool flag) {
+    this->debug = flag;
+    return this->debug;
+}
 
-/* Prototypes */
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+int     Root::debugLevel() {
+    return this->level;
 
-class   WidgetSettingsDialog : public Dialog {
-    public:
-    HWND        hwndParent;
-    HWND        hwndSelf;
-    Notebook*   settings;
-    WidgetSettingsDialog();
-    virtual ~WidgetSettingsDialog();
-    virtual int create(void);
-    virtual int process(void);
-    virtual int destroy(void);
-
-    virtual int test123(void);
-
-    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-
-
-// The _System qualifier can not be applied... (when a static method ?)
-    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-
-    private:
-    DLG_CLASS_INSTANCE dci;
-};
-
-
-class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
-    public:
-    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-};
-
-
-#ifdef      __cplusplus
-    }
-#endif
-
-#endif // __WIDGETSETINGS_HPP__
+}
+int     Root::debugLevel(int level) {
+    this->level = level;
+    return this->level;
+}

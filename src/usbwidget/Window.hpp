@@ -35,7 +35,27 @@
     extern "C" {
 #endif
 
+#include    "Master.hpp"
 
+#include    "Object.hpp"
+
+//~ class   Root;
+class   Window : public Root {
+//~ class   Window {
+    public:
+    Window();
+    virtual ~Window();
+    virtual int     show();
+    virtual void    center();
+    virtual void    centerToDesktop();
+    virtual void    centerToOther(ulong toCenterTo);
+    virtual int     hide();
+    virtual ulong   getHandle();
+    protected:
+    ulong   handle;
+    char    buf[256];
+    private:
+};
 
 #ifdef      __cplusplus
     }

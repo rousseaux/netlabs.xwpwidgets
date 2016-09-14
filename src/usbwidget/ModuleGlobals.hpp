@@ -354,23 +354,7 @@ typedef struct  _DRIVEINFO {
 
 #ifndef __ROOT__
 #define __ROOT__
-/*
-// This is the root-class of the whole shebang.
-// It has some stuff common to all classes, like a debug-flag.
-*/
-class   Root {
-    private:
-    bool    debug;
-    int     level;
-
-    public:
-    Root();
-    ~Root();
-    bool    debugMe();
-    bool    debugMe(bool flag);
-    int     debugLevel();
-    int     debugLevel(int level);
-};
+// Class Root was here
 #endif
 
 

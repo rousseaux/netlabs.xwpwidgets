@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.hpp -- NeoWPS * USB Widget                                   *
+* Object.hpp -- NeoWPS * USB Widget                                           *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,62 +22,40 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.hpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module holds the top-level Object.
  */
 
 
-#ifndef     __WIDGETSETINGS_HPP__
-#define     __WIDGETSETINGS_HPP__
+#ifndef     __OBJECT_HPP__
+#define     __OBJECT_HPP__
 #ifdef      __cplusplus
     extern "C" {
 #endif
 
 #include    "Master.hpp"
-#include    "ModuleGlobals.hpp"
-#include    "ecomedia.h"
 
-#include    "GUIHelpers.hpp"
-
-#include    "Notebook.hpp"
-
-/* Prototypes */
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-
-class   WidgetSettingsDialog : public Dialog {
-    public:
-    HWND        hwndParent;
-    HWND        hwndSelf;
-    Notebook*   settings;
-    WidgetSettingsDialog();
-    virtual ~WidgetSettingsDialog();
-    virtual int create(void);
-    virtual int process(void);
-    virtual int destroy(void);
-
-    virtual int test123(void);
-
-    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-
-
-// The _System qualifier can not be applied... (when a static method ?)
-    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-
+/*
+// This is the root-class of the whole shebang.
+// It has some stuff common to all classes, like a debug-flag.
+*/
+class   Root {
     private:
-    DLG_CLASS_INSTANCE dci;
-};
+    bool    debug;
+    int     level;
 
-
-class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
     public:
-    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    Root();
+    ~Root();
+    bool    debugMe();
+    bool    debugMe(bool flag);
+    int     debugLevel();
+    int     debugLevel(int level);
 };
-
 
 #ifdef      __cplusplus
     }
 #endif
 
-#endif // __WIDGETSETINGS_HPP__
+#endif // __OBJECT_HPP__

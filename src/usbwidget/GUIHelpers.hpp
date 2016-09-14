@@ -35,11 +35,10 @@
     extern "C" {
 #endif
 
-
 #include    "ModuleGlobals.hpp"
 #include    "ecomedia.h"
 
-
+#include    "Window.hpp"
 
 class   GUIHelpers {
 
@@ -113,26 +112,10 @@ class   UsbMonitor : public Monitor {
 
 
 
-class   Window : public Root {
-    private:
-
-    protected:
-    ulong   handle;
-    char    buf[256];
-
-    public:
-    Window();
-    virtual ~Window();
-    virtual int     show();
-    virtual void    center();
-    virtual void    centerToDesktop();
-    virtual void    centerToOther(ulong toCenterTo);
-    virtual int     hide();
-    virtual ulong   getHandle();
-};
+// Window class was here
 
 
-
+class   Window;
 class   Dialog : public Window {
 
     private:
@@ -250,7 +233,7 @@ class   ProblemFixerDialog : public Dialog {
 
 
 
-
+class   Window;
 class   Notifier : public Root {
     private:
     Window* myNotifierWindow;

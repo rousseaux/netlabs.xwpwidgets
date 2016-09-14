@@ -40,58 +40,7 @@ void    GUIHelpers(void) {
 
 
 
-/*
-// WINDOW
-*/
-Window::Window() {
-    this->handle = NULL;
-    sprintf(this->buf, "Window() : hdlg=%08X", this->handle);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-Window::~Window() {
-    sprintf(this->buf, "~Window() : hdlg=%08X", this->handle);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-int     Window::show() {
-    if (this->handle) {
-        WinSetWindowPos(this->handle, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
-        WinShowWindow(this->handle, true);
-        WinSetFocus(HWND_DESKTOP, this->handle);
-    }
-    return this->handle;
-}
-
-void    Window::center() {
-    if (this->handle) {
-        CenterWindow(WinQueryWindow(this->handle, QW_PARENT), this->handle);
-    }
-}
-
-void    Window::centerToDesktop() {
-    if (this->handle) {
-        CenterWindow(HWND_DESKTOP, this->handle);
-    }
-}
-
-void    Window::centerToOther(ulong toCenterTo) {
-    if (this->handle) {
-        CenterWindow(toCenterTo, this->handle);
-    }
-}
-
-int     Window::hide() {
-    if (this->handle) {
-        WinShowWindow(this->handle, false);
-    }
-    return this->handle;
-}
-
-ulong   Window::getHandle() {
-    return this->handle;
-}
-
+// Window Members were here
 
 /*
 // DIALOG

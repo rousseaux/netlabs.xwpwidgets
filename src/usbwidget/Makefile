@@ -100,6 +100,7 @@ WGTDEPS=\
 	GUIHelpers.hpp\
 	Testing123.hpp\
 	WidgetSettings.hpp\
+	Object.hpp\
 	Window.hpp\
 	USBWidget.hpp\
 
@@ -139,6 +140,7 @@ WGTOBJECTS=\
 	Notebook.obj\
 	NotebookPage.obj\
 	WidgetSettings.obj\
+	Object.obj\
 	Window.obj\
 	USBWidget.obj\
 
@@ -304,13 +306,14 @@ Threads.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBWidget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 WidgetSettings.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-APIHelpers.lib: $*.obj Dialog.obj Window.obj
-GUIHelpers.lib: $*.obj
+APIHelpers.lib: $*.obj
+GUIHelpers.lib: $*.obj Object.obj Dialog.obj Window.obj
 LVMHelpers.lib: $*.obj
 USBHelpers.lib: $*.obj
 

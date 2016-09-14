@@ -28,6 +28,8 @@
  * It's purpose is to log debug information to none or more outputs.
  */
 
+#include    "GUIHelpers.hpp"
+
 #include    "Debug.hpp"
 
 //! FIXME: THE DELAY CULPRIT !!!!

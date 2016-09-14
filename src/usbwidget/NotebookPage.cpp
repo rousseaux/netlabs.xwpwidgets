@@ -28,6 +28,7 @@
  * This module contains the NotebookPage Class Implementation.
  */
 
+#include    "GUIHelpers.hpp"
 
 #include    "NotebookPage.hpp"
 
