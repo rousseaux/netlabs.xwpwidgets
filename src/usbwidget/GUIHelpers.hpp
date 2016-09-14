@@ -65,77 +65,7 @@ class   GUIHelpers {
 #define     PF_FIX_DIRTY    3
 
 
-/**
- * This is the new dialog to fix an LVM hostile disk-layout.
- * The OO approach of DebugDialog seems to work good enough to implement it
- * this way instead of the usual like the normal DebugDialog.
- */
-class   ProblemFixerDialog : public Dialog {
-
-    private:
-    char    dletter;
-    int     pdisk;
-    ulong   dskstat;
-    ulong   fixmask;
-    ulong   effmask;
-    ulong   tofixmap;
-
-    int     fixcommands_count;
-    char    fixcommands[5][256];
-    ulong   fixes[5];
-    ulong   action_taken;
-
-
-    void    init();
-    int     mle_cmdname(int id);
-    int     set_fix_state();
-    int     set_close_state(int fixed);
-
-    ulong   get_fixmask();
-    ulong   set_fixmask(ulong fixmask);
-    ulong   get_effmask();
-    ulong   set_effmask(ulong effmask);
-    ulong   get_tofixmap();
-    ulong   set_tofixmap(ulong tofixmap);
-
-    public:
-    ProblemFixerDialog();
-    ~ProblemFixerDialog();
-    ulong   create();
-    ulong   process();
-    ulong   destroy();
-
-
-    ulong   redraw();
-
-    ulong   msgInitDialog(ulong mp1, ulong mp2);
-    ulong   msgCommand(ulong mp1, ulong mp2);
-
-    ulong   commandDrawButton();
-    ulong   commandDestroyButton();
-
-    void    mleAppendText(char* text);
-    void    mleClear();
-
-    char    getDriveLetter();
-    char    setDriveLetter(char dletter);
-    int     getPhysDisk();
-    int     setPhysDisk(int pdisk);
-    ulong   getDiskStatus();
-    ulong   setDiskStatus(ulong dskstat);
-
-    void    help();
-    void    noDFSVOS2();
-    void    setupFixCommands();
-
-    ulong   instanceMessageHandler2(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    ulong   instanceMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    //~ static ulong EXPENTRY ProblemFixerDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    static ulong ProblemFixerDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-};
-
-
-
+// ProblemFixerDialog class was here
 
 // Notifier class was here
 

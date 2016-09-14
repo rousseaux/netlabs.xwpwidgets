@@ -91,6 +91,7 @@ CLASSDEPS=\
 	Classes.hpp\
 	Dialog.hpp\
 	DebugDialog.hpp\
+	ProblemFixerDialog.hpp\
 	Monitor.hpp\
 	DriveMonitor.hpp\
 	UsbMonitor.hpp\
@@ -146,6 +147,7 @@ CLASSOBJECTS=\
 	Classes.obj\
 	Dialog.obj\
 	DebugDialog.obj\
+	ProblemFixerDialog.obj\
 	Monitor.obj\
 	DriveMonitor.obj\
 	UsbMonitor.obj\
@@ -321,6 +323,7 @@ usbshold.res: $(RESDEPS)
 Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 DebugDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+ProblemFixerDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)

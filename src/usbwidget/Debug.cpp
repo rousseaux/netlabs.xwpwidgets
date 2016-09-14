@@ -32,6 +32,8 @@
 
 #include    "Debug.hpp"
 
+#include    "ProblemFixerDialog.hpp"
+
 //! FIXME: THE DELAY CULPRIT !!!!
 ///
 /// When there are no PM applications or Windowed Sessions running, it

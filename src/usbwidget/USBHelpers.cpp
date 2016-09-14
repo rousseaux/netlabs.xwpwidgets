@@ -32,6 +32,8 @@
 
 #include    "GUIHelpers.hpp"
 
+#include    "ProblemFixerDialog.hpp"
+
 #include    "USBHelpers.hpp"
 
 
