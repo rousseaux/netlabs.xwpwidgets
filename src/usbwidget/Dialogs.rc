@@ -29,5 +29,5 @@
  */
 
 #include    "Bldvars.h"
-#include    "dialogids.h"
-rcinclude   "dialogs.dlg"
+#include    "Dialogids.h"
+rcinclude   "Dialogs.dlg"

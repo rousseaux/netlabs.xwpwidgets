@@ -82,7 +82,7 @@ extern "C" {
 #include    "USBWidget.hpp"
 
 #include    "Apm.h"
-#include    "dialogids.h"
+#include    "Dialogids.h"
 #include    "lange.h"
 
 
@@ -1338,7 +1338,7 @@ MRESULT EXPENTRY fnwpSettingsDlg(HWND hwnd, ULONG msg0, MPARAM mp1, MPARAM mp2) 
 */
 
 
-            // Rousseau: Moved widget-name-string to dialogids.h (WIDGET_NAME)
+            // Rousseau: Moved widget-name-string to Dialogids.h (WIDGET_NAME)
             WinSendMsg(WinWindowFromID(hwnd, ENTRY_TITLE),EM_SETTEXTLIMIT,(MPARAM)72,(MPARAM)0);
 //#         WinSendMsg(WinWindowFromID(hwnd, ENTRY_TITLE),EM_SETFIRSTCHAR,(MPARAM)10,(MPARAM)0);
 //#         WinSetWindowText(WinWindowFromID(hwnd, ENTRY_TITLE), WIDGET_NAME" == TEST VERSIE #1 ==");

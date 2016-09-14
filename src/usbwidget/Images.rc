@@ -29,7 +29,7 @@
  */
 
 
-#include    "dialogids.h"
+#include    "Dialogids.h"
 
 resource    RT_PNG  ID_PNG_USBDEV           "images/png/usbdev_64.png"
 resource    RT_PNG  ID_PNG_USBDEV2          "images/png/usbdev_64-2.png"

@@ -31,7 +31,7 @@
 
 
 #include    "Debug.h"
-#include    "dialogids.h"
+#include    "Dialogids.h"
 #include    <os2.h>
 
 /* When UNIX-paths are accepted these are preferred */
