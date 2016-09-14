@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.cpp -- NeoWPS * USB Widget                                   *
+* WidgetSettingsDialog.cpp -- NeoWPS * USB Widget                             *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -25,11 +25,11 @@
 // From GUIHelpers.cpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module contains the new WidgetSettingsDialog.
  */
 
 
-#include    "WidgetSettings.hpp"
+#include    "WidgetSettingsDialog.hpp"
 
 
 /*
@@ -55,7 +55,7 @@ int WidgetSettingsDialog::create() {
                             NULL,
                             //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
                             //~ (PFNWP) MyDialogHandler_1,
-                            (PFNWP) WidgetSettingsDialogHandler,
+                            (PFNWP) DlgProcWidgetSettingsDialog,
                             hmodMe,
                             DLG_ID_WIDGETSETTINGS,
                             //~ ID_DEBUG_DIALOG,
@@ -195,8 +195,7 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
 }
 
 
-//~ ulong   WidgetSettingsDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
-MRESULT WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     /* Locals */
     BOOL    brc = FALSE;
@@ -230,7 +229,7 @@ MRESULT WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
 
         /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
-            pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("WidgetSettingsDialogHandler","pWsd is NULL !!");
+            pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
             break;
         }
         //~: Handle default message (debug dialog)

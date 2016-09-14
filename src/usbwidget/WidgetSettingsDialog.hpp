@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* WidgetSettings.hpp -- NeoWPS * USB Widget                                   *
+* WidgetSettingsDialog.hpp -- NeoWPS * USB Widget                             *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -25,12 +25,12 @@
 // From GUIHelpers.hpp
 
 /**
- * This module contains the new WidgetSettings Notebook.
+ * This module contains the new WidgetSettingsDialog.
  */
 
 
-#ifndef     __WIDGETSETINGS_HPP__
-#define     __WIDGETSETINGS_HPP__
+#ifndef     __WIDGETSETINGSDIALOG_HPP__
+#define     __WIDGETSETINGSDIALOG_HPP__
 #ifdef      __cplusplus
     extern "C" {
 #endif
@@ -44,7 +44,7 @@
 #include    "Notebook.hpp"
 
 /* Prototypes */
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   WidgetSettingsDialog : public Dialog {
     public:
@@ -79,4 +79,4 @@ class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
     }
 #endif
 
-#endif // __WIDGETSETINGS_HPP__
+#endif // __WIDGETSETINGSDIALOG_HPP__

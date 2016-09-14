@@ -22,8 +22,6 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From WidgetSettings.hpp
-
 /**
  * This module contains the NotebookPage Class Definition.
  */

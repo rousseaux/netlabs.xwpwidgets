@@ -77,7 +77,7 @@ extern "C" {
  */
 
 
-#include    "WidgetSettings.hpp"
+#include    "WidgetSettingsDialog.hpp"
 
 #include    "USBWidget.hpp"
 
@@ -3066,14 +3066,14 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     break;
                 }
 
-                //! WidgetSettings Dialog
+                //! WidgetSettingsDialog
                 case ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK: {
                     BOOL    brc = FALSE;
                     ULONG   ulReply = NULL;
                     HWND    hwndWidgetSettingsDialog = NULL;
                     WidgetSettingsDialog* lwsd = NULL;
 
-                    /* Test new WidgetSettings Dialog */
+                    /* Test new WidgetSettingsDialog */
                     lwsd = new WidgetSettingsDialog;        // Default Dialog
                     //~ lwsd = new WidgetSettingsDialogEx;      // Extended Dialog to test overrides
                     if (lwsd) {

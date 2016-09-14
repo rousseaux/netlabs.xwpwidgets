@@ -22,8 +22,6 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From WidgetSettings.cpp
-
 /**
  * This module contains the NotebookPage Class Implementation.
  */

@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* Window.cpp -- NeoWPS * USB Widget                                           *
+* Classes.cpp -- NeoWPS * USB Widget                                          *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -22,64 +22,14 @@
 *                                                                             *
 \*****************************************************************************/
 
+
 /**
- * This module handles Windows.
+ * This module is a dummy to invoke the .obj.lib inference rule.
  */
 
-#include    "GUIHelpers.hpp"
+//~ #include    "GUIHelpers.hpp"
 
-#include    "Window.hpp"
+#include    "Classes.hpp"
 
-
-Window::Window() {
-    this->hwndParent = NULL;
-    this->hwndOwner = NULL;
-    this->hwndSelf = NULL;
-    this->wci.cb = sizeof(WND_CLASS_INSTANCE);
-    this->wci.pvClassInstance = this;
-    sprintf(this->buf, "Window() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-Window::~Window() {
-    sprintf(this->buf, "~Window() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-int     Window::show() {
-    if (this->hwndSelf) {
-        WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
-        WinShowWindow(this->hwndSelf, true);
-        WinSetFocus(HWND_DESKTOP, this->hwndSelf);
-    }
-    return this->hwndSelf;
-}
-
-void    Window::center() {
-    if (this->hwndSelf) {
-        CenterWindow(WinQueryWindow(this->hwndSelf, QW_PARENT), this->hwndSelf);
-    }
-}
-
-void    Window::centerToDesktop() {
-    if (this->hwndSelf) {
-        CenterWindow(HWND_DESKTOP, this->hwndSelf);
-    }
-}
-
-void    Window::centerToOther(ulong toCenterTo) {
-    if (this->hwndSelf) {
-        CenterWindow(toCenterTo, this->hwndSelf);
-    }
-}
-
-int     Window::hide() {
-    if (this->hwndSelf) {
-        WinShowWindow(this->hwndSelf, false);
-    }
-    return this->hwndSelf;
-}
-
-ulong   Window::getHandle() {
-    return this->hwndSelf;
-}
+Classes::Classes() {}
+Classes::~Classes() {}

@@ -85,26 +85,35 @@ DMNDEPS=\
 	Master.hpp\
 
 #
+# Class dependencies
+#
+CLASSDEPS=\
+	Classes.hpp\
+	Dialog.hpp\
+	Monitor.hpp\
+	DriveMonitor.hpp\
+	UsbMonitor.hpp\
+	WidgetSettingsDialog.hpp\
+	Object.hpp\
+	Notebook.hpp\
+	NotebookPage.hpp\
+	Window.hpp\
+
+#
 # Widget dependencies
 #
 WGTDEPS=\
 	$(DBGDEPS)\
 	$(INCDEPS)\
+	$(CLASSDEPS)\
 	AllocMem.hpp\
-	Dialog.hpp\
 	ProblemFixer.hpp\
 	Threads.hpp\
-	Monitor.hpp\
-	DriveMonitor.hpp\
-	UsbMonitor.hpp\
 	USBHelpers.hpp\
 	LVMHelpers.hpp\
 	APIHelpers.hpp\
 	GUIHelpers.hpp\
 	Testing123.hpp\
-	WidgetSettings.hpp\
-	Object.hpp\
-	Window.hpp\
 	USBWidget.hpp\
 
 #
@@ -129,31 +138,39 @@ DMNOBJECTS=\
 	AllocMem.obj\
 
 #
+# Class Objects
+#
+CLASSOBJECTS=\
+	Classes.obj\
+	Dialog.obj\
+	Monitor.obj\
+	DriveMonitor.obj\
+	UsbMonitor.obj\
+	WidgetSettingsDialog.obj\
+	Object.obj\
+	Notebook.obj\
+	NotebookPage.obj\
+	Window.obj\
+
+#
 # Objects to build the Widget from
 #
 WGTOBJECTS=\
+	$(CLASSOBJECTS)\
 	Debug.obj\
 	AllocMem.obj\
-	Dialog.obj\
 	ProblemFixer.obj\
 	Threads.obj\
 	CList.obj\
 	ModuleGlobals.obj\
-	Monitor.obj\
-	DriveMonitor.obj\
-	UsbMonitor.obj\
 	Testing123.obj\
-	Notebook.obj\
-	NotebookPage.obj\
-	WidgetSettings.obj\
-	Object.obj\
-	Window.obj\
 	USBWidget.obj\
 
 #
 # Libraries to cluster some stuff
 #
 LIBRARIES=\
+	Classes.lib\
 	APIHelpers.lib\
 	LVMHelpers.lib\
 	USBHelpers.lib\
@@ -296,33 +313,37 @@ usbshold.res: $(RESDEPS)
 # =============================================================================
 #                                    [ OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+# Class Objects
+Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-CList.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-LVMHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-ModuleGlobals.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+# Common Objects
+AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+CList.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+LVMHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+ModuleGlobals.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 ProblemFixer.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Testing123.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Threads.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 USBWidget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-WidgetSettings.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
 # =============================================================================
+Classes.lib: $(CLASSOBJECTS)
 APIHelpers.lib: $*.obj
-GUIHelpers.lib: $*.obj Object.obj Dialog.obj Window.obj Monitor.obj DriveMonitor.obj UsbMonitor.obj
+GUIHelpers.lib: $*.obj
 LVMHelpers.lib: $*.obj
 USBHelpers.lib: $*.obj
 
