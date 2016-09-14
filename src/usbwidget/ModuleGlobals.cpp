@@ -411,5 +411,5 @@ BOOL    dlg_logging         = FALSE;
 //~ LOGICAL_DRIVE   ldrives[26];
 
 
-// Root members were here
+// Object members were here
 

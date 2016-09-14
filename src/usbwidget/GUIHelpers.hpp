@@ -83,7 +83,7 @@ class   TextLogger {
 
 
 
-class   Monitor : public Root {
+class   Monitor : public Object {
 
     public:
     Monitor();
@@ -234,7 +234,7 @@ class   ProblemFixerDialog : public Dialog {
 
 
 class   Window;
-class   Notifier : public Root {
+class   Notifier : public Object {
     private:
     Window* myNotifierWindow;
 

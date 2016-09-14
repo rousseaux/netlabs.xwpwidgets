@@ -39,9 +39,7 @@
 
 #include    "Object.hpp"
 
-//~ class   Root;
-class   Window : public Root {
-//~ class   Window {
+class   Window : public Object {
     public:
     Window();
     virtual ~Window();

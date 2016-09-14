@@ -37,17 +37,17 @@
 #include    "Master.hpp"
 
 /*
-// This is the root-class of the whole shebang.
+// This is the top-level class of the whole shebang.
 // It has some stuff common to all classes, like a debug-flag.
 */
-class   Root {
+class   Object {
     private:
     bool    debug;
     int     level;
 
     public:
-    Root();
-    ~Root();
+    Object();
+    ~Object();
     bool    debugMe();
     bool    debugMe(bool flag);
     int     debugLevel();

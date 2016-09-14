@@ -91,7 +91,7 @@ ulong   DebugDialog::create() {
     // It is passed as a max-64KB buffer with the 16-bit word at offset 0 containing
     // the length of the data.
     */
-    char    myself[sizeof(short)+sizeof(Root*)];        // Allocate the buffer; all classes descend from Root.
+    char    myself[sizeof(short)+sizeof(Object*)];        // Allocate the buffer; all classes descend from Object.
 
     /* Initialize it */
     myself[0]               = (short) sizeof(myself);   // Size of the buffer as a 16-bit word at offset 0.
@@ -371,7 +371,7 @@ ulong   ProblemFixerDialog::create() {
     // It is passed as a max-64KB buffer with the 16-bit word at offset 0 containing
     // the length of the data.
     */
-    char    myself[sizeof(short)+sizeof(Root*)];        // Allocate the buffer; all classes descend from Root.
+    char    myself[sizeof(short)+sizeof(Object*)];        // Allocate the buffer; all classes descend from Object.
     short*  sp = (short*) &myself[0];
     ulong*  lp = (ulong*) &myself[2];
 

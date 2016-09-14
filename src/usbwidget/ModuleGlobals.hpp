@@ -354,7 +354,7 @@ typedef struct  _DRIVEINFO {
 
 #ifndef __ROOT__
 #define __ROOT__
-// Class Root was here
+// Class Object was here
 #endif
 
 

@@ -34,23 +34,23 @@
 /*
 // This is where all other classes descend from.
 */
-Root::Root() {}
-Root::~Root() {}
+Object::Object() {}
+Object::~Object() {}
 
-bool    Root::debugMe() {
+bool    Object::debugMe() {
     return this->debug;
 }
 
-bool    Root::debugMe(bool flag) {
+bool    Object::debugMe(bool flag) {
     this->debug = flag;
     return this->debug;
 }
 
-int     Root::debugLevel() {
+int     Object::debugLevel() {
     return this->level;
 
 }
-int     Root::debugLevel(int level) {
+int     Object::debugLevel(int level) {
     this->level = level;
     return this->level;
 }
