@@ -55,7 +55,7 @@ void    GUIHelpers(void) {
 // Constructor
 */
 DebugDialog::DebugDialog() {
-    sprintf(this->buf, "DebugDialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "DebugDialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }
 
@@ -63,7 +63,7 @@ DebugDialog::DebugDialog() {
 // Destructor
 */
 DebugDialog::~DebugDialog() {
-    sprintf(this->buf, "~DebugDialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "~DebugDialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
     this->destroy();
 }
@@ -85,36 +85,36 @@ ulong   DebugDialog::create() {
     myself[sizeof(short)]   = (ulong) this;             // The pointer to this Dialog instance.
 
     /* Load the Dialog */
-    this->handle =  WinLoadDlg(
-                        hdlgDebugDialog,                // parent
-                        hdlgDebugDialog,                // owner
-                        (PFNWP) classMessageHandler,    // handler
-                        //MyDialogHandler_3,
-                        hmodMe,                         // module; GLOBAL VAR!! CHANGE THIS !!
-                        ID_NOTIFICATION_DIALOG,         // id
-                        myself                          // parameters
-                    );
+    this->hwndSelf =    WinLoadDlg(
+                            hdlgDebugDialog,                // parent
+                            hdlgDebugDialog,                // owner
+                            (PFNWP) classMessageHandler,    // handler
+                            //MyDialogHandler_3,
+                            hmodMe,                         // module; GLOBAL VAR!! CHANGE THIS !!
+                            ID_NOTIFICATION_DIALOG,         // id
+                            myself                          // parameters
+                        );
 
     /* Show it */
     this->show();
 
     /* Debug Info */
     if (this->debugMe()) {
-        sprintf(this->buf, "DebugDialog::create() : hdlg=%08X, myself=%08X", this->handle, myself);
+        sprintf(this->buf, "DebugDialog::create() : hdlg=%08X, myself=%08X", this->hwndSelf, myself);
         __debug(NULL, this->buf, DBG_LBOX);
     }
 
     /* Return the handle of the new Dialog */
-    return this->handle;
+    return this->hwndSelf;
 }
 
 /*
 // detroy :: Destroy the Dialog and any resources it uses.
 */
 ulong   DebugDialog::destroy() {
-    if (this->handle) {
-        WinDestroyWindow(this->handle);
-        this->handle = NULL;
+    if (this->hwndSelf) {
+        WinDestroyWindow(this->hwndSelf);
+        this->hwndSelf = NULL;
     }
     return true;
 }
@@ -221,7 +221,7 @@ ulong   DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong
 // Constructor
 */
 ProblemFixerDialog::ProblemFixerDialog() {
-    sprintf(this->buf, "ProblemFixerDialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "ProblemFixerDialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 
     this->init();
@@ -231,7 +231,7 @@ ProblemFixerDialog::ProblemFixerDialog() {
 // Destructor
 */
 ProblemFixerDialog::~ProblemFixerDialog() {
-    sprintf(this->buf, "~ProblemFixerDialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "~ProblemFixerDialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
     this->destroy();
 }
@@ -261,7 +261,7 @@ int     ProblemFixerDialog::mle_cmdname(int id) {
     char    buf2[256] = "\0";
     char    *p = buf;
 
-    WinQueryDlgItemText(this->handle, id, sizeof(buf), buf);
+    WinQueryDlgItemText(this->hwndSelf, id, sizeof(buf), buf);
     sprintf(buf2, "# %s #\n", buf);
 
     l = strlen(buf2);
@@ -282,12 +282,12 @@ int     ProblemFixerDialog::mle_cmdname(int id) {
 }
 
 int     ProblemFixerDialog::set_fix_state() {
-    WinShowWindow(WinWindowFromID(this->handle, DID_FIX), TRUE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_CANCEL), TRUE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_HIDE), TRUE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_CLOSE), FALSE);
-    WinSetFocus(HWND_DESKTOP, WinWindowFromID(this->handle, DID_CANCEL));   // Stack Trap (werkt nu na txtbuf verkleining)
-    //~ WinFocusChange(HWND_DESKTOP, WinWindowFromID(this->handle, DID_CANCEL), NULL);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_FIX), TRUE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_CANCEL), TRUE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_HIDE), TRUE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_CLOSE), FALSE);
+    WinSetFocus(HWND_DESKTOP, WinWindowFromID(this->hwndSelf, DID_CANCEL));   // Stack Trap (werkt nu na txtbuf verkleining)
+    //~ WinFocusChange(HWND_DESKTOP, WinWindowFromID(this->hwndSelf, DID_CANCEL), NULL);
     return 0;
 }
 
@@ -300,19 +300,19 @@ int     ProblemFixerDialog::set_close_state(int fixed) {
         rgb2.bGreen = 128;
         rgb2.bBlue = 0;
         rgb2.fcOptions = 0;
-        WinSetPresParam(WinWindowFromID(this->handle, ID_FIX_WARNING), PP_FOREGROUNDCOLOR, (ULONG) sizeof(RGB2), (PVOID) &rgb2);
-        WinSetDlgItemText(this->handle, ID_FIX_WARNING, "The fix(es) have been applied, click on the Close Button and wait for the Safe Eject message");
+        WinSetPresParam(WinWindowFromID(this->hwndSelf, ID_FIX_WARNING), PP_FOREGROUNDCOLOR, (ULONG) sizeof(RGB2), (PVOID) &rgb2);
+        WinSetDlgItemText(this->hwndSelf, ID_FIX_WARNING, "The fix(es) have been applied, click on the Close Button and wait for the Safe Eject message");
     }
     else {
-        WinSetDlgItemText(this->handle, ID_FIX_WARNING, "There are no fixes that can be applied");
+        WinSetDlgItemText(this->hwndSelf, ID_FIX_WARNING, "There are no fixes that can be applied");
     }
 
-    WinShowWindow(WinWindowFromID(this->handle, DID_FIX), FALSE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_CANCEL), FALSE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_HIDE), FALSE);
-    WinShowWindow(WinWindowFromID(this->handle, DID_CLOSE), TRUE);
-    WinSetFocus(HWND_DESKTOP, WinWindowFromID(this->handle, DID_CLOSE));    // Stack Trap (werkt nu na txtbuf verkleining)
-    //~ WinFocusChange(HWND_DESKTOP, WinWindowFromID(this->handle, DID_CLOSE), NULL);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_FIX), FALSE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_CANCEL), FALSE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_HIDE), FALSE);
+    WinShowWindow(WinWindowFromID(this->hwndSelf, DID_CLOSE), TRUE);
+    WinSetFocus(HWND_DESKTOP, WinWindowFromID(this->hwndSelf, DID_CLOSE));    // Stack Trap (werkt nu na txtbuf verkleining)
+    //~ WinFocusChange(HWND_DESKTOP, WinWindowFromID(this->hwndSelf, DID_CLOSE), NULL);
 
     sprintf(buf, "buf:%08lX", buf);
     __debug("BUF-ON-STACK-IN-MEMBER", buf, DBG_MLE);
@@ -370,7 +370,7 @@ ulong   ProblemFixerDialog::create() {
     __debug("Create", buf, DBG_MLE);
 
     /* Load the Dialog */
-    this->handle =  WinLoadDlg(
+    this->hwndSelf =  WinLoadDlg(
                         HWND_DESKTOP,                   // parent
                         NULL,                           // owner
                         (PFNWP) classMessageHandler,    // handler
@@ -385,12 +385,12 @@ ulong   ProblemFixerDialog::create() {
 
     /* Debug Info */
     if (this->debugMe()) {
-        sprintf(this->buf, "ProblemFixerDialog::create() : hdlg=%08X, myself=%08X", this->handle, myself);
+        sprintf(this->buf, "ProblemFixerDialog::create() : hdlg=%08X, myself=%08X", this->hwndSelf, myself);
         __debug(NULL, this->buf, DBG_LBOX);
     }
 
     /* Return the handle of the new Dialog */
-    return this->handle;
+    return this->hwndSelf;
 }
 
 
@@ -398,7 +398,7 @@ ulong   ProblemFixerDialog::create() {
 // process :: Process the Dialog to get a return value.
 */
 ulong   ProblemFixerDialog::process() {
-    return WinProcessDlg(this->handle);
+    return WinProcessDlg(this->hwndSelf);
 }
 
 
@@ -406,10 +406,10 @@ ulong   ProblemFixerDialog::process() {
 // detroy :: Destroy the Dialog and any resources it uses.
 */
 ulong   ProblemFixerDialog::destroy() {
-    if (this->handle) {
-        //~ WinDismissDlg(this->handle, 0x88);
-        WinDestroyWindow(this->handle);
-        this->handle = NULL;
+    if (this->hwndSelf) {
+        //~ WinDismissDlg(this->hwndSelf, 0x88);
+        WinDestroyWindow(this->hwndSelf);
+        this->hwndSelf = NULL;
     }
     return true;
 }
@@ -450,19 +450,19 @@ ulong   ProblemFixerDialog::commandDestroyButton() {
 }
 
 void    ProblemFixerDialog::mleAppendText(char* text) {
-    WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_INSERT, (MPARAM) text, (MPARAM) NULL);
-    //~ WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+    WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_INSERT, (MPARAM) text, (MPARAM) NULL);
+    //~ WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
 }
 
 
 void    ProblemFixerDialog::mleClear() {
     MRESULT mresReply   = 0;
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
-    mresReply = WinSendMsg(WinWindowFromID(this->handle, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_SETSEL, (MPARAM) NULL, (MPARAM) 50000);
+    mresReply = WinSendMsg(WinWindowFromID(this->hwndSelf, ID_MLE_1), MLM_CLEAR, (MPARAM) NULL, (MPARAM) NULL);
 }
 
 
@@ -484,7 +484,7 @@ char    ProblemFixerDialog::setDriveLetter(char dletter) {
     }
 
     sprintf(buf, "Drive %c:", this->dletter);
-    WinSetDlgItemText(this->handle, ID_DRIVE_LETTER, buf);
+    WinSetDlgItemText(this->hwndSelf, ID_DRIVE_LETTER, buf);
 
     return this->dletter;
 }
@@ -498,7 +498,7 @@ int     ProblemFixerDialog::setPhysDisk(int pdisk) {
     this->pdisk = pdisk;
 
     sprintf(buf, "Physical Disk #%d", this->pdisk);
-    WinSetDlgItemText(this->handle, ID_DISK_NUMBER, buf);
+    WinSetDlgItemText(this->hwndSelf, ID_DISK_NUMBER, buf);
 
     return this->pdisk;
 }
@@ -700,7 +700,7 @@ ulong   ProblemFixerDialog::instanceMessageHandler(ulong hwnd, ulong msg, ulong 
 
             /* Set the labels, NULL terminates loop */
             for (i=0; action_names[i]; i++) {
-                WinSetDlgItemText(this->handle, ID_ACTION_1+i, action_names[i]);
+                WinSetDlgItemText(this->hwndSelf, ID_ACTION_1+i, action_names[i]);
             }
 
             //~ mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
@@ -755,12 +755,12 @@ ulong   ProblemFixerDialog::instanceMessageHandler(ulong hwnd, ulong msg, ulong 
                         this->action_taken = DID_FIX;
                     }
 
-                    WinShowWindow(WinWindowFromID(this->handle, ID_SHOW_PROBLEMS), FALSE);
+                    WinShowWindow(WinWindowFromID(this->hwndSelf, ID_SHOW_PROBLEMS), FALSE);
                     for (i=ID_ACTION_1; i<=ID_ACTION_12; i++) {
-                        WinShowWindow(WinWindowFromID(this->handle, i), FALSE);
+                        WinShowWindow(WinWindowFromID(this->hwndSelf, i), FALSE);
                     }
-                    WinShowWindow(WinWindowFromID(this->handle, ID_IMAGE_BACKUP), FALSE);
-                    WinShowWindow(WinWindowFromID(this->handle, ID_IMAGE_RESTORE), FALSE);
+                    WinShowWindow(WinWindowFromID(this->hwndSelf, ID_IMAGE_BACKUP), FALSE);
+                    WinShowWindow(WinWindowFromID(this->hwndSelf, ID_IMAGE_RESTORE), FALSE);
                     this->set_close_state(1);
                     //~ mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
                     break;
@@ -780,7 +780,7 @@ ulong   ProblemFixerDialog::instanceMessageHandler(ulong hwnd, ulong msg, ulong 
                 case DID_CLOSE: {
                     mresReply = (MRESULT) 0x1234;
                     //~ mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
-                    WinDismissDlg(this->handle, this->action_taken);
+                    WinDismissDlg(this->hwndSelf, this->action_taken);
                     break;
                 }
 
@@ -1160,7 +1160,7 @@ ulong   ProblemFixerDialog::instanceMessageHandler(ulong hwnd, ulong msg, ulong 
                     /* Show Action */
                     this->mle_cmdname(SHORT1FROMMP(mp1));
                     this->mleAppendText("\n");
-                    WinSetDlgItemText(this->handle, ID_FIX_WARNING, "There are no fixes that can be applied");
+                    WinSetDlgItemText(this->hwndSelf, ID_FIX_WARNING, "There are no fixes that can be applied");
                     mresReply = 0;
                     break;
                 }
@@ -1169,7 +1169,7 @@ ulong   ProblemFixerDialog::instanceMessageHandler(ulong hwnd, ulong msg, ulong 
                     /* Show Action */
                     this->mle_cmdname(SHORT1FROMMP(mp1));
                     this->mleAppendText("\n");
-                    WinSetDlgItemText(this->handle, ID_FIX_WARNING, "The fix(es) have been applied, click on the Close button to eject the medium");
+                    WinSetDlgItemText(this->hwndSelf, ID_FIX_WARNING, "The fix(es) have been applied, click on the Close button to eject the medium");
                     mresReply = 0;
                     break;
                 }
@@ -1341,7 +1341,7 @@ ulong   ProblemFixerDialog::instanceMessageHandler2(ulong hwnd, ulong msg, ulong
 
             /* Set the labels, NULL terminates loop */
             for (i=0; action_names[i]; i++) {
-                WinSetDlgItemText(this->handle, ID_ACTION_1+i, action_names[i]);
+                WinSetDlgItemText(this->hwndSelf, ID_ACTION_1+i, action_names[i]);
             }
 
             //~ mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);

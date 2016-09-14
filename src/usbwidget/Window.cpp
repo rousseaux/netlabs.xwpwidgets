@@ -34,50 +34,50 @@
 
 
 Window::Window() {
-    this->handle = NULL;
-    sprintf(this->buf, "Window() : hdlg=%08X", this->handle);
+    this->hwndSelf = NULL;
+    sprintf(this->buf, "Window() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }
 
 Window::~Window() {
-    sprintf(this->buf, "~Window() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "~Window() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }
 
 int     Window::show() {
-    if (this->handle) {
-        WinSetWindowPos(this->handle, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
-        WinShowWindow(this->handle, true);
-        WinSetFocus(HWND_DESKTOP, this->handle);
+    if (this->hwndSelf) {
+        WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
+        WinShowWindow(this->hwndSelf, true);
+        WinSetFocus(HWND_DESKTOP, this->hwndSelf);
     }
-    return this->handle;
+    return this->hwndSelf;
 }
 
 void    Window::center() {
-    if (this->handle) {
-        CenterWindow(WinQueryWindow(this->handle, QW_PARENT), this->handle);
+    if (this->hwndSelf) {
+        CenterWindow(WinQueryWindow(this->hwndSelf, QW_PARENT), this->hwndSelf);
     }
 }
 
 void    Window::centerToDesktop() {
-    if (this->handle) {
-        CenterWindow(HWND_DESKTOP, this->handle);
+    if (this->hwndSelf) {
+        CenterWindow(HWND_DESKTOP, this->hwndSelf);
     }
 }
 
 void    Window::centerToOther(ulong toCenterTo) {
-    if (this->handle) {
-        CenterWindow(toCenterTo, this->handle);
+    if (this->hwndSelf) {
+        CenterWindow(toCenterTo, this->hwndSelf);
     }
 }
 
 int     Window::hide() {
-    if (this->handle) {
-        WinShowWindow(this->handle, false);
+    if (this->hwndSelf) {
+        WinShowWindow(this->hwndSelf, false);
     }
-    return this->handle;
+    return this->hwndSelf;
 }
 
 ulong   Window::getHandle() {
-    return this->handle;
+    return this->hwndSelf;
 }

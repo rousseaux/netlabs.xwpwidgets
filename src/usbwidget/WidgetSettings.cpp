@@ -42,6 +42,8 @@ WidgetSettingsDialog::WidgetSettingsDialog() {
     this->dci.cb = sizeof(DLG_CLASS_INSTANCE);
     this->dci.pvClassInstance = this;
     //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
+    sprintf(this->buf, "WidgetSettingsDialog(): this=%08X", this);
+    MessageBox("WIDGETSETTINGSDIALOG", this->buf);
 }
 
 WidgetSettingsDialog::~WidgetSettingsDialog() {
@@ -52,21 +54,20 @@ int WidgetSettingsDialog::create() {
     //~ MessageBox("WidgetSettingsDialog","CREATE");
 
     /* Load the WidgetSettings Dialog */
-    this->handle =  WinLoadDlg(
-                        HWND_DESKTOP,
-                        NULL,
-                        //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
-                        //~ (PFNWP) MyDialogHandler_1,
-                        (PFNWP) WidgetSettingsDialogHandler,
-                        hmodMe,
-                        DLG_ID_WIDGETSETTINGS,
-                        //~ ID_DEBUG_DIALOG,
-                        &this->dci
-                    );
+    this->hwndSelf =    WinLoadDlg(
+                            HWND_DESKTOP,
+                            NULL,
+                            //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
+                            //~ (PFNWP) MyDialogHandler_1,
+                            (PFNWP) WidgetSettingsDialogHandler,
+                            hmodMe,
+                            DLG_ID_WIDGETSETTINGS,
+                            //~ ID_DEBUG_DIALOG,
+                            &this->dci
+                        );
 
-    if (this->handle) {
+    if (this->hwndSelf) {
         this->hwndParent = HWND_DESKTOP;
-        this->hwndSelf = this->handle;
         //~ MessageBox("WinLoadDlg", "OK");
     } else {
         MessageBox("WinLoadDlg", "NULL");
@@ -132,7 +133,7 @@ int WidgetSettingsDialog::create() {
 int WidgetSettingsDialog::process() {
     MessageBox("WidgetSettingsDialog","PROCESS");
     int reply = NULL;
-    reply = WinProcessDlg(this->handle);
+    reply = WinProcessDlg(this->hwndSelf);
     return reply;
 }
 
@@ -140,8 +141,8 @@ int WidgetSettingsDialog::destroy() {
     MessageBox("WidgetSettingsDialog","DESTROY");
     if (this->settings) delete this->settings;
     this->settings = NULL;
-    if (this->handle) WinDestroyWindow(this->handle);
-    this->handle = NULL;
+    if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
+    this->hwndSelf = NULL;
     this->hwndParent = NULL;
     this->hwndSelf = NULL;
     return NULL;

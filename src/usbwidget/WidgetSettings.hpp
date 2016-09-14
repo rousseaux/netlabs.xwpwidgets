@@ -48,8 +48,6 @@ MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, M
 
 class   WidgetSettingsDialog : public Dialog {
     public:
-    HWND        hwndParent;
-    HWND        hwndSelf;
     Notebook*   settings;
     WidgetSettingsDialog();
     virtual ~WidgetSettingsDialog();

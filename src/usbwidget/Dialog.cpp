@@ -28,17 +28,20 @@
  * This module handles Dialogs.
  */
 
+#include    "GUIHelpers.hpp"
 
 #include    "Dialog.hpp"
 
 
 Dialog::Dialog() {
-    sprintf(this->buf, "Dialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "Dialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
+    sprintf(this->buf, "Dialog(): this=%08X", this);
+    MessageBox("DIALOG", this->buf);
 }
 
 Dialog::~Dialog() {
-    sprintf(this->buf, "~Dialog() : hdlg=%08X", this->handle);
+    sprintf(this->buf, "~Dialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }
 

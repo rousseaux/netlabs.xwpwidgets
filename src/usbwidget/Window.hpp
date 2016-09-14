@@ -50,7 +50,10 @@ class   Window : public Object {
     virtual int     hide();
     virtual ulong   getHandle();
     protected:
-    ulong   handle;
+    ulong   handlex;
+    HWND    hwndParent;
+    HWND    hwndOwner;
+    HWND    hwndSelf;
     char    buf[256];
     private:
 };
