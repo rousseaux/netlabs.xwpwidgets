@@ -90,6 +90,7 @@ DMNDEPS=\
 CLASSDEPS=\
 	Classes.hpp\
 	Dialog.hpp\
+	DebugDialog.hpp\
 	Monitor.hpp\
 	DriveMonitor.hpp\
 	UsbMonitor.hpp\
@@ -144,6 +145,7 @@ DMNOBJECTS=\
 CLASSOBJECTS=\
 	Classes.obj\
 	Dialog.obj\
+	DebugDialog.obj\
 	Monitor.obj\
 	DriveMonitor.obj\
 	UsbMonitor.obj\
@@ -318,6 +320,7 @@ usbshold.res: $(RESDEPS)
 # Class Objects
 Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+DebugDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)

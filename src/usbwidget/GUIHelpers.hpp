@@ -58,33 +58,7 @@ class   GUIHelpers {
 
 // Dialog class was here
 
-/**
- * This dialog is only created when the debug-setting is on; which can be influenced by changing
- * the settings for the widget.
- * Settings get loaded when the widget is created.
- */
-class   DebugDialog : public Dialog {
-
-    private:
-
-    public:
-    DebugDialog();
-    ~DebugDialog();
-    ulong   create();
-    ulong   destroy();
-
-
-    ulong   redraw();
-
-    ulong   msgInitDialog(ulong mp1, ulong mp2);
-    ulong   msgCommand(ulong mp1, ulong mp2);
-
-    ulong   commandDrawButton();
-    ulong   commandDestroyButton();
-
-    //~ static ulong EXPENTRY DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    static ulong DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-};
+// DebugDialog class was here
 
 #define     PF_FIX_SIZE     1
 #define     PF_FIX_HSECS    2
