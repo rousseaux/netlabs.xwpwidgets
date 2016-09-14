@@ -163,17 +163,7 @@ class   ProblemFixerDialog : public Dialog {
 
 
 
-class   Notifier : public Object {
-    private:
-    Window* myNotifierWindow;
-
-    Notifier();
-    ~Notifier();
-
-    ulong   show();
-    ulong   hide();
-
-};
+// Notifier class was here
 
 
 

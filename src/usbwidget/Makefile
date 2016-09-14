@@ -97,6 +97,7 @@ CLASSDEPS=\
 	Object.hpp\
 	Notebook.hpp\
 	NotebookPage.hpp\
+	Notifier.hpp\
 	Window.hpp\
 
 #
@@ -150,6 +151,7 @@ CLASSOBJECTS=\
 	Object.obj\
 	Notebook.obj\
 	NotebookPage.obj\
+	Notifier.obj\
 	Window.obj\
 
 #
@@ -321,6 +323,7 @@ DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Notifier.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
