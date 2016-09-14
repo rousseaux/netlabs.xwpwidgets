@@ -35,7 +35,19 @@
     extern "C" {
 #endif
 
+#include    "Window.hpp"
 
+class   Dialog : public Window {
+
+    private:
+
+    protected:
+
+
+    public:
+    Dialog();
+    virtual ~Dialog();
+};
 
 #ifdef      __cplusplus
     }

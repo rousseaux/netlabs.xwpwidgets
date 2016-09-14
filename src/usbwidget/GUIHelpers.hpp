@@ -39,6 +39,7 @@
 #include    "ecomedia.h"
 
 #include    "Window.hpp"
+#include    "Dialog.hpp"
 
 class   GUIHelpers {
 
@@ -114,19 +115,7 @@ class   UsbMonitor : public Monitor {
 
 // Window class was here
 
-
-class   Window;
-class   Dialog : public Window {
-
-    private:
-
-    protected:
-
-
-    public:
-    Dialog();
-    virtual ~Dialog();
-};
+// Dialog class was here
 
 /**
  * This dialog is only created when the debug-setting is on; which can be influenced by changing

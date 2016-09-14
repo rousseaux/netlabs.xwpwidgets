@@ -40,22 +40,9 @@ void    GUIHelpers(void) {
 
 
 
-// Window Members were here
+// Window members were here
 
-/*
-// DIALOG
-*/
-Dialog::Dialog() {
-    sprintf(this->buf, "Dialog() : hdlg=%08X", this->handle);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-Dialog::~Dialog() {
-    sprintf(this->buf, "~Dialog() : hdlg=%08X", this->handle);
-    __debug(NULL, this->buf, DBG_LBOX);
-}
-
-
+// Dialog members were here
 
 
 /**
