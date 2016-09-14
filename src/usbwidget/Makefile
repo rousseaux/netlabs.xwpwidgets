@@ -94,6 +94,9 @@ WGTDEPS=\
 	Dialog.hpp\
 	ProblemFixer.hpp\
 	Threads.hpp\
+	Monitor.hpp\
+	DriveMonitor.hpp\
+	UsbMonitor.hpp\
 	USBHelpers.hpp\
 	LVMHelpers.hpp\
 	APIHelpers.hpp\
@@ -136,6 +139,9 @@ WGTOBJECTS=\
 	Threads.obj\
 	CList.obj\
 	ModuleGlobals.obj\
+	Monitor.obj\
+	DriveMonitor.obj\
+	UsbMonitor.obj\
 	Testing123.obj\
 	Notebook.obj\
 	NotebookPage.obj\
@@ -298,6 +304,9 @@ Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 LVMHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 ModuleGlobals.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 ProblemFixer.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
@@ -313,7 +322,7 @@ Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
 # =============================================================================
 APIHelpers.lib: $*.obj
-GUIHelpers.lib: $*.obj Object.obj Dialog.obj Window.obj
+GUIHelpers.lib: $*.obj Object.obj Dialog.obj Window.obj Monitor.obj DriveMonitor.obj UsbMonitor.obj
 LVMHelpers.lib: $*.obj
 USBHelpers.lib: $*.obj
 

@@ -48,34 +48,11 @@ class   GUIHelpers {
     ulong   hideWindow(ulong window);
 };
 
-class   Monitor : public Object {
+// Monitor class was here
 
-    public:
-    Monitor();
-    ~Monitor();
+// DriveMonitor class was here
 
-    ulong   start();
-    ulong   stop();
-    ulong   block();
-    ulong   unblock();
-    ulong   suspend();
-    ulong   resume();
-
-    ulong   setStatus();
-    ulong   captureStatus();
-    ulong   getStatus();
-
-    ulong   eventStatusChanged();
-
-};
-
-class   DriveMonitor : public Monitor {
-};
-
-class   UsbMonitor : public Monitor {
-};
-
-
+// UsbMonitor class was here
 
 // Window class was here
 

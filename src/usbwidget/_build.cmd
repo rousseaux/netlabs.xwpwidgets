@@ -1,2 +1,2 @@
 @echo off
-nmake -nologo
+nmake -nologo all
