@@ -55,12 +55,23 @@ class   WidgetSettingsDialog : public Dialog {
     virtual int process(void);
     virtual int destroy(void);
 
+    virtual int test123(void);
+
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+
 // The _System qualifier can not be applied... (when a static method ?)
     //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    //~ static MRESULT EXPENTRY classMessageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    private:
+    DLG_CLASS_INSTANCE dci;
 };
 
 
+class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
+    public:
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+};
 
 
 #ifdef      __cplusplus

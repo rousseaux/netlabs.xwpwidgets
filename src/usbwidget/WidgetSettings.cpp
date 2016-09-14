@@ -39,6 +39,8 @@ WidgetSettingsDialog::WidgetSettingsDialog() {
     this->hwndParent = NULL;
     this->hwndSelf = NULL;
     this->settings = NULL;
+    this->dci.cb = sizeof(DLG_CLASS_INSTANCE);
+    this->dci.pvClassInstance = this;
     //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
 }
 
@@ -59,7 +61,7 @@ int WidgetSettingsDialog::create() {
                         hmodMe,
                         DLG_ID_WIDGETSETTINGS,
                         //~ ID_DEBUG_DIALOG,
-                        NULL
+                        &this->dci
                     );
 
     if (this->handle) {
@@ -145,42 +147,93 @@ int WidgetSettingsDialog::destroy() {
     return NULL;
 }
 
+int WidgetSettingsDialog::test123() {
+    MessageBox("WidgetSettingsDialog","test123");
+    return 0;
+}
 
+MRESULT WidgetSettingsDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+    switch (SHORT1FROMMP(mp1)) {
+
+        /* Close Button */
+        case 9003: {
+            mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
+            break;
+        }
+
+        /* Default */
+        default: {
+            mresReply = 0;
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
+        }
+
+    } // switch
+    return (MRESULT) mresReply;
+}
+
+
+/* Override */
+MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+    switch (SHORT1FROMMP(mp1)) {
+
+        /* Close Button */
+        case 9003: {
+            MessageBox("WidgetSettingsDialogEx","wmCommand Override !!");
+            mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
+            break;
+        }
+
+        /* Default */
+        default: {
+            mresReply = 0;
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
+        }
+
+    } // switch
+    return (MRESULT) mresReply;
+}
 
 
 //~ ulong   WidgetSettingsDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
-MRESULT EXPENTRY WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+MRESULT WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
+    /* Locals */
+    BOOL    brc = FALSE;
     MRESULT mresReply = 0;
-    HWND    hwndNB = NULL;
+    CHAR    buf[512] = {0};
 
+    /*
+    // Get pointer to Class Instance.
+    // Can be NULL if WM_INITDLG has not been invoked yet.
+    // Using this pointer, messages can be deferred to member-functions.
+    */
+    WidgetSettingsDialog*   pWsd = (WidgetSettingsDialog*) WinQueryWindowPtr(hwnd, QWL_USER);
+
+    /* Message Switch */
     switch (msg) {
 
-        //!: Init dialog (Debug)
+        /* Initialize Dialog */
         case WM_INITDLG: {
-            hwndNB = WinWindowFromID(hwnd, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
-
+            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            pWsd = ((WidgetSettingsDialog*)((DLG_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
+            brc =   WinSetWindowPtr(
+                        hwnd,
+                        QWL_USER,
+                        pWsd
+                    );
+            pWsd->test123();
             mresReply = FALSE;
             break;
         }
 
+        /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
-            switch (SHORT1FROMMP(mp1)) {
-
-                /* Close Button */
-                case 9003: {
-                    mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
-                    break;
-                }
-
-                /* Default */
-                default: {
-                    mresReply = 0;
-                    //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
-                    break;
-                }
-
-            } // switch
+            pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("WidgetSettingsDialogHandler","pWsd is NULL !!");
             break;
         }
         //~: Handle default message (debug dialog)

@@ -3074,7 +3074,8 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     WidgetSettingsDialog* lwsd = NULL;
 
                     /* Test new WidgetSettings Dialog */
-                    lwsd = new WidgetSettingsDialog;
+                    lwsd = new WidgetSettingsDialog;        // Default Dialog
+                    //~ lwsd = new WidgetSettingsDialogEx;      // Extended Dialog to test overrides
                     if (lwsd) {
                         lwsd->create();
                         lwsd->show();
