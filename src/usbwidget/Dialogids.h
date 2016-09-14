@@ -191,6 +191,7 @@
 
 #define     ID_WIDGET_PROBLEMS                  4001
 #define     ID_WIDGET_UPDATES                   4002
+#define     ID_WIDGET_EMAIL                     4003
 
 #define     ID_LOGO                             7001
 #define     USB_THUMB                           7002

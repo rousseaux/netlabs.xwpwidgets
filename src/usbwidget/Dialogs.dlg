@@ -15,12 +15,6 @@ BEGIN
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000AAL
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans.Bold"
-        ENTRYFIELD      "http://rousseaux.github.io/netlabs.xwpwidgets", ENTRY_NEOWPS,
-                        34, 80, 170, 8, ES_CENTER | ES_READONLY | WS_GROUP |
-                        NOT WS_VISIBLE
-                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000050L
-                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
-                        PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
         AUTOCHECKBOX    "Enable Beeps on attach/eject", ID_BEEPS_CONNECT, 10,
                         22, 120, 8, WS_GROUP
                         PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
@@ -35,20 +29,10 @@ BEGIN
         RTEXT           BLD_VERSION_STR, ID_WIDGET_VERSION, 186, 82, 30, 8,
                         DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
-        LTEXT           "3f11e440-f3f5-4d80-8da9-33d70dda483b",
-                        ID_WIDGET_UUID, 55, 55, 128, 8, DT_VCENTER | NOT
-                        WS_VISIBLE
-                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00808080L
         CTEXT           "You can report problems to:", ID_WIDGET_PROBLEMS,
                         40, 58, 148, 8, DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
-        CTEXT           "(please include the file ?:\\usbshold.log)", 105, 57,
-                        0, 138, 8, DT_VCENTER | NOT WS_VISIBLE
-                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00808080L
-        AUTOCHECKBOX    "Automount Zipdisks", ID_MONITOR_ZIP, 0, 0, 160, 8,
-                        WS_GROUP | NOT WS_VISIBLE
-                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
-        ENTRYFIELD      "rousseau.os2dev@gmx.com", 106, 40, 51, 148, 8,
+        ENTRYFIELD      "rousseau.os2dev@gmx.com", ID_WIDGET_EMAIL, 40, 51, 148, 8,
                         ES_CENTER | ES_READONLY | WS_GROUP
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
                         PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
@@ -56,12 +40,6 @@ BEGIN
         CTEXT           "Get the latest version at:", ID_WIDGET_UPDATES, 40,
                         41, 148, 8, DT_VCENTER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
-        ENTRYFIELD      "http://github.com/rousseaux/netlabs.xwpwidgets/releases", 108, 64, 81, 148,
-                        8, ES_CENTER | ES_READONLY | WS_GROUP | NOT
-                        WS_VISIBLE
-                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00404040L
-                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
-                        PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
         PUSHBUTTON      "http://rousseaux.github.io/netlabs.xwpwidgets", ID_FF_NEOWPS,
                         38, 68, 158, 8, BS_NOBORDER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
