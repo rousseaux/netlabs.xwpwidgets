@@ -39,14 +39,13 @@
 
 class   Dialog : public Window {
 
-    private:
-
-    protected:
-
-
     public:
     Dialog();
     virtual ~Dialog();
+
+    protected:
+
+    private:
 };
 
 #ifdef      __cplusplus

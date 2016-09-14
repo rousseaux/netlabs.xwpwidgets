@@ -39,6 +39,19 @@
 
 #include    "Object.hpp"
 
+/*
+// According to the documentation, CtlData for Windows and CreateParams for
+// Dialogs needs to point to a structure with the 1st USHORT holding its size.
+// This structure is used by WM_INIT or WM_INITDLG to associate the
+// Class Instance to the Window or Dialog Procedure. This makes it possible to
+// defer messages to instance members and allow for overrides with member
+// granularity, instead of subclassing the whole Dialog or Window Procedure.
+*/
+typedef struct {
+    USHORT  cb;                 // Size of this structure
+    PVOID   pvClassInstance;    // Pointer to Class Instance
+} WND_CLASS_INSTANCE;
+
 class   Window : public Object {
     public:
     Window();
@@ -49,12 +62,13 @@ class   Window : public Object {
     virtual void    centerToOther(ulong toCenterTo);
     virtual int     hide();
     virtual ulong   getHandle();
+
     protected:
-    ulong   handlex;
     HWND    hwndParent;
     HWND    hwndOwner;
     HWND    hwndSelf;
     char    buf[256];
+    WND_CLASS_INSTANCE  wci;
     private:
 };
 

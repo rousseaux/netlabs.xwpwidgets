@@ -36,11 +36,7 @@
 // WidgetSettingsDialog
 */
 WidgetSettingsDialog::WidgetSettingsDialog() {
-    this->hwndParent = NULL;
-    this->hwndSelf = NULL;
     this->settings = NULL;
-    this->dci.cb = sizeof(DLG_CLASS_INSTANCE);
-    this->dci.pvClassInstance = this;
     //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
     sprintf(this->buf, "WidgetSettingsDialog(): this=%08X", this);
     MessageBox("WIDGETSETTINGSDIALOG", this->buf);
@@ -63,7 +59,7 @@ int WidgetSettingsDialog::create() {
                             hmodMe,
                             DLG_ID_WIDGETSETTINGS,
                             //~ ID_DEBUG_DIALOG,
-                            &this->dci
+                            &this->wci
                         );
 
     if (this->hwndSelf) {
@@ -220,7 +216,7 @@ MRESULT WidgetSettingsDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
         /* Initialize Dialog */
         case WM_INITDLG: {
             /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
-            pWsd = ((WidgetSettingsDialog*)((DLG_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            pWsd = ((WidgetSettingsDialog*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
             /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
             brc =   WinSetWindowPtr(
                         hwnd,

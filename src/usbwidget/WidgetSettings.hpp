@@ -62,9 +62,10 @@ class   WidgetSettingsDialog : public Dialog {
 
 // The _System qualifier can not be applied... (when a static method ?)
     //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
+    protected:
 
     private:
-    DLG_CLASS_INSTANCE dci;
+
 };
 
 

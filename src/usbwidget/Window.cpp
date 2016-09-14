@@ -34,7 +34,11 @@
 
 
 Window::Window() {
+    this->hwndParent = NULL;
+    this->hwndOwner = NULL;
     this->hwndSelf = NULL;
+    this->wci.cb = sizeof(WND_CLASS_INSTANCE);
+    this->wci.pvClassInstance = this;
     sprintf(this->buf, "Window() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }

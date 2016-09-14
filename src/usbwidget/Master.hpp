@@ -182,19 +182,6 @@ typedef FSDTYPE*    PFSDTYPE;
 #include    <stdarg.h>
 #include    <ctype.h>
 
-/*
-// According to the documentation, CreateParams needs to point to a structure
-// where the first USHORT contains its size.
-// This structure is passed to WinLoadDlg to connect the Class Instance to
-// the Dialog Procedure. This makes it possible to defer messages to instance
-// members and allow for overrides with member granularity, instead of
-// subclassing the whole Dialog Procedure.
-*/
-typedef struct {
-    USHORT  cb;                 // Size of this structure
-    PVOID   pvClassInstance;    // Pointer to Class Instance
-} DLG_CLASS_INSTANCE;
-
 // Used to communicate with extern logpipe program (obsolete)
 #define     PIPE_NAME           "\\PIPE\\PIPE1"
 #define     PIPE_SIZE   256
