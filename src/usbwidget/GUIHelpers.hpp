@@ -48,42 +48,6 @@ class   GUIHelpers {
     ulong   hideWindow(ulong window);
 };
 
-
-
-
-
-
-
-class   LineLogger {
-
-    public:
-    LineLogger();
-    ~LineLogger();
-
-    clear();
-    insert();
-    remove();
-    toStart();
-    toEnd();
-};
-
-class   TextLogger {
-    public:
-    TextLogger();
-    ~TextLogger();
-
-    clear();
-    insert();
-    remove();
-    toStart();
-    toEnd();
-};
-
-
-
-
-
-
 class   Monitor : public Object {
 
     public:
@@ -222,7 +186,6 @@ class   ProblemFixerDialog : public Dialog {
 
 
 
-class   Window;
 class   Notifier : public Object {
     private:
     Window* myNotifierWindow;
