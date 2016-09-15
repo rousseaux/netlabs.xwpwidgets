@@ -101,6 +101,7 @@ CLASSDEPS=\
 	NotebookPage.hpp\
 	Notifier.hpp\
 	Window.hpp\
+	Widget.hpp\
 
 #
 # Widget dependencies
@@ -157,6 +158,7 @@ CLASSOBJECTS=\
 	NotebookPage.obj\
 	Notifier.obj\
 	Window.obj\
+	Widget.obj\
 
 #
 # Objects to build the Widget from
@@ -333,6 +335,7 @@ Notifier.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Widget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 # Common Objects
 AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
