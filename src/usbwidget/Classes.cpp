@@ -32,6 +32,7 @@
 #include    "Classes.hpp"
 
 Classes::Classes() {
+    this->debugMe();
 }
 
 Classes::~Classes() {

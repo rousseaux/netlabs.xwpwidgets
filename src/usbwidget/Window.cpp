@@ -32,6 +32,7 @@
 
 
 Window::Window() {
+    this->debugMe();
     this->hwndParent = NULL;
     this->hwndOwner = NULL;
     this->hwndSelf = NULL;

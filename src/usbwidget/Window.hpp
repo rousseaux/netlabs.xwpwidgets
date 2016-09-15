@@ -61,10 +61,11 @@ class   Window : public Object {
     virtual int     hide();
     virtual ulong   getHandle();
 
-    protected:
+    //! FIXME: Access problems using pointers in derived classes
     HWND    hwndParent;
     HWND    hwndOwner;
     HWND    hwndSelf;
+    protected:
     char    buf[256];
     WND_CLASS_INSTANCE  wci;
 

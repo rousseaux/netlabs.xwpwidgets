@@ -36,6 +36,7 @@
 // WidgetSettingsDialog
 */
 WidgetSettingsDialog::WidgetSettingsDialog() {
+    this->debugMe();
     this->settings = NULL;
     //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
     sprintf(this->buf, "WidgetSettingsDialog(): this=%08X", this);

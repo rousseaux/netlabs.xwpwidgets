@@ -33,6 +33,7 @@
 
 
 DriveMonitor::DriveMonitor() {
+    this->debugMe();
 }
 
 DriveMonitor::~DriveMonitor() {

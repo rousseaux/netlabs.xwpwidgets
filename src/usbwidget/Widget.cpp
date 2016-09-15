@@ -32,6 +32,7 @@
 #include    "Widget.hpp"
 
 Widget::Widget() {
+    this->debugMe();
 }
 
 Widget::~Widget() {

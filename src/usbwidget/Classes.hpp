@@ -36,7 +36,9 @@
 
 //~ #include    "Master.hpp"
 
-class   Classes {
+#include    "Object.hpp"
+
+class   Classes : public Object {
     public:
     Classes();
     virtual ~Classes();

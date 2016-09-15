@@ -35,6 +35,7 @@
 // NotebookPage
 */
 NotebookPage::NotebookPage() {
+    this->debugMe();
     MessageBox("NotebookPage","CONSTRUCTOR");
     this->idPage = 0;
     this->idResource = 0;

@@ -33,6 +33,7 @@
 
 
 UsbMonitor::UsbMonitor() {
+    this->debugMe();
 }
 
 UsbMonitor::~UsbMonitor() {

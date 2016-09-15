@@ -36,7 +36,9 @@
 
 //~ #include    "Master.hpp"
 
-class   Widget {
+#include    "Object.hpp"
+
+class   Widget : public Object {
     public:
     Widget();
     virtual ~Widget();

@@ -32,6 +32,7 @@
 
 
 Dialog::Dialog() {
+    this->debugMe();
     sprintf(this->buf, "Dialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
     sprintf(this->buf, "Dialog(): this=%08X", this);

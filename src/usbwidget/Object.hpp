@@ -41,17 +41,21 @@
 // It has some stuff common to all classes, like a debug-flag.
 */
 class   Object {
-    private:
-    bool    debug;
-    int     level;
 
     public:
     Object();
     virtual ~Object();
-    virtual bool    debugMe();
-    virtual bool    debugMe(bool flag);
-    virtual int     debugLevel();
-    virtual int     debugLevel(int level);
+    virtual bool    debugMe();              // Query debug status
+    virtual bool    debugMe(bool flag);     // Set debug status
+    virtual int     debugLevel();           // Query debug level
+    virtual int     debugLevel(int level);  // Set debug level
+
+    protected:
+
+    private:
+    bool    debug;      // TRUE when debugging is active, FALSE when not
+    int     level;      // Indicates debug level -- 0 is least detailed
+
 };
 
 #ifdef      __cplusplus

@@ -31,25 +31,33 @@
 
 #include    "Object.hpp"
 
-/*
-// This is where all other classes descend from.
-*/
-Object::Object() {}
-Object::~Object() {}
+/* Constructor */
+Object::Object() {
+    this->debug = FALSE;    // No debugging bt default
+    this->level = 0;        // Least detailed level by default
+}
 
+/* Destructor */
+Object::~Object() {
+}
+
+/* Query debug status */
 bool    Object::debugMe() {
     return this->debug;
 }
 
+/* Set debug status */
 bool    Object::debugMe(bool flag) {
     this->debug = flag;
     return this->debug;
 }
 
+/* Query debug level */
 int     Object::debugLevel() {
     return this->level;
-
 }
+
+/* Set debug level */
 int     Object::debugLevel(int level) {
     this->level = level;
     return this->level;

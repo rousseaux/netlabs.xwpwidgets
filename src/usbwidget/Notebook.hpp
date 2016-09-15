@@ -41,17 +41,19 @@
 
 #include    "NotebookPage.hpp"
 
+#include    "Window.hpp"
+
 /* Prototypes */
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-class   Notebook {
+class   Notebook : public Window {
     public:
     /* Do these public for now */
     ULONG           idResource;
-    HWND            hwndParent;
-    HWND            hwndSelf;
-    NotebookPage*   pages;
+    //~ HWND            hwndParent;
+    //~ HWND            hwndSelf;
     /* Constructor and Destructor */
+    NotebookPage*   pages;
     Notebook();
     virtual ~Notebook();
     virtual void    appendPage(NotebookPage*);

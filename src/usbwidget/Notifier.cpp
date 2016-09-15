@@ -32,6 +32,7 @@
 #include    "Notifier.hpp"
 
 Notifier::Notifier() {
+    this->debugMe();
 }
 
 Notifier::~Notifier() {

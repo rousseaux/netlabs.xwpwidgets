@@ -37,16 +37,18 @@
 #include    "ModuleGlobals.hpp"
 #include    "ecomedia.h"
 
+#include    "Dialog.hpp"
+
 /* Prototypes */
 MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-class   NotebookPage {
+class   NotebookPage : public Dialog {
     public:
     /* Do these public for now */
     ULONG   idPage;
     ULONG   idResource;
-    HWND    hwndParent;
-    HWND    hwndSelf;
+    //~ HWND    hwndParent;
+    //~ HWND    hwndSelf;
     PFNWP   dlgProc;
     USHORT  pageStyle;
     USHORT  pageOrder;

@@ -37,6 +37,7 @@
 // Notebook
 */
 Notebook::Notebook() {
+    this->debugMe();
     MessageBox("Notebook","CONSTRUCTOR");
     this->idResource = NULL;
     this->hwndParent = NULL;

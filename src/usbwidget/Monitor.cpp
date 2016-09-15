@@ -33,6 +33,7 @@
 
 
 Monitor::Monitor() {
+    this->debugMe();
 }
 
 Monitor::~Monitor() {

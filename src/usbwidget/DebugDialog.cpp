@@ -35,6 +35,7 @@
 // Constructor
 */
 DebugDialog::DebugDialog() {
+    this->debugMe();
     sprintf(this->buf, "DebugDialog() : hdlg=%08X", this->hwndSelf);
     __debug(NULL, this->buf, DBG_LBOX);
 }
