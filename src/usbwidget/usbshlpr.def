@@ -7,7 +7,7 @@
 ;##############################################################################
 
 NAME usbshlpr WINDOWCOMPAT
-Description 'Support DAEMON for the NeoWPS * USB Widget [testbuild-20160914]'
+Description 'Support DAEMON for the NeoWPS * USB Widget [testbuild-20160915]'
 PROTMODE
 
 DATA    MULTIPLE READWRITE LOADONCALL NONSHARED

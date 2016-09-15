@@ -39,7 +39,7 @@
 class   Classes {
     public:
     Classes();
-    ~Classes();
+    virtual ~Classes();
 };
 
 #ifdef      __cplusplus

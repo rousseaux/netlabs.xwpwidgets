@@ -57,6 +57,11 @@ class   NotebookPage {
     /* Constructor and Destructor */
     NotebookPage();
     virtual ~NotebookPage();
+
+    protected:
+
+    private:
+
 };
 
 

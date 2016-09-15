@@ -42,20 +42,18 @@ class   Monitor : public Object {
 
     public:
     Monitor();
-    ~Monitor();
+    virtual ~Monitor();
 
-    ulong   start();
-    ulong   stop();
-    ulong   block();
-    ulong   unblock();
-    ulong   suspend();
-    ulong   resume();
-
-    ulong   setStatus();
-    ulong   captureStatus();
-    ulong   getStatus();
-
-    ulong   eventStatusChanged();
+    virtual ulong   start();
+    virtual ulong   stop();
+    virtual ulong   block();
+    virtual ulong   unblock();
+    virtual ulong   suspend();
+    virtual ulong   resume();
+    virtual ulong   setStatus();
+    virtual ulong   captureStatus();
+    virtual ulong   getStatus();
+    virtual ulong   eventStatusChanged();
 
     protected:
 

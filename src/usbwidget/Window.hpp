@@ -67,7 +67,9 @@ class   Window : public Object {
     HWND    hwndSelf;
     char    buf[256];
     WND_CLASS_INSTANCE  wci;
+
     private:
+
 };
 
 #ifdef      __cplusplus

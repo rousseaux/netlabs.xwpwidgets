@@ -47,11 +47,11 @@ class   Object {
 
     public:
     Object();
-    ~Object();
-    bool    debugMe();
-    bool    debugMe(bool flag);
-    int     debugLevel();
-    int     debugLevel(int level);
+    virtual ~Object();
+    virtual bool    debugMe();
+    virtual bool    debugMe(bool flag);
+    virtual int     debugLevel();
+    virtual int     debugLevel(int level);
 };
 
 #ifdef      __cplusplus

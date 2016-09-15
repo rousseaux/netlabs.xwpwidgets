@@ -42,7 +42,7 @@ class   DriveMonitor : public Monitor {
 
     public:
     DriveMonitor();
-    ~DriveMonitor();
+    virtual ~DriveMonitor();
 
     protected:
 

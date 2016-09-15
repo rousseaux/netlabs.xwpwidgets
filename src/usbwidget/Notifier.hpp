@@ -42,9 +42,9 @@ class   Notifier : public Object {
 
     public:
     Notifier();
-    ~Notifier();
-    ulong   show();
-    ulong   hide();
+    virtual ~Notifier();
+    virtual ulong   show();
+    virtual ulong   hide();
 
     protected:
 

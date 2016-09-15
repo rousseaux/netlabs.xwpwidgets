@@ -60,11 +60,6 @@ class   GUIHelpers {
 
 // DebugDialog class was here
 
-#define     PF_FIX_SIZE     1
-#define     PF_FIX_HSECS    2
-#define     PF_FIX_DIRTY    3
-
-
 // ProblemFixerDialog class was here
 
 // Notifier class was here

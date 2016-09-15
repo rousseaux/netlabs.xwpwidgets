@@ -44,18 +44,15 @@ class   DebugDialog : public Dialog {
 
     public:
     DebugDialog();
-    ~DebugDialog();
-    ulong   create();
-    ulong   destroy();
+    virtual ~DebugDialog();
 
-
-    ulong   redraw();
-
-    ulong   msgInitDialog(ulong mp1, ulong mp2);
-    ulong   msgCommand(ulong mp1, ulong mp2);
-
-    ulong   commandDrawButton();
-    ulong   commandDestroyButton();
+    virtual ulong   create();
+    virtual ulong   destroy();
+    virtual ulong   redraw();
+    virtual ulong   msgInitDialog(ulong mp1, ulong mp2);
+    virtual ulong   msgCommand(ulong mp1, ulong mp2);
+    virtual ulong   commandDrawButton();
+    virtual ulong   commandDestroyButton();
 
     //~ static ulong EXPENTRY DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
     static ulong DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);

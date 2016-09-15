@@ -31,5 +31,8 @@
 
 #include    "Classes.hpp"
 
-Classes::Classes() {}
-Classes::~Classes() {}
+Classes::Classes() {
+}
+
+Classes::~Classes() {
+}

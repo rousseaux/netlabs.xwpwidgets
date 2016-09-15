@@ -46,36 +46,28 @@ class   ProblemFixerDialog : public Dialog {
 
     public:
     ProblemFixerDialog();
-    ~ProblemFixerDialog();
-    ulong   create();
-    ulong   process();
-    ulong   destroy();
-
-
-    ulong   redraw();
-
-    ulong   msgInitDialog(ulong mp1, ulong mp2);
-    ulong   msgCommand(ulong mp1, ulong mp2);
-
-    ulong   commandDrawButton();
-    ulong   commandDestroyButton();
-
-    void    mleAppendText(char* text);
-    void    mleClear();
-
-    char    getDriveLetter();
-    char    setDriveLetter(char dletter);
-    int     getPhysDisk();
-    int     setPhysDisk(int pdisk);
-    ulong   getDiskStatus();
-    ulong   setDiskStatus(ulong dskstat);
-
-    void    help();
-    void    noDFSVOS2();
-    void    setupFixCommands();
-
-    ulong   instanceMessageHandler2(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    ulong   instanceMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
+    virtual ~ProblemFixerDialog();
+    virtual ulong   create();
+    virtual ulong   process();
+    virtual ulong   destroy();
+    virtual ulong   redraw();
+    virtual ulong   msgInitDialog(ulong mp1, ulong mp2);
+    virtual ulong   msgCommand(ulong mp1, ulong mp2);
+    virtual ulong   commandDrawButton();
+    virtual ulong   commandDestroyButton();
+    virtual void    mleAppendText(char* text);
+    virtual void    mleClear();
+    virtual char    getDriveLetter();
+    virtual char    setDriveLetter(char dletter);
+    virtual int     getPhysDisk();
+    virtual int     setPhysDisk(int pdisk);
+    virtual ulong   getDiskStatus();
+    virtual ulong   setDiskStatus(ulong dskstat);
+    virtual void    help();
+    virtual void    noDFSVOS2();
+    virtual void    setupFixCommands();
+    virtual ulong   instanceMessageHandler2(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
+    virtual ulong   instanceMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
     //~ static ulong EXPENTRY ProblemFixerDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
     static ulong ProblemFixerDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
 
@@ -88,24 +80,20 @@ class   ProblemFixerDialog : public Dialog {
     ulong   fixmask;
     ulong   effmask;
     ulong   tofixmap;
-
     int     fixcommands_count;
     char    fixcommands[5][256];
     ulong   fixes[5];
     ulong   action_taken;
-
-
-    void    init();
-    int     mle_cmdname(int id);
-    int     set_fix_state();
-    int     set_close_state(int fixed);
-
-    ulong   get_fixmask();
-    ulong   set_fixmask(ulong fixmask);
-    ulong   get_effmask();
-    ulong   set_effmask(ulong effmask);
-    ulong   get_tofixmap();
-    ulong   set_tofixmap(ulong tofixmap);
+    virtual void    init();
+    virtual int     mle_cmdname(int id);
+    virtual int     set_fix_state();
+    virtual int     set_close_state(int fixed);
+    virtual ulong   get_fixmask();
+    virtual ulong   set_fixmask(ulong fixmask);
+    virtual ulong   get_effmask();
+    virtual ulong   set_effmask(ulong effmask);
+    virtual ulong   get_tofixmap();
+    virtual ulong   set_tofixmap(ulong tofixmap);
 };
 
 

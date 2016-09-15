@@ -58,6 +58,11 @@ class   Notebook {
     virtual void    appendPages();
     virtual void    removePage(NotebookPage*);
     virtual void    removePages();
+
+    protected:
+
+    private:
+
 };
 
 
