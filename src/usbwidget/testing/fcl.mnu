@@ -1,0 +1,6 @@
+B:	Build
+	make all
+R:	Run
+	make run
+C:	Clean
+	make clean

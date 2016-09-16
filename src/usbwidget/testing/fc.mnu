@@ -1,0 +1,6 @@
+B:	Build
+	nmake -nologo all
+R:	Run
+	nmake -nologo run
+C:	Clean
+	nmake -nologo clean
