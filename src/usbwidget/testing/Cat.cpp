@@ -27,7 +27,7 @@ int     Cat::testAttAccess() {
     printf("this->tail: %d\n", this->tail);
 
     //! Cannot access this member this way
-    //~ printf("this->an->tail: %d\n", this->an->tail);
+    printf("this->an->tail: %d\n", this->an->tail);
 
     //! This one works
     //~ printf("this->an->tail: %d\n", ((Cat*)this->an)->tail);
@@ -42,7 +42,7 @@ int     Cat::testAttAccess(Animal* animal) {
     printf("Legs: %d\n", animal->legs);
 
     //! Cannot access parameter this way
-    //~ printf("this->tail: %d\n", animal->tail);
+    printf("this->tail: %d\n", animal->tail);
 
     //! This one works
     //~ printf("this->tail: %d\n", ((Cat*)animal)->tail);
