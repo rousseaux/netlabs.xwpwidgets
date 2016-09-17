@@ -40,7 +40,7 @@ DLLPATH=$(OSDIR)\SYSTEM\eWPS\PLUGINS\XCENTER                    # Target path fo
 RCINCLUDE=.;h;xworkplace\include;xwphelpers\include             # Dirs to search for rc includes
 INCLUDE=$(RCINCLUDE);$(INCLUDE)                                 # Dirs to search for headers
 LIB=.;lib;$(LIB)                                                # Dirs to search for libraries
-LIBS=ecolange.lib lvm.lib usbcalls.lib ecomedia.lib             # External libraries to use
+EXTLIBS=ecolange.lib lvm.lib usbcalls.lib ecomedia.lib          # External libraries to use
 CCFLAGS=-Q+ -C+ -Gm+ -Ss -Sp1 -Su4 -Gd- -Ge+ -Tdp               # Compiler flags
 LIBFLAGS=/nologo                                                # Lib flags
 LNKFLAGS=-nologo -noe -map:$*.map                               # Linker flags
@@ -58,155 +58,75 @@ RCINCLUDE=$(CPPMAIN)\INCLUDE;$(CPPMAIN)\INCLUDE\OS2;$(RCINCLUDE)
 !endif
 
 #
-# Debug dependencies
+# Global Dependencies
 #
-DBGDEPS=\
-	Bldvars.h\
-	Debug.h\
-	Debug.hpp\
+GLOBDEPS=\
+Bldvars.h\
+Debug.h\
+Dialogids.h\
+Notebookids.h\
+Master.hpp\
+ModuleGlobals.hpp\
 
 #
-# General dependencies
+# Daemon Modules
 #
-INCDEPS=\
-	Bldvars.h\
-	Dialogids.h\
-	Notebookids.h\
-	Master.hpp\
-	ModuleGlobals.hpp\
+DEAMON_MODULES=
 
 #
-# Daemon dependencies
+# Class Modules
 #
-DMNDEPS=\
-	$(DBGDEPS)\
-	$(INCDEPS)\
-	AllocMem.hpp\
-	Master.hpp\
+CLASS_MODULES=\
+Classes.*\
+Dialog.*\
+DebugDialog.*\
+ProblemFixerDialog.*\
+Monitor.*\
+DriveMonitor.*\
+UsbMonitor.*\
+WidgetSettingsDialog.*\
+Object.*\
+Notebook.*\
+NotebookPage.*\
+Notifier.*\
+Window.*\
+Widget.*\
 
 #
-# Class dependencies
+# Widget Modules
 #
-CLASSDEPS=\
-	Classes.hpp\
-	Dialog.hpp\
-	DebugDialog.hpp\
-	ProblemFixerDialog.hpp\
-	Monitor.hpp\
-	DriveMonitor.hpp\
-	UsbMonitor.hpp\
-	WidgetSettingsDialog.hpp\
-	Object.hpp\
-	Notebook.hpp\
-	NotebookPage.hpp\
-	Notifier.hpp\
-	Window.hpp\
-	Widget.hpp\
+WIDGET_MODULES=\
+AllocMem.*\
+CList.*\
+Debug.*\
+ProblemFixer.*\
+Threads.*\
+Testing123.*\
+ModuleGlobals.*\
+USBWidget.*\
 
 #
-# Widget dependencies
-#
-WGTDEPS=\
-	$(DBGDEPS)\
-	$(INCDEPS)\
-	$(CLASSDEPS)\
-	AllocMem.hpp\
-	ProblemFixer.hpp\
-	Threads.hpp\
-	USBHelpers.hpp\
-	LVMHelpers.hpp\
-	APIHelpers.hpp\
-	GUIHelpers.hpp\
-	Testing123.hpp\
-	USBWidget.hpp\
-
-#
-# Resource dependencies
+# Resource Dependencies
 #
 RESDEPS=\
-	$(DBGDEPS)\
-	$(INCDEPS)\
-	Dialogs.rc\
-	Dialogs.dlg\
-	Notebooks.rc\
-	Notebooks.dlg\
-	usbshold.rc\
-	USBWidget.rc\
-	Images.rc\
-
-#
-# Objects to build the Daemon from
-#
-DMNOBJECTS=\
-	Debug.obj\
-	AllocMem.obj\
-
-#
-# Class Objects
-#
-CLASSOBJECTS=\
-	Classes.obj\
-	Dialog.obj\
-	DebugDialog.obj\
-	ProblemFixerDialog.obj\
-	Monitor.obj\
-	DriveMonitor.obj\
-	UsbMonitor.obj\
-	WidgetSettingsDialog.obj\
-	Object.obj\
-	Notebook.obj\
-	NotebookPage.obj\
-	Notifier.obj\
-	Window.obj\
-	Widget.obj\
-
-#
-# Objects to build the Widget from
-#
-WGTOBJECTS=\
-	$(CLASSOBJECTS)\
-	Debug.obj\
-	AllocMem.obj\
-	ProblemFixer.obj\
-	Threads.obj\
-	CList.obj\
-	ModuleGlobals.obj\
-	Testing123.obj\
-	USBWidget.obj\
+$(DBGDEPS)\
+Dialogs.rc\
+Dialogs.dlg\
+Notebooks.rc\
+Notebooks.dlg\
+usbshold.rc\
+USBWidget.rc\
+Images.rc\
 
 #
 # Libraries to cluster some stuff
 #
 LIBRARIES=\
-	Classes.lib\
-	APIHelpers.lib\
-	LVMHelpers.lib\
-	USBHelpers.lib\
-	GUIHelpers.lib\
-
-# =============================================================================
-#                                                [ CPP TO OBJ INFERENCE RULES ]
-# =============================================================================
-.cpp.obj:
-	@echo [$@]
-	@echo Reason: $?
-	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
-
-# =============================================================================
-#                                                [ OBJ TO LIB INFERENCE RULES ]
-# =============================================================================
-.obj.lib:
-	@echo [$@]
-	@echo Reason: $?
-!if "$(BLDENV)"=="vac3"
-	$(LIBTOOL) $(LIBFLAGS) $@ -+$?; 2>nul
-!else
-!if "$(BLDENV)"=="icc36"
-	$(LIBTOOL) $(LIBFLAGS) -out:$@ $?
-!else
-!error **** INVALID BUILD ENVIRONMENT ****
-!endif
-!endif
+Classes.lib\
+APIHelpers.lib\
+LVMHelpers.lib\
+USBHelpers.lib\
+GUIHelpers.lib\
 
 # =============================================================================
 #                                                         [ PSEUDO ALL TARGET ]
@@ -223,24 +143,27 @@ all:
 #                                                 [ SUPPORT DAEMON EXECUTABLE ]
 # =============================================================================
 support-daemon:
+	@echo.
 	@echo ## Building the Support Daemon ##
 	@$(MAKE) -nologo usbshlpr.exe
-	@echo.
 
 # =============================================================================
 #                                                                [ WIDGET DLL ]
 # =============================================================================
 usb-widget:
+	@echo.
 	@echo ## Building the NeoWPS * USB Widget ##
 	@$(MAKE) -nologo usbshold.dll
 
 # =============================================================================
 #                                                          [ DAEMON EXECUTABLE]
 # =============================================================================
-usbshlpr.exe: $*.obj $(DMNOBJECTS) $*.def
+usbshlpr.exe: $*.obj $(DAEMON_MODULES:.*=.obj) $*.def
 	@echo.
-	@echo ## Linking modules ##
-	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.def $*.obj
+	@echo [$@]
+	@echo Reason: $?
+	@echo		## Linking modules ##
+	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.obj $(DAEMON_MODULES:.*=.obj) $*.def
 	@mapsym $*.map > nul
 	@exehdr $*.exe > $*.exh
 # 2013-03-18 SHL
@@ -264,7 +187,8 @@ usbshlpr.exe: $*.obj $(DMNOBJECTS) $*.def
 # =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DMNDEPS) $(CLASSDEPS)
+usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(GLOBDEPS)
+	@echo.
 	@echo [$@]
 	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge+ -Fo$*.obj $*.cpp
@@ -272,13 +196,14 @@ usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DMNDEPS) $(CLASSDEPS)
 # =============================================================================
 #                                                                [ WIDGET DLL ]
 # =============================================================================
-usbshold.dll: $*.obj $(WGTOBJECTS) $(LIBRARIES) $*.res $*.def
+usbshold.dll: $*.obj $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $*.res $*.def
 	@echo.
-	@echo ## Linking modules ##
-	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.def $*.obj $(WGTOBJECTS) $(LIBRARIES) $(LIBS)
+	@echo [$@]
+	@echo Reason: $?
+	@echo		## Linking modules ##
+	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.obj $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $(EXTLIBS) $*.def
 	@mapsym $*.map > nul
-	@echo.
-	@echo ## Embedding Resources ##
+	@echo		## Embedding Resources ##
 	$(RC) $(RCFLAGS) $*.res $*.dll
 	@exehdr $*.DLL > $*.exh
 # 2013-03-18 SHL
@@ -301,7 +226,8 @@ usbshold.dll: $*.obj $(WGTOBJECTS) $(LIBRARIES) $*.res $*.def
 # =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshold.obj: $*.cpp $*.hpp $*.lvl $(WGTDEPS) $(CLASSDEPS)
+usbshold.obj: $*.cpp $*.hpp $*.lvl $(WIDGET_MODULES:.*=*.hpp) $(CLASS_MODULES:.*=*.hpp) $(GLOBDEPS)
+	@echo.
 	@echo [$@]
 	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge- -Fo$*.obj $*.cpp
@@ -319,41 +245,45 @@ usbshold.res: $(RESDEPS)
 	$(RC) -r $*.rc $@
 
 # =============================================================================
-#                                    [ OBJECTS TO BUILD USING INFERENCE RULES ]
+#                              [ CLASS OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
 # Class Objects
-Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-DebugDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-ProblemFixerDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Notifier.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
-Widget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Classes.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Dialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+DebugDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+ProblemFixerDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Monitor.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+DriveMonitor.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+UsbMonitor.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Notebook.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+NotebookPage.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Notifier.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+WidgetSettingsDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Object.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Window.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Widget.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+
+# =============================================================================
+#                             [ COMMON OBJECTS TO BUILD USING INFERENCE RULES ]
+# =============================================================================
 # Common Objects
-AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-CList.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Debug.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-GUIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-LVMHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-ModuleGlobals.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-ProblemFixer.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Testing123.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Threads.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-USBHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-USBWidget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+AllocMem.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+APIHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+CList.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Debug.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+GUIHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+LVMHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+ModuleGlobals.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+ProblemFixer.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Testing123.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Threads.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+USBHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+USBWidget.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-Classes.lib: $(CLASSOBJECTS)
+Classes.lib: $(CLASS_MODULES:.*=.obj)
 APIHelpers.lib: $*.obj
 GUIHelpers.lib: $*.obj
 LVMHelpers.lib: $*.obj
@@ -380,6 +310,32 @@ clean:
 #	@echo Cleaning code-store
 #	vacbld -CL "$(BASENAME).icc"
 	@touch Bldvars.mif
+
+# =============================================================================
+#                                                [ CPP TO OBJ INFERENCE RULES ]
+# =============================================================================
+.cpp.obj:
+	@echo.
+	@echo [$@]
+	@echo Reason: $?
+	$(CC) $(CCFLAGS) -Fo$@ $*.cpp
+
+# =============================================================================
+#                                                [ OBJ TO LIB INFERENCE RULES ]
+# =============================================================================
+.obj.lib:
+	@echo.
+	@echo [$@]
+	@echo Reason: $?
+!if "$(BLDENV)"=="vac3"
+	$(LIBTOOL) $(LIBFLAGS) $@ -+$?; 2>nul
+!else
+!if "$(BLDENV)"=="icc36"
+	$(LIBTOOL) $(LIBFLAGS) -out:$@ $?
+!else
+!error **** INVALID BUILD ENVIRONMENT ****
+!endif
+!endif
 
 # Include targets that generate files
 !include GenFiles.mif
