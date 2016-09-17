@@ -76,12 +76,12 @@ int WidgetSettingsDialog::create() {
     /* Populate the Notebook with Pages */
     if (this->settings) {
         this->settings->idResource = DLG_ID_WIDGETSETTINGS_NOTEBOOK;
-        this->settings->hwndParent = this->hwndSelf;
-        this->settings->hwndSelf = WinWindowFromID(this->hwndSelf, this->settings->idResource);
+        ((WidgetSettingsDialog*)this->settings)->hwndParent = this->hwndSelf;
+        ((WidgetSettingsDialog*)this->settings)->hwndSelf = WinWindowFromID(this->hwndSelf, this->settings->idResource);
 
         /* Set dimensions of Major Tabs -- can resize Notebook */
         WinSendMsg(
-            settings->hwndSelf,
+            ((WidgetSettingsDialog*)this->settings)->hwndSelf,
             BKM_SETDIMENSIONS,
             MPFROM2SHORT(80, 40),
             MPFROMLONG(BKA_MAJORTAB)
@@ -106,7 +106,7 @@ int WidgetSettingsDialog::create() {
 
         /* Set background color for page */
         WinSendMsg(
-            settings->hwndSelf,
+            ((WidgetSettingsDialog*)this->settings)->hwndSelf,
             BKM_SETNOTEBOOKCOLORS,
             MPFROMLONG(CLR_PALEGRAY),
             MPFROMLONG(BKA_BACKGROUNDPAGECOLORINDEX)
@@ -114,7 +114,7 @@ int WidgetSettingsDialog::create() {
 
         /* Set background color for Major Tabs */
         WinSendMsg(
-            settings->hwndSelf,
+            ((WidgetSettingsDialog*)this->settings)->hwndSelf,
             BKM_SETNOTEBOOKCOLORS,
             MPFROMLONG(CLR_PALEGRAY),
             MPFROMLONG(BKA_BACKGROUNDMAJORCOLORINDEX)
