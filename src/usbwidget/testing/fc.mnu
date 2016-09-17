@@ -4,3 +4,11 @@ R:	Run
 	nmake -nologo run
 C:	Clean
 	nmake -nologo clean
+-:	-------------------
+N:	NMake bug
+{
+W:	Test Works
+	nmake -nologo -f Makefile.nmakebug test-works
+F:	Test Fails
+	nmake -nologo -f Makefile.nmakebug test-fails
+}

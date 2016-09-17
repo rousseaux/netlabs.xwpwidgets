@@ -1,0 +1,53 @@
+###############################################################################
+# Makefile.nmakebug -- Exposing a curious NMake v3 / v4 bug                   #
+# --------------------------------------------------------------------------- #
+# NMake can drop one or more assignments when a macro references itself       #
+# to build a list and is then subsequently used to compose a derived list.    #
+#                                                                             #
+# Tests have been done with more than three lines, spaces-no-spaces and what  #
+# not, but no precise cause could be determined. It seems that the assignment #
+# before the last is dropped most often, but other cases were also found.     #
+#                                                                             #
+# Anyway:                                                                     #
+# NMake: 'MYVAR=$(MYVAR) and some more' is BAD !!                             #
+###############################################################################
+
+# Our list of headers -- working method
+MYDEPS1=\
+one.hpp\
+two.hpp\
+three.hpp\
+
+# Assign and change extension
+MYSRC1=$(MYDEPS1:.hpp=.cpp)
+
+test-works:
+	@echo.
+	@echo [$@]
+	@echo.
+	@echo The list below is correct -- independent of method used
+	@echo MYDEPS       : $(MYDEPS1)
+	@echo.
+	@echo AND, the derived list below is also correct, containing 'two.cpp'
+	@echo MYSRC        : $(MYSRC1)
+	@echo.
+
+# Our list of headers -- failing method
+MYDEPS2=
+MYDEPS2=$(MYDEPS2) one.hpp
+MYDEPS2=$(MYDEPS2) two.hpp
+MYDEPS2=$(MYDEPS2) three.hpp
+
+# Assign and change extension
+MYSRC2=$(MYDEPS2:.hpp=.cpp)
+
+test-fails:
+	@echo.
+	@echo [$@]
+	@echo.
+	@echo The list below is correct -- independent of method used
+	@echo MYDEPS       : $(MYDEPS2)
+	@echo.
+	@echo BUT, the derived list below is now MISSING 'two.cpp' !!!
+	@echo MYSRC        : $(MYSRC2)
+	@echo.
