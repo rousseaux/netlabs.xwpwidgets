@@ -264,7 +264,7 @@ usbshlpr.exe: $*.obj $(DMNOBJECTS) $*.def
 # =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DMNDEPS)
+usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DMNDEPS) $(CLASSDEPS)
 	@echo [$@]
 	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge+ -Fo$*.obj $*.cpp
@@ -301,7 +301,7 @@ usbshold.dll: $*.obj $(WGTOBJECTS) $(LIBRARIES) $*.res $*.def
 # =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshold.obj: $*.cpp $*.hpp $*.lvl $(WGTDEPS)
+usbshold.obj: $*.cpp $*.hpp $*.lvl $(WGTDEPS) $(CLASSDEPS)
 	@echo [$@]
 	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge- -Fo$*.obj $*.cpp
@@ -322,20 +322,20 @@ usbshold.res: $(RESDEPS)
 #                                    [ OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
 # Class Objects
-Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-DebugDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-ProblemFixerDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Notifier.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
-Widget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
+Classes.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Dialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+DebugDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+ProblemFixerDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Monitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+DriveMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+UsbMonitor.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Notebook.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+NotebookPage.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Notifier.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+WidgetSettingsDialog.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Object.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Window.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
+Widget.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS) $(CLASSDEPS)
 # Common Objects
 AllocMem.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
 APIHelpers.obj: $*.cpp $*.hpp $(INCDEPS) $(DBGDEPS)
