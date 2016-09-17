@@ -34,4 +34,4 @@
     #define FCF_CLOSEBUTTON 0x04000000L
 #endif
 
-rcinclude   "USBWidget.rc"
+rcinclude   "usbsimpl.rc"

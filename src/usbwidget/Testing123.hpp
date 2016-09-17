@@ -37,7 +37,7 @@
 
 #include    "ModuleGlobals.hpp"
 #include    "APIHelpers.hpp"
-#include    "USBWidget.hpp"
+#include    "usbsimpl.hpp"
 #include    "ProblemFixer.hpp"
 //#include  "APIHelpers.hpp"
 //#include  "LVMHelpers.hpp"

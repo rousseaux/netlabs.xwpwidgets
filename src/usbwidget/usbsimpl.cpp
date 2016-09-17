@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* USBWidget.cpp -- NeoWPS * USB Widget                                        *
+* usbsimpl.cpp -- NeoWPS * USB Widget                                         *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 * Portions Copyright (c) eCoSoft                                              *
@@ -24,13 +24,17 @@
 *                                                                             *
 \*****************************************************************************/
 
-
-/**
- * This module is based on the original sources created by eCoSoft.
- * These original sources are in turn based on the Widget Template sources
- * created by Ulrich M”ller that accompany the XWorkplace source package.
- */
-
+/******************************************************************************
+* This module holds the (legacy) implementation the USB Widget
+* -----------------------------------------------------------------------------
+* It contains the main program logic which will gradually be moved to the
+* UsbWidget Class.
+*
+* This module is based on the original sources created by eCoSoft.
+* These original sources are in turn based on the Widget Template sources
+* created by Ulrich M”ller that accompany the XWorkplace source package.
+*
+*/
 
 /**
  * USB Widget - Taken from miniwdgt.c
@@ -79,7 +83,7 @@ extern "C" {
 
 #include    "WidgetSettingsDialog.hpp"
 
-#include    "USBWidget.hpp"
+#include    "usbsimpl.hpp"
 
 #include    "Apm.h"
 #include    "Dialogids.h"

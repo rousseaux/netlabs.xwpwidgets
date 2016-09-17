@@ -22,34 +22,27 @@
 *                                                                             *
 \*****************************************************************************/
 
-
-/**
- * This module is kind of a proxy in the sense that it does not contain much.
- * However, it's .def file is used to redirect the exported entries that
- * eCenter calls to create and initialize the Widget.
- *
- * The .def file is used to redirect these calls to either the old
- * implementation or the new implementation.
- *
- * The true code starts in USBWidget.c for the old implementation and in
- * USBWidget.cpp for the new implementation.
- */
-
-
-#include    "usbshold.hpp"
-//~ #include    "usbshold.hpv"
-#include    "USBWidget.hpp"
-
-/*
-// This includes the BLDLEVEL information.
-// It defines a it defines a global character string so it is a source file
-// and not an include file. The character string holds the BLDLEVEL information
-// and is thus embedded in the resulting object file.
+/******************************************************************************
+* This is the main module for the Widget DLL
+* -----------------------------------------------------------------------------
+* It holds the entrypoints that XCenter uses to query, initialize and
+* uninitialize a widget. These entrypoints are invoked by ordinal with the
+* following mappings:
+*
+* 1. Initialize Widget
+* 2. UnInitialize Widget
+* 3. Query required XWorkplace version
+*
 */
+
+/* Implementation Header */
+#include    "usbsimpl.hpp"
+
+/* Module Header */
+#include    "usbshold.hpp"
+
+/* BLDLEVEL Information */
 #include    "usbshold.lvl"
-
-
-
 
 /*****************************************************************************\
  *

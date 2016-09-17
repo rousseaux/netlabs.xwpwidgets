@@ -132,8 +132,8 @@ char*               GetUsbVendorString(char* usbid, char* buf, int bufsize);
 
 // CHECKME: Oud commentaar
 /*
-// VANWEGE KNIFTIGE INCLUDE STRUCTUUR HIER GEDECLAREED IPV USBWidget.hpp
-// TERWIJL DE FUNCTIE IN DE USBWIDGET MODULE ZIT !!!!!!!!!!!!!!!!
+// VANWEGE KNIFTIGE INCLUDE STRUCTUUR HIER GEDECLAREED IPV usbsimpl.hpp
+// TERWIJL DE FUNCTIE IN DE usbsimpl MODULE ZIT !!!!!!!!!!!!!!!!
 */
 int PopUpChangedDevices(int action, USBDeviceReport*);
 

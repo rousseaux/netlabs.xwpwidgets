@@ -213,7 +213,7 @@ typedef FSDTYPE*    PFSDTYPE;
 #include    "LVMHelpers.hpp"
 #include    "Testing123.hpp"
 #include    "ProblemFixer.hpp"
-#include    "USBWidget.hpp"
+#include    "usbsimpl.hpp"
 
 
 //! PROBLEMS WITH THE ABOVE INCLUDES

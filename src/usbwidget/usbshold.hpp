@@ -23,9 +23,18 @@
 \*****************************************************************************/
 
 
-/**
- * This is the public header file for it's correcponding source.
- */
+/******************************************************************************
+* This is the main module for the Widget DLL
+* -----------------------------------------------------------------------------
+* It holds the entrypoints that XCenter uses to query, initialize and
+* uninitialize a widget. These entrypoints are invoked by ordinal with the
+* following mappings:
+*
+* 1. Initialize Widget
+* 2. UnInitialize Widget
+* 3. Query required XWorkplace version
+*
+*/
 
 #ifndef     __USBSHOLD_HPP__
 #define     __USBSHOLD_HPP__
@@ -67,4 +76,3 @@ VOID EXPENTRY   UsbWgtUnInitModule();
 #endif
 // __USBSHOLD_HPP__
 #endif
-

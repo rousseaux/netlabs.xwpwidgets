@@ -99,11 +99,16 @@ WIDGET_MODULES=\
 AllocMem.*\
 CList.*\
 Debug.*\
-ProblemFixer.*\
-Threads.*\
-Testing123.*\
 ModuleGlobals.*\
-USBWidget.*\
+ProblemFixer.*\
+Testing123.*\
+Threads.*\
+
+#
+# Widget Legacy Implementation
+#
+WIDGET_IMPL=\
+usbsimpl.*\
 
 #
 # Resource Dependencies
@@ -112,11 +117,11 @@ RESDEPS=\
 $(DBGDEPS)\
 Dialogs.rc\
 Dialogs.dlg\
+Images.rc\
 Notebooks.rc\
 Notebooks.dlg\
 usbshold.rc\
-USBWidget.rc\
-Images.rc\
+usbsimpl.rc\
 
 #
 # Libraries to cluster some stuff
@@ -196,12 +201,12 @@ usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(GLOBDEPS)
 # =============================================================================
 #                                                                [ WIDGET DLL ]
 # =============================================================================
-usbshold.dll: $*.obj $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $*.res $*.def
+usbshold.dll: $*.obj $(WIDGET_IMPL:.*=.obj) $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $*.res $*.def
 	@echo.
 	@echo [$@]
 	@echo Reason: $?
 	@echo		## Linking modules ##
-	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.obj $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $(EXTLIBS) $*.def
+	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.obj $(WIDGET_IMPL:.*=.obj) $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $(EXTLIBS) $*.def
 	@mapsym $*.map > nul
 	@echo		## Embedding Resources ##
 	$(RC) $(RCFLAGS) $*.res $*.dll
@@ -247,7 +252,6 @@ usbshold.res: $(RESDEPS)
 # =============================================================================
 #                              [ CLASS OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-# Class Objects
 Classes.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Dialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 DebugDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
@@ -266,7 +270,6 @@ Widget.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 # =============================================================================
 #                             [ COMMON OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
-# Common Objects
 AllocMem.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 APIHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 CList.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
@@ -278,7 +281,12 @@ ProblemFixer.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Testing123.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Threads.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 USBHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
-USBWidget.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+
+
+# =============================================================================
+#                      [ LEGACY IMPLEMENTATION TO BUILD USING INFERENCE RULES ]
+# =============================================================================
+usbsimpl.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]
