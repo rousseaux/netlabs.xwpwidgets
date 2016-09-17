@@ -20,18 +20,18 @@ LD=icc
 LDFLAGS=-Q+
 
 # List of class definitions
-CLASSDEPS=
-CLASSDEPS=$(CLASSDEPS) Animal.hpp
-CLASSDEPS=$(CLASSDEPS) Cat.hpp
-CLASSDEPS=$(CLASSDEPS) StrayCat.hpp
-CLASSDEPS=$(CLASSDEPS) TopCat.hpp
+CLASS_MODULES=\
+Animal.*\
+Cat.*\
+StrayCat.*\
+TopCat.*\
 
 # List of classes to compile
-CLASSOBJECTS=
-CLASSOBJECTS=$(CLASSOBJECTS) Animal.obj
-CLASSOBJECTS=$(CLASSOBJECTS) Cat.obj
-CLASSOBJECTS=$(CLASSOBJECTS) StrayCat.obj
-CLASSOBJECTS=$(CLASSOBJECTS) TopCat.obj
+CLASSOBJECTS=\
+Animal.*\
+Cat.*\
+StrayCat.*\
+TopCat.*\
 
 # Required for inference rules to function correctly
 .SUFFIXES:
@@ -55,16 +55,16 @@ CLASSOBJECTS=$(CLASSOBJECTS) TopCat.obj
 all: main.exe
 
 # Target for the Executable
-main.exe: $*.obj $(CLASSOBJECTS)
+main.exe: $*.obj $(CLASS_MODULES:.*=.obj)
 
 # Target for object-file for Executable
-main.obj: $*.cpp $*.hpp $(CLASSDEPS)
+main.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp)
 
 # Targets for object-files for Classes
-Animal.obj: $*.cpp $(CLASSDEPS)
-Cat.obj: $*.cpp $(CLASSDEPS)
-StrayCat.obj: $*.cpp $(CLASSDEPS)
-TopCat.obj: $*.cpp $(CLASSDEPS)
+Animal.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
+Cat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
+StrayCat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
+TopCat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
 
 # Run the program
 run: main.exe
