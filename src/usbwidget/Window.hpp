@@ -62,10 +62,10 @@ class   Window : public Object {
     virtual ulong   getHandle();
 
     //! FIXME: Access problems using pointers in derived classes
+    protected:
     HWND    hwndParent;
     HWND    hwndOwner;
     HWND    hwndSelf;
-    protected:
     char    buf[256];
     WND_CLASS_INSTANCE  wci;
 
