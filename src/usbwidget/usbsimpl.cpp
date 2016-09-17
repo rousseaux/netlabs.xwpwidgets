@@ -83,14 +83,21 @@ extern "C" {
 
 #include    "WidgetSettingsDialog.hpp"
 
-#include    "usbsimpl.hpp"
 
 #include    "Apm.h"
 #include    "Dialogids.h"
 #include    "lange.h"
 
+#include    "AllocMem.hpp"
+#include    "Debug.hpp"
+#include    "CList.hpp"
+#include    "Threads.hpp"
+#include    "Testing123.hpp"
 
-#include    "clist.hpp"
+#include    "APIHelpers.hpp"
+#include    "GUIHelpers.hpp"
+#include    "LVMHelpers.hpp"
+#include    "USBHelpers.hpp"
 
 // Rousseau:
 // When uncommented VAC40 (VACBLD) barks at multiple inclusion eventhough
@@ -140,6 +147,9 @@ extern "C" {
 VOID EXPENTRY WwgtShowSettingsDlg(PWIDGETSETTINGSDLGDATA pData);
 
 #include    "usbshold.hpp"
+
+#include    "usbsimpl.hpp"
+
 
 #define     PIPE_NAME   "\\PIPE\\PIPE1"
 #define     PIPE_SIZE   256

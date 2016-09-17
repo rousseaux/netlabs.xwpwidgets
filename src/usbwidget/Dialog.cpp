@@ -26,6 +26,7 @@
  * This module handles Dialogs.
  */
 
+#include    "Debug.hpp"
 #include    "GUIHelpers.hpp"
 
 #include    "Dialog.hpp"

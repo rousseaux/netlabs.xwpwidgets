@@ -27,8 +27,13 @@
  * This module is a dummy to invoke the .obj.lib inference rule.
  */
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
 //~ #include    "GUIHelpers.hpp"
+//~ #include    "LVMHelpers.hpp"
+#include    "USBHelpers.hpp"
 
+#include    "ProblemFixer.hpp"
 #include    "ProblemFixerDialog.hpp"
 
 /**

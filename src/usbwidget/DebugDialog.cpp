@@ -27,6 +27,8 @@
  * This module contains the DebugDialog.
  */
 
+#include    "Debug.hpp"
+
 //~ #include    "GUIHelpers.hpp"
 
 #include    "DebugDialog.hpp"

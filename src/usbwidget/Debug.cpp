@@ -28,11 +28,15 @@
  * It's purpose is to log debug information to none or more outputs.
  */
 
+#include    "APIHelpers.hpp"
 #include    "GUIHelpers.hpp"
+#include    "LVMHelpers.hpp"
+#include    "USBHelpers.hpp"
+#include    "ProblemFixer.hpp"
+#include    "ProblemFixerDialog.hpp"
 
 #include    "Debug.hpp"
 
-#include    "ProblemFixerDialog.hpp"
 
 //! FIXME: THE DELAY CULPRIT !!!!
 ///

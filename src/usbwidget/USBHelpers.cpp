@@ -30,8 +30,10 @@
 
 #include    "Master.hpp"
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
 #include    "GUIHelpers.hpp"
-
+#include    "ProblemFixer.hpp"
 #include    "ProblemFixerDialog.hpp"
 
 #include    "USBHelpers.hpp"

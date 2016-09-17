@@ -28,6 +28,7 @@
  * to other modules or removed if not needed.
  */
 
+#include    "Debug.hpp"
 #include    "GUIHelpers.hpp"
 
 #include    "Testing123.hpp"

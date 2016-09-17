@@ -30,6 +30,9 @@
  * C/C++ methods.
  */
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
+
 #include    "AllocMem.hpp"
 
 /*

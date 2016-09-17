@@ -27,6 +27,11 @@
  * This module contains all the threads used by the widget.
  */
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
+#include    "LVMHelpers.hpp"
+#include    "USBHelpers.hpp"
+
 #include    "Threads.hpp"
 
 

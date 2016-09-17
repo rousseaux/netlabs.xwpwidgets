@@ -36,7 +36,7 @@
 
 #include    "Master.hpp"
 #include    "ModuleGlobals.hpp"
-//~ #include    "USBHelpers.hpp"
+#include    "USBHelpers.hpp"
 
 /* Masks for QueryDeviceSanity() */
 #define     DSKSTAT_VALID           0x80000000L     // 31

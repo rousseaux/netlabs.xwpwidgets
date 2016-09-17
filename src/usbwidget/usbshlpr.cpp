@@ -36,6 +36,7 @@
  * restarts, especially the drive <-> usb-device relations.
  */
 
+#include    "AllocMem.hpp"
 
 /* The public include file for this module */
 #include    "usbshlpr.hpp"

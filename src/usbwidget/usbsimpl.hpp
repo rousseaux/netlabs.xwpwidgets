@@ -53,45 +53,6 @@
 #include    "shared\center.h"       // Public eCenter interfaces
 
 
-
-
-#define     TXFSDC_EJECT                    0x02    // eject removable
-
-/*
-// These are used in the window-procedure to select the indicator.
-// The window-id should be used in the code (switch) instead of these.
-*/
-#define     SHOW_DEV_INSERT                 1
-#define     SHOW_SAFE_EJECT                 2
-#define     SHOW_DEV_REMOVE                 3
-#define     SHOW_DRIVES_CHANGED             4
-
-/*
-// ID's of the indicator windows.
-*/
-#define     ID_INDI_DEV_INSERT              7053
-#define     ID_INDI_SAFE_EJECT              7054
-#define     ID_INDI_FORCE_REMOVE            7055
-#define     ID_INDI_DRIVES_CHANGED          7056
-
-/*
-// ID's of the timers of the indicator windows.
-// These control the time such a window is visible.
-*/
-#define     TIMER_SHOW_BANNER_DEV_INSERT        8001
-#define     TIMER_SHOW_BANNER_SAFE_EJECT        8002
-#define     TIMER_SHOW_BANNER_DEV_REMOVE        8003
-#define     TIMER_SHOW_BANNER_DRIVES_CHANGED    8004
-
-/*
-// The timeouts for each of the indicator windows.
-*/
-#define     TIMEOUT_BANNER_DEV_INSERT       3000
-#define     TIMEOUT_BANNER_SAFE_EJECT       3000
-#define     TIMEOUT_BANNER_DEV_REMOVE       5000
-#define     TIMEOUT_BANNER_DRIVES_CHANGED   3000
-
-
 //#include  "setup.h"
 
 

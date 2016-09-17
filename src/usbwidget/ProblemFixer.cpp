@@ -27,6 +27,9 @@
  * This module implements the stuff needed to fix an LVM hostile disk layout.
  */
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
+
 #include    "ProblemFixer.hpp"
 
 

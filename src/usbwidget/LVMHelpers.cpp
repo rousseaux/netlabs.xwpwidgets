@@ -28,9 +28,11 @@
  * It is used to simplify things.
  */
 
+#include    "Debug.hpp"
+#include    "APIHelpers.hpp"
+#include    "USBHelpers.hpp"
 
 #include    "LVMHelpers.hpp"
-
 
 void    LVMHelpers(void) {
 }

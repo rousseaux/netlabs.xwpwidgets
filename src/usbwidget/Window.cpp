@@ -26,6 +26,7 @@
  * This module handles Windows.
  */
 
+#include    "Debug.hpp"
 #include    "GUIHelpers.hpp"
 
 #include    "Window.hpp"

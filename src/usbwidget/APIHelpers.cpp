@@ -28,6 +28,10 @@
  * It is used to simplify things.
  */
 
+#include    "Debug.hpp"
+#include    "Allocmem.hpp"
+#include    "USBHelpers.hpp"
+#include    "ProblemFixer.hpp"
 
 #include    "APIHelpers.hpp"
 

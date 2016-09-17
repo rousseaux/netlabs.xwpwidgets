@@ -37,6 +37,7 @@
 
 #include    "Master.hpp"
 
+#include    "CList.hpp"
 
 /*
 // Messages for the ProblemFixerDialog.
