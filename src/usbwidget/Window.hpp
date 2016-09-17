@@ -51,6 +51,7 @@ typedef struct {
 } WND_CLASS_INSTANCE;
 
 class   Window : public Object {
+
     public:
     Window();
     virtual ~Window();
@@ -61,11 +62,11 @@ class   Window : public Object {
     virtual int     hide();
     virtual ulong   getHandle();
 
-    //! FIXME: Access problems using pointers in derived classes
+    HWND    hwndParent;     // public for now
+    HWND    hwndOwner;      // public for now
+    HWND    hwndSelf;       // public for now
+
     protected:
-    HWND    hwndParent;
-    HWND    hwndOwner;
-    HWND    hwndSelf;
     char    buf[256];
     WND_CLASS_INSTANCE  wci;
 

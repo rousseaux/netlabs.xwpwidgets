@@ -78,7 +78,7 @@ void    Notebook::appendPage(NotebookPage* page) {
     );
 
     /* Load the page */
-    ((Notebook*)page)->hwndSelf =    WinLoadDlg(
+    page->hwndSelf =    WinLoadDlg(
                             this->hwndSelf,
                             this->hwndSelf,
                             WinDefDlgProc,
@@ -92,7 +92,7 @@ void    Notebook::appendPage(NotebookPage* page) {
         this->hwndSelf,
         BKM_SETPAGEWINDOWHWND,
         MPFROMLONG(page->idPage),
-        MPFROMHWND(((Notebook*)page)->hwndSelf)
+        MPFROMHWND(page->hwndSelf)
     );
 
     /* Append the page to the list */
