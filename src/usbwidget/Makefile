@@ -91,6 +91,7 @@ NotebookPage.*\
 Notifier.*\
 Window.*\
 Widget.*\
+UsbWidget.*\
 
 #
 # Widget Modules
@@ -266,6 +267,7 @@ WidgetSettingsDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Object.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Window.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Widget.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+UsbWidget.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 
 # =============================================================================
 #                             [ COMMON OBJECTS TO BUILD USING INFERENCE RULES ]

@@ -4451,12 +4451,12 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     // Let's go OO if g_use_new_implementation is set.
     */
     //~ if (g_use_new_implementation) {
-        //~ g_myUSBWidget = new USBWidget("Hello from USBWidget Class");
-        //~ g_myUSBWidget->init();
-        //~ g_myUSBWidget->startHandlingEvents();
-        //~ g_myUSBWidget->stopHandlingEvents();
-        //~ g_myUSBWidget->uninit();
-        //~ delete g_myUSBWidget;
+        //~ g_myUsbWidget = new UsbWidget("Hello from UsbWidget Class");
+        //~ g_myUsbWidget->init();
+        //~ g_myUsbWidget->startHandlingEvents();
+        //~ g_myUsbWidget->stopHandlingEvents();
+        //~ g_myUsbWidget->uninit();
+        //~ delete g_myUsbWidget;
     //~ }
 
     __debug("WidgetInitModule", "  >> Query Module Name", DBG_AUX);

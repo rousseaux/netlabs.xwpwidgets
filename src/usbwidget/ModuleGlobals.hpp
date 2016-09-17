@@ -85,7 +85,7 @@ extern  PVOID           shmem;
 
 /* Needed because of cyclic dependancies; fix later */
 class   Window;
-class   USBWidget;
+class   UsbWidget;
 class   DebugDialog;
 class   ProblemFixerDialog;
 class   WidgetSettingsDialog;
@@ -96,7 +96,7 @@ extern  bool            g_debug;
 extern  bool            g_the_very_first_time;
 extern  bool            g_use_new_implementation;
 
-extern  USBWidget*              g_myUSBWidget;
+extern  UsbWidget*              g_myUSBWidget;
 extern  DebugDialog*            g_myDebugDialog;
 extern  ProblemFixerDialog*     g_ProblemFixerDialog;
 extern  WidgetSettingsDialog*   g_WidgetSettingsDialog;
