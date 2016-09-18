@@ -19,15 +19,8 @@ CCFLAGS=-Q+
 LD=icc
 LDFLAGS=-Q+
 
-# List of class definitions
+# Class Modules to build
 CLASS_MODULES=\
-Animal.*\
-Cat.*\
-StrayCat.*\
-TopCat.*\
-
-# List of classes to compile
-CLASSOBJECTS=\
 Animal.*\
 Cat.*\
 StrayCat.*\
