@@ -22,11 +22,14 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.cpp
-
-/**
- * This module contains the new WidgetSettingsDialog.
- */
+/******************************************************************************
+* This module holds the new Widget Settings Dialog
+* -----------------------------------------------------------------------------
+* It contains a Notebook Control so that settings can be grouped according to
+* their category. From the C++ point-of-view, an instance wraps around a Dialog
+* and messages are deferred to instance-members.
+*
+*/
 
 
 #include    "WidgetSettingsDialog.hpp"
@@ -37,7 +40,7 @@
 */
 WidgetSettingsDialog::WidgetSettingsDialog() {
     this->debugMe();
-    this->settings = NULL;
+    this->notebook = NULL;
     //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
     sprintf(this->buf, "WidgetSettingsDialog(): this=%08X", this);
     MessageBox("WIDGETSETTINGSDIALOG", this->buf);
@@ -63,6 +66,7 @@ int WidgetSettingsDialog::create() {
                             &this->wci
                         );
 
+    /* Show message if creation failed */
     if (this->hwndSelf) {
         this->hwndParent = HWND_DESKTOP;
         //~ MessageBox("WinLoadDlg", "OK");
@@ -71,57 +75,16 @@ int WidgetSettingsDialog::create() {
     }
 
     /* Create a new Notebook to manage the Notebook Control */
-    this->settings = new Notebook();
+    this->notebook = new Notebook();
 
     /* Populate the Notebook with Pages */
-    if (this->settings) {
-        this->settings->idResource = DLG_ID_WIDGETSETTINGS_NOTEBOOK;
-        this->settings->hwndParent = this->hwndSelf;
-        this->settings->hwndSelf = WinWindowFromID(this->hwndSelf, this->settings->idResource);
+    if (this->notebook) {
 
-        /* Set dimensions of Major Tabs -- can resize Notebook */
-        WinSendMsg(
-            settings->hwndSelf,
-            BKM_SETDIMENSIONS,
-            MPFROM2SHORT(80, 40),
-            MPFROMLONG(BKA_MAJORTAB)
-        );
-
-        /* Set dimensions of Minor Tabs -- can resize Notebook */
-        //~ WinSendMsg(
-            //~ settings->hwndSelf,
-            //~ BKM_SETDIMENSIONS,
-            //~ MPFROM2SHORT(80, 25),
-            //~ MPFROMLONG(BKA_MINORTAB)
-        //~ );
-
-        /* Set dimensions of prev/next page button */
-        //~ WinSendMsg(
-            //~ settings->hwndSelf,
-            //~ BKM_SETDIMENSIONS,
-            //~ MPFROM2SHORT(30, 30),
-            //~ MPFROMLONG(BKA_PAGEBUTTON)
-        //~ );
-
-
-        /* Set background color for page */
-        WinSendMsg(
-            settings->hwndSelf,
-            BKM_SETNOTEBOOKCOLORS,
-            MPFROMLONG(CLR_PALEGRAY),
-            MPFROMLONG(BKA_BACKGROUNDPAGECOLORINDEX)
-        );
-
-        /* Set background color for Major Tabs */
-        WinSendMsg(
-            settings->hwndSelf,
-            BKM_SETNOTEBOOKCOLORS,
-            MPFROMLONG(CLR_PALEGRAY),
-            MPFROMLONG(BKA_BACKGROUNDMAJORCOLORINDEX)
-        );
+        /* Initialize Notebook */
+        this->notebook->init(this->hwndSelf, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
 
         /* Append the pages */
-        this->settings->appendPages();
+        this->notebook->appendPages();
     }
 
     return NULL;
@@ -136,8 +99,8 @@ int WidgetSettingsDialog::process() {
 
 int WidgetSettingsDialog::destroy() {
     MessageBox("WidgetSettingsDialog","DESTROY");
-    if (this->settings) delete this->settings;
-    this->settings = NULL;
+    if (this->notebook) delete this->notebook;
+    this->notebook = NULL;
     if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
     this->hwndSelf = NULL;
     this->hwndParent = NULL;
@@ -154,8 +117,9 @@ MRESULT WidgetSettingsDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM
     MRESULT mresReply = 0;
     switch (SHORT1FROMMP(mp1)) {
 
-        /* Close Button */
-        case 9003: {
+        /* Widget Settings Close Button */
+        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+            MessageBox("WidgetSettingsDialog","Dismissing Dialog");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
         }
@@ -178,8 +142,8 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
     switch (SHORT1FROMMP(mp1)) {
 
         /* Close Button */
-        case 9003: {
-            MessageBox("WidgetSettingsDialogEx","wmCommand Override !!");
+        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+            MessageBox("WidgetSettingsDialogEx","Dismissing Dialog -- wmCommand Override !!");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
         }
@@ -195,7 +159,7 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
     return (MRESULT) mresReply;
 }
 
-
+/* Redirect messages for the WidgetSettingsDialog */
 MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     /* Locals */
@@ -215,6 +179,7 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
 
         /* Initialize Dialog */
         case WM_INITDLG: {
+            //~ MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
             /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
             pWsd = ((WidgetSettingsDialog*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
             /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
@@ -230,7 +195,7 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
 
         /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
-            pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
+            mresReply = pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
             break;
         }
         //~: Handle default message (debug dialog)

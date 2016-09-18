@@ -24,17 +24,30 @@
 
 /**
 * This file defines the IDs for Notebook Dialogs and their controls.
+* While the ID of a child-window is in the scope of its parent, and other
+* can have child-windows with the same ID, for the Dialog Editor the IDs here
+* must be unique. This is because multiple dialogs with their controls can be
+* defined and duplicate IDs makes it impossible for the Dialog Editor to map
+* them to their corresponding #defines.
 */
 
-#define DLG_ID_WIDGETSETTINGS           10000   // Notebook Dialog
+#define DLG_ID_WIDGETSETTINGS               10000   // Notebook Dialog
 
-#define DLG_ID_WIDGETSETTINGS_NOTEBOOK  10100   // Notebook Control
+#define DLG_ID_WIDGETSETTINGS_CLOSEBUTTON   10101   // Close Button
+#define DLG_ID_WIDGETSETTINGS_NOTEBOOK      10900   // Notebook Control
 
-#define NB_PAGE_1                       10101   // Page #1 Dialog
+#define NB_PAGE_1                       10901   // Page #1 Dialog
 #define NB_PAGE_1_LB_1                      1   // Listbox #1
+#define NB_PAGE_1_PB_1                     11   // Button #1
+#define NB_PAGE_1_PB_2                     12   // Button #2
+#define NB_PAGE_1_PB_3                     13   // Button #3
+#define NB_PAGE_1_PB_4                     14   // Button #4
+#define NB_PAGE_1_PB_5                     15   // Button #5
+#define NB_PAGE_1_PB_6                     16   // Button #6
+#define NB_PAGE_1_PB_7                     17   // Button #7
 
-#define NB_PAGE_2                       10102   // Page #2 Dialog
+#define NB_PAGE_2                       10902   // Page #2 Dialog
 #define NB_PAGE_2_LB_1                      1   // Listbox #1
 
-#define NB_PAGE_3                       10103   // Page #3 Dialog
+#define NB_PAGE_3                       10903   // Page #3 Dialog
 #define NB_PAGE_3_LB_1                      1   // Listbox #1

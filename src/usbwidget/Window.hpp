@@ -62,13 +62,17 @@ class   Window : public Object {
     virtual int     hide();
     virtual ulong   getHandle();
 
-    HWND    hwndParent;     // public for now
-    HWND    hwndOwner;      // public for now
-    HWND    hwndSelf;       // public for now
+    /* Public Message Handlers */
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    /* Public Attributes */
+    char    buf[256];
+    HWND    hwndParent;         // public for now
+    HWND    hwndOwner;          // public for now
+    HWND    hwndSelf;           // public for now
+    WND_CLASS_INSTANCE  wci;    // public for now
 
     protected:
-    char    buf[256];
-    WND_CLASS_INSTANCE  wci;
 
     private:
 

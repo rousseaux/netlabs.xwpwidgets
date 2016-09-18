@@ -54,7 +54,13 @@ NotebookPage::~NotebookPage() {
     MessageBox("NotebookPage","DESTRUCTOR");
 }
 
-MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+int     NotebookPage::test123(void) {
+    MessageBox("NotebookPage","test123");
+    return 0;
+}
+
+/* This one is not used -- active handler is in Notebook Class */
+MRESULT EXPENTRY NotebookPageHandler2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
     MRESULT mresReply = 0;
     HWND    hwndNB = NULL;

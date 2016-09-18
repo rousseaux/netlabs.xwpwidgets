@@ -50,6 +50,55 @@ Notebook::~Notebook() {
     MessageBox("Notebook","DESTRUCTOR");
 }
 
+void    Notebook::init(HWND parent, ULONG id) {
+
+    /* Set some important attributes */
+    this->hwndParent = parent;
+    this->idResource = id;
+    this->hwndSelf = WinWindowFromID(this->hwndParent, this->idResource);
+
+    /* Set dimensions of Major Tabs -- can resize Notebook */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETDIMENSIONS,
+        MPFROM2SHORT(80, 40),
+        MPFROMLONG(BKA_MAJORTAB)
+    );
+
+    /* Set dimensions of Minor Tabs -- can resize Notebook */
+    //~ WinSendMsg(
+        //~ this->hwndSelf,
+        //~ BKM_SETDIMENSIONS,
+        //~ MPFROM2SHORT(80, 25),
+        //~ MPFROMLONG(BKA_MINORTAB)
+    //~ );
+
+    /* Set dimensions of prev/next page button */
+    //~ WinSendMsg(
+        //~ this->hwndSelf,
+        //~ BKM_SETDIMENSIONS,
+        //~ MPFROM2SHORT(30, 30),
+        //~ MPFROMLONG(BKA_PAGEBUTTON)
+    //~ );
+
+
+    /* Set background color for page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETNOTEBOOKCOLORS,
+        MPFROMLONG(CLR_PALEGRAY),
+        MPFROMLONG(BKA_BACKGROUNDPAGECOLORINDEX)
+    );
+
+    /* Set background color for Major Tabs */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETNOTEBOOKCOLORS,
+        MPFROMLONG(CLR_PALEGRAY),
+        MPFROMLONG(BKA_BACKGROUNDMAJORCOLORINDEX)
+    );
+}
+
 void    Notebook::appendPage(NotebookPage* page) {
     MessageBox("Notebook","appendPage");
 
@@ -81,10 +130,10 @@ void    Notebook::appendPage(NotebookPage* page) {
     page->hwndSelf =    WinLoadDlg(
                             this->hwndSelf,
                             this->hwndSelf,
-                            WinDefDlgProc,
+                            page->dlgProc,
                             hmodMe,
                             page->idResource,
-                            NULL
+                            &page->wci
                         );
 
     /* Associate page-dialog with notebook-page */
@@ -124,7 +173,7 @@ void    Notebook::appendPages() {
         /* Insert first page */
         nbp->idPage = 0;
         nbp->idResource = NB_PAGE_1;
-        nbp->dlgProc = WinDefDlgProc;
+        nbp->dlgProc = NotebookPageHandler;
         nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
         nbp->pageOrder = BKA_LAST;
         nbp->tabTitle = "Page #1";
@@ -137,7 +186,7 @@ void    Notebook::appendPages() {
         /* Insert second page */
         nbp->idPage = 0;
         nbp->idResource = NB_PAGE_2;
-        nbp->dlgProc = WinDefDlgProc;
+        nbp->dlgProc = NotebookPageHandler;
         nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
         nbp->pageOrder = BKA_LAST;
         nbp->tabTitle = "Page #2";
@@ -150,7 +199,7 @@ void    Notebook::appendPages() {
         /* Insert third page */
         nbp->idPage = 0;
         nbp->idResource = NB_PAGE_3;
-        nbp->dlgProc = WinDefDlgProc;
+        nbp->dlgProc = NotebookPageHandler;
         nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
         nbp->pageOrder = BKA_LAST;
         nbp->tabTitle = "Page #3";
@@ -191,40 +240,98 @@ void    Notebook::removePages() {
     }
 }
 
+int     Notebook::test123(void) {
+    MessageBox("Notebook","test123");
+    return 0;
+}
+
+/* Probably obsolete because a Notebook is a Control */
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
+    /* Locals */
+    BOOL    brc = FALSE;
     MRESULT mresReply = 0;
-    HWND    hwndNB = NULL;
+    CHAR    buf[512] = {0};
 
+    /*
+    // Get pointer to Class Instance.
+    // Can be NULL if WM_INITDLG has not been invoked yet.
+    // Using this pointer, messages can be deferred to member-functions.
+    */
+    Notebook*   pNbk = (Notebook*) WinQueryWindowPtr(hwnd, QWL_USER);
+
+    /* Message Switch */
     switch (msg) {
 
-        //!: Init dialog (Debug)
+        /* Initialize Dialog */
         case WM_INITDLG: {
-            hwndNB = WinWindowFromID(hwnd, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
-
+            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            pNbk = ((Notebook*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
+            brc =   WinSetWindowPtr(
+                        hwnd,
+                        QWL_USER,
+                        pNbk
+                    );
+            pNbk->test123();
             mresReply = FALSE;
             break;
         }
 
+        /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
-            switch (SHORT1FROMMP(mp1)) {
-
-                /* Close Button */
-                case 9003: {
-                    mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
-                    break;
-                }
-
-                /* Default */
-                default: {
-                    mresReply = 0;
-                    //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
-                    break;
-                }
-
-            } // switch
+            pNbk ? pNbk->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookHandler","pNbk is NULL !!");
             break;
         }
+
+        //~: Handle default message (debug dialog)
+        default: {
+            mresReply = 0;
+            mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
+        }
+    }
+    return mresReply;
+}
+
+
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+
+    /* Locals */
+    BOOL    brc = FALSE;
+    MRESULT mresReply = 0;
+    CHAR    buf[512] = {0};
+
+    /*
+    // Get pointer to Class Instance.
+    // Can be NULL if WM_INITDLG has not been invoked yet.
+    // Using this pointer, messages can be deferred to member-functions.
+    */
+    NotebookPage*   pNbkPg = (NotebookPage*) WinQueryWindowPtr(hwnd, QWL_USER);
+
+    /* Message Switch */
+    switch (msg) {
+
+        /* Initialize Dialog */
+        case WM_INITDLG: {
+            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            pNbkPg = ((NotebookPage*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
+            brc =   WinSetWindowPtr(
+                        hwnd,
+                        QWL_USER,
+                        pNbkPg
+                    );
+            pNbkPg->test123();
+            mresReply = FALSE;
+            break;
+        }
+
+        /* Defer Command Messages to Class Instance */
+        case WM_COMMAND: {
+            mresReply = pNbkPg ? pNbkPg->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookPageHandler","pNbkPg is NULL !!");
+            break;
+        }
+
         //~: Handle default message (debug dialog)
         default: {
             mresReply = 0;

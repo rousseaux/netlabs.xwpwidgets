@@ -22,11 +22,14 @@
 *                                                                             *
 \*****************************************************************************/
 
-// From GUIHelpers.hpp
-
-/**
- * This module contains the new WidgetSettingsDialog.
- */
+/******************************************************************************
+* This module holds the new Widget Settings Dialog
+* -----------------------------------------------------------------------------
+* It contains a Notebook Control so that settings can be grouped according to
+* their category. From the C++ point-of-view, an instance wraps around a Dialog
+* and messages are deferred to instance-members.
+*
+*/
 
 
 #ifndef     __WIDGETSETINGSDIALOG_HPP__
@@ -46,29 +49,34 @@
 /* Prototypes */
 MRESULT EXPENTRY DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
+/* Widget Settings Dialog */
 class   WidgetSettingsDialog : public Dialog {
+
     public:
-    Notebook*   settings;
+
+    /* Public Constructor and Destructors */
     WidgetSettingsDialog();
     virtual ~WidgetSettingsDialog();
+
+    /* Public Methods */
     virtual int create(void);
     virtual int process(void);
     virtual int destroy(void);
-
     virtual int test123(void);
 
+    /* Public Message Handlers */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
+    /* Public Attributes */
+    Notebook*   notebook;
 
-// The _System qualifier can not be applied... (when a static method ?)
-    //~ static ulong classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
     protected:
 
     private:
 
 };
 
-
+/* Derived Widget Settings Dialog with override method */
 class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
     public:
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);

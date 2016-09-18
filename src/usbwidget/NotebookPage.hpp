@@ -40,25 +40,28 @@
 #include    "Dialog.hpp"
 
 /* Prototypes */
-MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY NotebookPageHandler2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   NotebookPage : public Dialog {
+
     public:
-    /* Do these public for now */
+    /* Public Constructor and Destructors */
+    NotebookPage();
+    virtual ~NotebookPage();
+
+    /* Public Methods */
+    virtual test123(void);
+
+    /* Public Attributes */
     ULONG   idPage;
-    ULONG   idResource;
-    //~ HWND    hwndParent;
-    //~ HWND    hwndSelf;
-    PFNWP   dlgProc;
     USHORT  pageStyle;
     USHORT  pageOrder;
     PSZ     tabTitle;
+    ULONG   idResource;
     PSZ     statusText;
     NotebookPage* prev;
     NotebookPage* next;
-    /* Constructor and Destructor */
-    NotebookPage();
-    virtual ~NotebookPage();
+    PFNWP   dlgProc;
 
     protected:
 

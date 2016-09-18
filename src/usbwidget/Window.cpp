@@ -85,3 +85,10 @@ int     Window::hide() {
 ulong   Window::getHandle() {
     return this->hwndSelf;
 }
+
+/* Default WM_COMMAND implementation for Window */
+MRESULT Window::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+    MessageBox("Window","wmCommand");
+    return (MRESULT) mresReply;
+}

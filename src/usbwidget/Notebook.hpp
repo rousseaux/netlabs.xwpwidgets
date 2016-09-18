@@ -45,21 +45,27 @@
 
 /* Prototypes */
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   Notebook : public Window {
+
     public:
-    /* Do these public for now */
-    ULONG           idResource;
-    //~ HWND            hwndParent;
-    //~ HWND            hwndSelf;
-    /* Constructor and Destructor */
-    NotebookPage*   pages;
+
+    /* Public Constructor and Destructors */
     Notebook();
     virtual ~Notebook();
+
+    /* Public Methods */
+    virtual void    init(HWND parent, ULONG id);
     virtual void    appendPage(NotebookPage*);
     virtual void    appendPages();
     virtual void    removePage(NotebookPage*);
     virtual void    removePages();
+    virtual int     test123(void);
+
+    /* Public Attributes */
+    ULONG           idResource;
+    NotebookPage*   pages;
 
     protected:
 

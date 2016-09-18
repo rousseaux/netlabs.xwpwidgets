@@ -45,3 +45,9 @@ Dialog::~Dialog() {
     __debug(NULL, this->buf, DBG_LBOX);
 }
 
+/* Default WM_COMMAND implementation for Dialog */
+MRESULT Dialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+    MessageBox("Dialog","wmCommand");
+    return (MRESULT) mresReply;
+}
