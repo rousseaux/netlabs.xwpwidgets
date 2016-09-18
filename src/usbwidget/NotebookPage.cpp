@@ -59,6 +59,64 @@ int     NotebookPage::test123(void) {
     return 0;
 }
 
+/* Handle Command Messages */
+MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+    switch (SHORT1FROMMP(mp1)) {
+
+        /* Test Button #1 */
+        case NB_PAGE_1_PB_1: {
+            MessageBox("NotebookPage1","Test Button #1");
+            break;
+        }
+
+        /* Test Button #2 */
+        case NB_PAGE_1_PB_2: {
+            MessageBox("NotebookPage1","Test Button #2");
+            break;
+        }
+
+        /* Test Button #3 */
+        case NB_PAGE_1_PB_3: {
+            MessageBox("NotebookPage1","Test Button #3");
+            break;
+        }
+
+        /* Test Button #4 */
+        case NB_PAGE_1_PB_4: {
+            MessageBox("NotebookPage1","Test Button #4");
+            break;
+        }
+
+        /* Test Button #5 */
+        case NB_PAGE_1_PB_5: {
+            MessageBox("NotebookPage1","Test Button #5");
+            break;
+        }
+
+        /* Test Button #6 */
+        case NB_PAGE_1_PB_6: {
+            MessageBox("NotebookPage1","Test Button #6");
+            break;
+        }
+
+        /* Test Button #7 */
+        case NB_PAGE_1_PB_7: {
+            MessageBox("NotebookPage1","Test Button #7");
+            break;
+        }
+
+        /* Default */
+        default: {
+            mresReply = 0;
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
+        }
+
+    } // switch
+    return (MRESULT) mresReply;
+}
+
 /* This one is not used -- active handler is in Notebook Class */
 MRESULT EXPENTRY NotebookPageHandler2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 

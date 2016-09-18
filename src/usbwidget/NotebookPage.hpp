@@ -70,6 +70,12 @@ class   NotebookPage : public Dialog {
 };
 
 
+class   NotebookPage1 : public NotebookPage {
+    public:
+    /* Public Message Handlers */
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+};
+
 #ifdef      __cplusplus
     }
 #endif

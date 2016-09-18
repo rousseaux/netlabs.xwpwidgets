@@ -113,6 +113,7 @@ int WidgetSettingsDialog::test123() {
     return 0;
 }
 
+/* Handle Command Messages */
 MRESULT WidgetSettingsDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     MRESULT mresReply = 0;
     switch (SHORT1FROMMP(mp1)) {

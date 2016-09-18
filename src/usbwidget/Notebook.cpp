@@ -167,7 +167,7 @@ void    Notebook::appendPages() {
 
     /* Create and insert pages */
     do {
-        nbp = new NotebookPage();
+        nbp = new NotebookPage1();
         if (nbp == NULL) break;
 
         /* Insert first page */
