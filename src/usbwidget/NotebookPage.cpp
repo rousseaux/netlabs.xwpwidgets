@@ -67,6 +67,7 @@ MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         /* Test Button #1 */
         case NB_PAGE_1_PB_1: {
             MessageBox("NotebookPage1","Test Button #1");
+            this->maximize();
             break;
         }
 

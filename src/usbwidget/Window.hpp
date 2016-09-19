@@ -60,6 +60,7 @@ class   Window : public Object {
     virtual void    centerToDesktop();
     virtual void    centerToOther(ulong toCenterTo);
     virtual int     hide();
+    virtual int     maximize();
     virtual ulong   getHandle();
 
     /* Public Message Handlers */

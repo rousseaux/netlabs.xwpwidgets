@@ -115,7 +115,6 @@ usbsimpl.*\
 # Resource Dependencies
 #
 RESDEPS=\
-$(DBGDEPS)\
 Dialogs.rc\
 Dialogs.dlg\
 Images.rc\
@@ -202,7 +201,7 @@ usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(GLOBDEPS)
 # =============================================================================
 #                                                                [ WIDGET DLL ]
 # =============================================================================
-usbshold.dll: $*.obj $(WIDGET_IMPL:.*=.obj) $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $*.res $*.def
+usbshold.dll: $*.obj $(WIDGET_IMPL:.*=.obj) $*.res $*.def
 	@echo.
 	@echo [$@]
 	@echo Reason: $?
@@ -230,9 +229,14 @@ usbshold.dll: $*.obj $(WIDGET_IMPL:.*=.obj) $(WIDGET_MODULES:.*=.obj) $(LIBRARIE
 	@md5sum $@ > $*.md5
 
 # =============================================================================
+#                      [ LEGACY IMPLEMENTATION TO BUILD USING INFERENCE RULES ]
+# =============================================================================
+usbsimpl.obj: $*.cpp $*.hpp $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $(GLOBDEPS)
+
+# =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshold.obj: $*.cpp $*.hpp $*.lvl $(WIDGET_MODULES:.*=*.hpp) $(CLASS_MODULES:.*=*.hpp) $(GLOBDEPS)
+usbshold.obj: $*.cpp $*.hpp $*.lvl $(WIDGET_MODULES:.*=.obj) $(LIBRARIES) $(GLOBDEPS)
 	@echo.
 	@echo [$@]
 	@echo Reason: $?
@@ -241,7 +245,7 @@ usbshold.obj: $*.cpp $*.hpp $*.lvl $(WIDGET_MODULES:.*=*.hpp) $(CLASS_MODULES:.*
 # =============================================================================
 #                                                 [ MAIN MODULE RESOURCE FILE ]
 # =============================================================================
-usbshold.res: $(RESDEPS)
+usbshold.res: $(RESDEPS) $(GLOBDEPS)
 	@echo ## Compiling Resources ##
 !if "$(BLDENV)"=="vac3"
 	@set INCLUDE=$(RCINCLUDE)
@@ -283,12 +287,6 @@ ProblemFixer.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Testing123.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Threads.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 USBHelpers.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
-
-
-# =============================================================================
-#                      [ LEGACY IMPLEMENTATION TO BUILD USING INFERENCE RULES ]
-# =============================================================================
-usbsimpl.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 
 # =============================================================================
 #                                  [ LIBRARIES TO BUILD USING INFERENCE RULES ]

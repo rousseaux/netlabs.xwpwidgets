@@ -55,7 +55,12 @@ void    Notebook::init(HWND parent, ULONG id) {
     /* Set some important attributes */
     this->hwndParent = parent;
     this->idResource = id;
-    this->hwndSelf = WinWindowFromID(this->hwndParent, this->idResource);
+
+    /* Get the handle of the Notebook Control */
+    this->hwndSelf = WinWindowFromID(       // Handle of the Notebook Control
+                        this->hwndParent,   // Window or Dialog parent
+                        this->idResource    // ID of the Notebook Control
+                    );
 
     /* Set dimensions of Major Tabs -- can resize Notebook */
     WinSendMsg(
@@ -149,7 +154,8 @@ void    Notebook::appendPage(NotebookPage* page) {
         page->prev = NULL;      // Is first page so there is no previous
         page->next = NULL;      // Is first page so there is no next
         this->pages = page;     // Link the first page
-    } else {
+    }
+    else {
         NotebookPage*   tnbp = this->pages;     // Temporary ptr
         while (tnbp->next) {                    // If there is a next page...
             tnbp = tnbp->next;                  // point to it
@@ -178,6 +184,7 @@ void    Notebook::appendPages() {
         nbp->pageOrder = BKA_LAST;
         nbp->tabTitle = "Page #1";
         nbp->statusText = "This is the first page";
+        nbp->hwndParent = this->hwndSelf;                         //
         this->appendPage(nbp);
 
         nbp = new NotebookPage();
@@ -213,18 +220,19 @@ void    Notebook::removePage(NotebookPage* page) {
     NotebookPage*   tnbp = this->pages;     // Temporary ptr
     MessageBox("Notebook","removePage");
 
-    //! NO NEED TO TRAVERSE !!
     /* Traverse linked list and delete page */
     while (tnbp) {
         if (tnbp == page) {                     // Found page
             if (page->prev == NULL) {           // Is first page ?
                 this->pages = page->next;       // Unlink it
-            } else {                            // Is not first page
+            }
+            else {                              // Is not first page
                 page->prev->next = page->next;  // Unlink it
             }
             delete page;                        // Delete the page
             tnbp = NULL;                        // Cause loop to end
-        } else {
+        }
+        else {
             tnbp = tnbp->next;                  // Try next page
         }
     }

@@ -82,6 +82,15 @@ int     Window::hide() {
     return this->hwndSelf;
 }
 
+int     Window::maximize() {
+    if (this->hwndSelf) {
+        WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE|SWP_ZORDER);
+        WinShowWindow(this->hwndSelf, true);
+        WinSetFocus(HWND_DESKTOP, this->hwndSelf);
+    }
+    return this->hwndSelf;
+}
+
 ulong   Window::getHandle() {
     return this->hwndSelf;
 }

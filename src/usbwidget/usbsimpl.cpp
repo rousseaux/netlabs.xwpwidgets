@@ -4949,6 +4949,11 @@ VOID EXPENTRY WgtUnInitModule()
 
 #endif  // DEBUG
 
+    /* Destroy the global WidgetSettingsDialog */
+    if (g_WidgetSettingsDialog) {
+        delete g_WidgetSettingsDialog;
+        g_WidgetSettingsDialog = NULL;
+    }
 
 }
 

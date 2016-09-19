@@ -48,34 +48,42 @@ WidgetSettingsDialog::WidgetSettingsDialog() {
 
 WidgetSettingsDialog::~WidgetSettingsDialog() {
     //~ MessageBox("WidgetSettingsDialog","DESTRUCTOR");
+    this->destroy();
 }
 
 int WidgetSettingsDialog::create() {
     //~ MessageBox("WidgetSettingsDialog","CREATE");
 
-    /* Load the WidgetSettings Dialog */
-    this->hwndSelf =    WinLoadDlg(
-                            HWND_DESKTOP,
-                            NULL,
-                            //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
-                            //~ (PFNWP) MyDialogHandler_1,
-                            (PFNWP) DlgProcWidgetSettingsDialog,
-                            hmodMe,
-                            DLG_ID_WIDGETSETTINGS,
-                            //~ ID_DEBUG_DIALOG,
-                            &this->wci
-                        );
+    /* Load dialog is not already loaded */
+    if (this->hwndSelf == NULL) {
 
-    /* Show message if creation failed */
+        /* Load the WidgetSettings Dialog */
+        this->hwndSelf =    WinLoadDlg(
+                                HWND_DESKTOP,
+                                NULL,
+                                //~ (PFNWP) WidgetSettingsDialog::classMessageHandler,
+                                //~ (PFNWP) MyDialogHandler_1,
+                                (PFNWP) DlgProcWidgetSettingsDialog,
+                                hmodMe,
+                                DLG_ID_WIDGETSETTINGS,
+                                //~ ID_DEBUG_DIALOG,
+                                &this->wci
+                            );
+    }
+
+    /* Show dialog if creation succeeded */
     if (this->hwndSelf) {
         this->hwndParent = HWND_DESKTOP;
+        this->show();
         //~ MessageBox("WinLoadDlg", "OK");
-    } else {
+    }
+    /* Show message if creation failed */
+    else {
         MessageBox("WinLoadDlg", "NULL");
     }
 
     /* Create a new Notebook to manage the Notebook Control */
-    this->notebook = new Notebook();
+    if (this->notebook == NULL) this->notebook = new Notebook();
 
     /* Populate the Notebook with Pages */
     if (this->notebook) {
@@ -85,6 +93,9 @@ int WidgetSettingsDialog::create() {
 
         /* Append the pages */
         this->notebook->appendPages();
+    }
+    else {
+        MessageBox("Notebook", "NULL");
     }
 
     return NULL;
@@ -98,13 +109,15 @@ int WidgetSettingsDialog::process() {
 }
 
 int WidgetSettingsDialog::destroy() {
-    MessageBox("WidgetSettingsDialog","DESTROY");
-    if (this->notebook) delete this->notebook;
-    this->notebook = NULL;
-    if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
-    this->hwndSelf = NULL;
-    this->hwndParent = NULL;
-    this->hwndSelf = NULL;
+    if (this->notebook || this->hwndSelf) {
+        MessageBox("WidgetSettingsDialog","DESTROY");
+        if (this->notebook) delete this->notebook;
+        this->notebook = NULL;
+        if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
+        this->hwndSelf = NULL;
+        this->hwndParent = NULL;
+    }
+
     return NULL;
 }
 
@@ -120,7 +133,7 @@ MRESULT WidgetSettingsDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM
 
         /* Widget Settings Close Button */
         case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
-            MessageBox("WidgetSettingsDialog","Dismissing Dialog");
+            //~ MessageBox("WidgetSettingsDialog","Dismissing Dialog");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
         }

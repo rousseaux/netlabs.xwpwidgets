@@ -34,6 +34,7 @@
 #include    "USBHelpers.hpp"
 #include    "ProblemFixer.hpp"
 #include    "ProblemFixerDialog.hpp"
+#include    "WidgetSettingsDialog.hpp"
 
 #include    "Debug.hpp"
 
@@ -783,6 +784,24 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
 
                     mresReply = 0;
 
+                    /* Create a new WidgetSettingsDialog */
+                    do {
+                        /* Create instance if not existing yet */
+                        if (!g_WidgetSettingsDialog) g_WidgetSettingsDialog = new WidgetSettingsDialog();
+
+                        /* Create dialog itself */
+                        if (g_WidgetSettingsDialog) {
+                            g_WidgetSettingsDialog->create();
+                            g_WidgetSettingsDialog->show();
+                            //~ g_WidgetSettingsDialog->process();
+                            //~ g_WidgetSettingsDialog->hide();
+                            //~ g_WidgetSettingsDialog->destroy();
+                            //~ delete g_WidgetSettingsDialog;
+                            //~ g_WidgetSettingsDialog = NULL;
+                        }
+                    } while (0);
+                    break;
+
                     //~ if (!g_myDebugDialog) {
                         //~ g_myDebugDialog = new DebugDialog();
                         //~ g_myDebugDialog->create();
@@ -837,6 +856,25 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
 
                     mresReply = 0;
 
+
+                    /* Show WidgetSettingsDialog */
+                    do {
+                        /* Create instance if not existing yet */
+                        if (!g_WidgetSettingsDialog) g_WidgetSettingsDialog = new WidgetSettingsDialog();
+
+                        /* Show it */
+                        if (g_WidgetSettingsDialog) {
+                            g_WidgetSettingsDialog->show();
+                            //~ g_WidgetSettingsDialog->process();
+                            //~ g_WidgetSettingsDialog->hide();
+                            //~ g_WidgetSettingsDialog->destroy();
+                            //~ delete g_WidgetSettingsDialog;
+                            //~ g_WidgetSettingsDialog = NULL;
+                        }
+                    } while (0);
+                    break;
+
+
                     //~ if (g_myDebugDialog) {
                         //~ g_myDebugDialog->show();
                     //~ }
@@ -858,6 +896,23 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
                     char    buf[256] = "\0";
 
                     mresReply = 0;
+
+                    /* Hide WidgetSettingsDialog */
+                    do {
+                        /* Create instance if not existing yet */
+                        if (!g_WidgetSettingsDialog) g_WidgetSettingsDialog = new WidgetSettingsDialog();
+
+                        /* Hide it */
+                        if (g_WidgetSettingsDialog) {
+                            //~ g_WidgetSettingsDialog->show();
+                            //~ g_WidgetSettingsDialog->process();
+                            g_WidgetSettingsDialog->hide();
+                            //~ g_WidgetSettingsDialog->destroy();
+                            //~ delete g_WidgetSettingsDialog;
+                            //~ g_WidgetSettingsDialog = NULL;
+                        }
+                    } while (0);
+                    break;
 
                     //~ if (g_myDebugDialog) {
                         //~ g_myDebugDialog->hide();
@@ -881,6 +936,23 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
                     char    buf[256] = "\0";
 
                     mresReply = 0;
+
+                    /* Destroy WidgetSettingsDialog */
+                    do {
+                        /* Create instance if not existing yet */
+                        if (!g_WidgetSettingsDialog) g_WidgetSettingsDialog = new WidgetSettingsDialog();
+
+                        /* Destroy it */
+                        if (g_WidgetSettingsDialog) {
+                            //~ g_WidgetSettingsDialog->show();
+                            //~ g_WidgetSettingsDialog->process();
+                            //~ g_WidgetSettingsDialog->hide();
+                            g_WidgetSettingsDialog->destroy();
+                            //~ delete g_WidgetSettingsDialog;
+                            //~ g_WidgetSettingsDialog = NULL;
+                        }
+                    } while (0);
+                    break;
 
                     //~ if (g_myDebugDialog) {
                         //~ g_myDebugDialog->destroy();
