@@ -78,6 +78,7 @@ DEAMON_MODULES=
 #
 CLASS_MODULES=\
 Classes.*\
+Button.*\
 Dialog.*\
 DebugDialog.*\
 ProblemFixerDialog.*\
@@ -258,6 +259,7 @@ usbshold.res: $(RESDEPS) $(GLOBDEPS)
 #                              [ CLASS OBJECTS TO BUILD USING INFERENCE RULES ]
 # =============================================================================
 Classes.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
+Button.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 Dialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 DebugDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
 ProblemFixerDialog.obj: $*.cpp $(CLASS_MODULES:.*=.hpp) $(GLOBDEPS)
