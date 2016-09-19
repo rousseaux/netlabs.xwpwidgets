@@ -21,10 +21,10 @@ LDFLAGS=-Q+
 
 # Class Modules to build
 CLASS_MODULES=\
-Animal.*\
-Cat.*\
-StrayCat.*\
-TopCat.*\
+Animal@\
+Cat@\
+StrayCat@\
+TopCat@\
 
 # Required for inference rules to function correctly
 .SUFFIXES:
@@ -48,16 +48,16 @@ TopCat.*\
 all: main.exe
 
 # Target for the Executable
-main.exe: $*.obj $(CLASS_MODULES:.*=.obj)
+main.exe: $*.obj $(CLASS_MODULES:@=.obj)
 
 # Target for object-file for Executable
-main.obj: $*.cpp $*.hpp $(CLASS_MODULES:.*=.hpp)
+main.obj: $*.cpp $*.hpp $(CLASS_MODULES:@=.obj)
 
 # Targets for object-files for Classes
-Animal.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
-Cat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
-StrayCat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
-TopCat.obj: $*.cpp $(CLASS_MODULES:.*=.hpp)
+Animal.obj: $*.cpp $(CLASS_MODULES:@=.hpp)
+Cat.obj: $*.cpp $(CLASS_MODULES:@=.hpp)
+StrayCat.obj: $*.cpp $(CLASS_MODULES:@=.hpp)
+TopCat.obj: $*.cpp $(CLASS_MODULES:@=.hpp)
 
 # Run the program
 run: main.exe
