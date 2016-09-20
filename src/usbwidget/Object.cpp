@@ -29,12 +29,14 @@
 
 //~ #include    "GUIHelpers.hpp"
 
+#include    "Debug.hpp"
 #include    "Object.hpp"
 
 /* Constructor */
 Object::Object() {
-    this->debug = FALSE;    // No debugging bt default
-    this->level = 0;        // Least detailed level by default
+    this->debug = FALSE;            // No debugging bt default
+    this->level = 0;                // Least detailed level by default
+    this->hwndDebugListbox = NULL;  // No control available yet
 }
 
 /* Destructor */
@@ -61,4 +63,15 @@ int     Object::debugLevel() {
 int     Object::debugLevel(int level) {
     this->level = level;
     return this->level;
+}
+
+/* Output debug message */
+void    Object::_debug(char* msg) {
+    if (this->hwndDebugListbox) {
+        WinSendMsg(hwndDebugListbox, LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) msg);
+        WinSendMsg(hwndDebugListbox, LM_SETTOPINDEX, (MPARAM) 32767, (MPARAM) 0);
+    }
+    else {
+        __debug(NULL, msg, DBG_LBOX);
+    }
 }

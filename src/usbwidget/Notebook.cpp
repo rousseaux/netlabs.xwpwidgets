@@ -37,7 +37,8 @@
 
 Notebook::Notebook() {
     this->debugMe();
-    MessageBox("Notebook","CONSTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     this->idResource = NULL;
     this->hwndParent = NULL;
     this->hwndSelf = NULL;
@@ -46,7 +47,8 @@ Notebook::Notebook() {
 
 Notebook::~Notebook() {
     this->removePages();
-    MessageBox("Notebook","DESTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 void    Notebook::init(HWND parent, ULONG id) {
@@ -104,7 +106,8 @@ void    Notebook::init(HWND parent, ULONG id) {
 }
 
 void    Notebook::appendPage(NotebookPage* page) {
-    MessageBox("Notebook","appendPage");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     /* Insert the page into the notebook */
     page->idPage = (ULONG)   WinSendMsg(
@@ -140,6 +143,8 @@ void    Notebook::appendPage(NotebookPage* page) {
                             &page->wci
                         );
 
+    page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
+
     /* Associate page-dialog with notebook-page */
     WinSendMsg(
         this->hwndSelf,
@@ -170,7 +175,8 @@ void    Notebook::appendPage(NotebookPage* page) {
 
 void    Notebook::appendPages() {
     NotebookPage*   nbp = NULL;
-    MessageBox("Notebook","appendPages");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     /* Create and insert pages */
     do {
@@ -207,7 +213,8 @@ void    Notebook::appendPages() {
 
 void    Notebook::removePage(NotebookPage* page) {
     NotebookPage*   tnbp = this->pages;     // Temporary ptr
-    MessageBox("Notebook","removePage");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     /* Traverse linked list and delete page */
     while (tnbp) {
@@ -229,7 +236,8 @@ void    Notebook::removePage(NotebookPage* page) {
 
 void    Notebook::removePages() {
     NotebookPage*   tnbp = this->pages;     // Temporary ptr
-    MessageBox("Notebook","removePages");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     /* Traverse linked list and remove each page */
     while (tnbp) {
         this->removePage(tnbp);
@@ -238,7 +246,8 @@ void    Notebook::removePages() {
 }
 
 int     Notebook::test123(void) {
-    MessageBox("Notebook","test123");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     return 0;
 }
 

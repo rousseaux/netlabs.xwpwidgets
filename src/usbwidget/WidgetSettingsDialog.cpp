@@ -41,9 +41,8 @@
 WidgetSettingsDialog::WidgetSettingsDialog() {
     this->debugMe();
     this->notebook = NULL;
-    //~ MessageBox("WidgetSettingsDialog","CONSTRUCTOR");
-    sprintf(this->buf, "WidgetSettingsDialog(): this=%08X", this);
-    MessageBox("WIDGETSETTINGSDIALOG", this->buf);
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 WidgetSettingsDialog::~WidgetSettingsDialog() {
@@ -52,7 +51,8 @@ WidgetSettingsDialog::~WidgetSettingsDialog() {
 }
 
 int WidgetSettingsDialog::create() {
-    //~ MessageBox("WidgetSettingsDialog","CREATE");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     /* Load dialog is not already loaded */
     if (this->hwndSelf == NULL) {
@@ -102,15 +102,17 @@ int WidgetSettingsDialog::create() {
 }
 
 int WidgetSettingsDialog::process() {
-    MessageBox("WidgetSettingsDialog","PROCESS");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     int reply = NULL;
     reply = WinProcessDlg(this->hwndSelf);
     return reply;
 }
 
 int WidgetSettingsDialog::destroy() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     if (this->notebook || this->hwndSelf) {
-        MessageBox("WidgetSettingsDialog","DESTROY");
         if (this->notebook) delete this->notebook;
         this->notebook = NULL;
         if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
@@ -122,7 +124,8 @@ int WidgetSettingsDialog::destroy() {
 }
 
 int WidgetSettingsDialog::test123() {
-    MessageBox("WidgetSettingsDialog","test123");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     return 0;
 }
 

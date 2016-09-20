@@ -35,7 +35,8 @@
 
 NotebookPage::NotebookPage() {
     this->debugMe();
-    MessageBox("NotebookPage","CONSTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     this->idPage = 0;
     this->idResource = 0;
     this->hwndParent = NULL;
@@ -52,16 +53,19 @@ NotebookPage::NotebookPage() {
 
 NotebookPage::NotebookPage(Notebook* notebook) {
     this->debugMe();
-    MessageBox("NotebookPage","CONSTRUCTOR-2");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     this->notebook = notebook;
 }
 
 NotebookPage::~NotebookPage() {
-    MessageBox("NotebookPage","DESTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 int     NotebookPage::init(void) {
-    MessageBox("NotebookPage","init");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     this->idResource = NB_PAGE_DEFAULT;
     this->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
     this->pageOrder = BKA_LAST;
@@ -74,13 +78,15 @@ int     NotebookPage::init(void) {
 }
 
 int     NotebookPage::initItems(void) {
-    MessageBox("NotebookPage","initItems");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     return 0;
 }
 
 int     NotebookPage::test123(void) {
-    MessageBox("NotebookPage","test123");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     return 0;
 }
 
@@ -88,12 +94,14 @@ int     NotebookPage::test123(void) {
 
 NotebookPage1::NotebookPage1(Notebook* notebook) {
     this->debugMe();
-    MessageBox("NotebookPage1","CONSTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
     this->notebook = notebook;
 }
 
 NotebookPage1::~NotebookPage1() {
-    MessageBox("NotebookPage1","DESTRUCTOR");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 int     NotebookPage1::init(void) {
@@ -101,7 +109,8 @@ int     NotebookPage1::init(void) {
     /* Call parent method to do default initialization */
     this->NotebookPage::init();
 
-    MessageBox("NotebookPage1","init");
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 
     /* Initialize this page */
     this->idResource = NB_PAGE_1;
@@ -113,17 +122,13 @@ int     NotebookPage1::init(void) {
 
 int     NotebookPage1::initItems(void) {
 
-
-    MessageBox("NotebookPage1","initItems");
-
-    Button* but = new Button(this->hwndSelf, NB_PAGE_1_PB_1);
-
-    /* Wrap button, set text and unwrap it */
-    if (but) {
-        but->setText("Maximize");
-        delete but;
-    }
-    but = NULL;
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    Button::setText(this->hwndSelf, NB_PAGE_1_PB_1, "Maximize");
+    Button::setText(this->hwndSelf, NB_PAGE_1_PB_2, "Test123");
+    Button::setText(this->hwndSelf, NB_PAGE_1_PB_3, "Test456");
+    Button::setText(this->hwndSelf, NB_PAGE_1_PB_4, "Test789");
+    Button::setText(this->hwndSelf, NB_PAGE_1_PB_7, "__debug");
 
     return 0;
 }
@@ -132,7 +137,7 @@ int     NotebookPage1::initItems(void) {
 MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     MRESULT mresReply = 0;
 
-    MessageBox("NotebookPage1","wmCommand");
+    //~ MessageBox("NotebookPage1","wmCommand");
 
     switch (SHORT1FROMMP(mp1)) {
 
@@ -175,7 +180,8 @@ MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
         /* Test Button #7 */
         case NB_PAGE_1_PB_7: {
-            MessageBox("NotebookPage1","Test Button #7");
+            //~ MessageBox("NotebookPage1","Test Button #7");
+            _debug("_debug test");
             break;
         }
 

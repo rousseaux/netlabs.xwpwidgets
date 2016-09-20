@@ -34,14 +34,13 @@
 
 Dialog::Dialog() {
     this->debugMe();
-    sprintf(this->buf, "CONSTRUCTOR\nthis=%08X\nhdlg=%08X", this, this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
-    MessageBox("Dialog", this->buf);
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 Dialog::~Dialog() {
-    sprintf(this->buf, "~Dialog() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
 }
 
 /* Default WM_COMMAND implementation for Dialog */

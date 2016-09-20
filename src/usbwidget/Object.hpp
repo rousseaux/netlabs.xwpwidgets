@@ -45,12 +45,20 @@ class   Object;
 class   Object {
 
     public:
+
+    /* Public Constructor(s) and Destructor */
     Object();
     virtual ~Object();
+
+    /* Public Methods */
     virtual bool    debugMe();              // Query debug status
     virtual bool    debugMe(bool flag);     // Set debug status
     virtual int     debugLevel();           // Query debug level
     virtual int     debugLevel(int level);  // Set debug level
+    virtual void    _debug(char* msg);
+
+    /* Public Attributes */
+    HWND    hwndDebugListbox;
 
     protected:
 

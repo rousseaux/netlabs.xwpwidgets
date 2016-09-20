@@ -70,6 +70,8 @@ class   Window : public Object {
     /* Public Message Handlers */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
+    static void     setText(unsigned parent, unsigned id, char* text);
+
     /* Public Attributes */
     char    buf[256];
     HWND    hwndParent;         // public for now

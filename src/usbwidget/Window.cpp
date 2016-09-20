@@ -33,22 +33,21 @@
 
 
 Window::Window() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     this->debugMe();
     this->hwndParent = NULL;
     this->hwndOwner = NULL;
     this->hwndSelf = NULL;
     this->wci.cb = sizeof(WND_CLASS_INSTANCE);
     this->wci.pvClassInstance = this;
-    sprintf(this->buf, "Window() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
 }
 
 Window::~Window() {
-    sprintf(this->buf, "~Window() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
 }
 
 int     Window::show() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_SHOW|SWP_ZORDER);
         WinShowWindow(this->hwndSelf, true);
@@ -58,24 +57,28 @@ int     Window::show() {
 }
 
 void    Window::center() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         CenterWindow(WinQueryWindow(this->hwndSelf, QW_PARENT), this->hwndSelf);
     }
 }
 
 void    Window::centerToDesktop() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         CenterWindow(HWND_DESKTOP, this->hwndSelf);
     }
 }
 
 void    Window::centerToOther(ulong toCenterTo) {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         CenterWindow(toCenterTo, this->hwndSelf);
     }
 }
 
 int     Window::hide() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         WinShowWindow(this->hwndSelf, false);
     }
@@ -83,6 +86,7 @@ int     Window::hide() {
 }
 
 int     Window::maximize() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE|SWP_ZORDER);
         WinShowWindow(this->hwndSelf, true);
@@ -92,6 +96,7 @@ int     Window::maximize() {
 }
 
 int     Window::minimize() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_MINIMIZE|SWP_ZORDER);
         WinShowWindow(this->hwndSelf, true);
@@ -101,6 +106,7 @@ int     Window::minimize() {
 }
 
 int     Window::setText(char* text) {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf && text) {
         WinSetWindowText(this->hwndSelf, (PSZ) text);
     }
@@ -108,12 +114,19 @@ int     Window::setText(char* text) {
 }
 
 ulong   Window::getHandle() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     return this->hwndSelf;
 }
 
 /* Default WM_COMMAND implementation for Window */
 MRESULT Window::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    //~ sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     MRESULT mresReply = 0;
     MessageBox("Window","wmCommand");
     return (MRESULT) mresReply;
+}
+
+void    Window::setText(unsigned parent, unsigned id, char* text) {
+    //~ sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    WinSetWindowText(WinWindowFromID(parent, id), (PSZ) text);
 }
