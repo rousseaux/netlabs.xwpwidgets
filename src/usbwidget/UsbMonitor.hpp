@@ -27,6 +27,8 @@
  * This module monitors usb changes.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   UsbMonitor;
 
 #ifndef     __USB_MONITOR_HPP__
 #define     __USB_MONITOR_HPP__

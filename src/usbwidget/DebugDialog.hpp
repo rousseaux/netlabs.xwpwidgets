@@ -27,6 +27,8 @@
  * This module contains the DebugDialog.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   debugDialog;
 
 #ifndef     __DEBUGDIALOG_HPP__
 #define     __DEBUGDIALOG_HPP__

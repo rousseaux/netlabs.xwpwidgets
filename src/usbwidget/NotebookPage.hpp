@@ -26,6 +26,9 @@
  * This module contains the NotebookPage Class Definition.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   NotebookPage;
+class   NotebookPage1;
 
 #ifndef     __NOTEBOOKPAGE_HPP__
 #define     __NOTEBOOKPAGE_HPP__
@@ -38,18 +41,26 @@
 #include    "ecomedia.h"
 
 #include    "Dialog.hpp"
+#include    "Button.hpp"
+#include    "Notebook.hpp"
 
 /* Prototypes */
-MRESULT EXPENTRY NotebookPageHandler2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
+///////////////////////////////////////////////////////////////////////////////
+// NotebookPage
+///////////////////////////////////////////////////////////////////////////////
 class   NotebookPage : public Dialog {
 
     public:
     /* Public Constructor and Destructors */
     NotebookPage();
+    NotebookPage(Notebook* notebook);
     virtual ~NotebookPage();
 
     /* Public Methods */
+    virtual init(void);
+    virtual initItems(void);
     virtual test123(void);
 
     /* Public Attributes */
@@ -59,8 +70,9 @@ class   NotebookPage : public Dialog {
     PSZ     tabTitle;
     ULONG   idResource;
     PSZ     statusText;
-    NotebookPage* prev;
-    NotebookPage* next;
+    Notebook*       notebook;
+    NotebookPage*   prev;
+    NotebookPage*   next;
     PFNWP   dlgProc;
 
     protected:
@@ -69,15 +81,20 @@ class   NotebookPage : public Dialog {
 
 };
 
-
+///////////////////////////////////////////////////////////////////////////////
+// NotebookPage1
+///////////////////////////////////////////////////////////////////////////////
 class   NotebookPage1 : public NotebookPage {
     public:
-    /* Public Message Handlers */
+    NotebookPage1(Notebook* notebook);
+    virtual ~NotebookPage1();
+    virtual init(void);
+    virtual initItems(void);
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
-
 #ifdef      __cplusplus
     }
 #endif
 
 #endif // __NOTEBOOKPAGE_HPP__
+

@@ -27,6 +27,8 @@
  * This module holds the top-level Object.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Object;
 
 #ifndef     __OBJECT_HPP__
 #define     __OBJECT_HPP__

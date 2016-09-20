@@ -27,6 +27,8 @@
  * This module is a dummy to invoke the .obj.lib inference rule.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Notifier;
 
 #ifndef     __NOTIFIER_HPP__
 #define     __NOTIFIER_HPP__

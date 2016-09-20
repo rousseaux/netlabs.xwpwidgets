@@ -27,6 +27,8 @@
  * This module holds the default Widget Implementation.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   UsbWidget;
 
 #ifndef     __USBWIDGET_HPP__
 #define     __USBWIDGET_HPP__

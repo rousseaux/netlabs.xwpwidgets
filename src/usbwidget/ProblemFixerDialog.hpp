@@ -27,6 +27,8 @@
  * This module is a dummy to invoke the .obj.lib inference rule.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   ProblemFixerDialog;
 
 #ifndef     __PROBLEMFIXERDIALOG_HPP__
 #define     __PROBLEMFIXERDIALOG_HPP__

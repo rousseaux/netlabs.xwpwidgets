@@ -27,6 +27,8 @@
  * This module holds the default Widget Implementation.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Widget;
 
 #ifndef     __WIDGET_HPP__
 #define     __WIDGET_HPP__

@@ -31,9 +31,8 @@
 #include    "NotebookPage.hpp"
 
 
-/*
-// NotebookPage
-*/
+///: ----------------------------------------------------------- [NotebookPage]
+
 NotebookPage::NotebookPage() {
     this->debugMe();
     MessageBox("NotebookPage","CONSTRUCTOR");
@@ -46,12 +45,38 @@ NotebookPage::NotebookPage() {
     this->pageOrder = NULL;
     this->tabTitle = NULL;
     this->statusText = NULL;
+    this->notebook = NULL;
     this->prev = NULL;
     this->next = NULL;
 }
 
+NotebookPage::NotebookPage(Notebook* notebook) {
+    this->debugMe();
+    MessageBox("NotebookPage","CONSTRUCTOR-2");
+    this->notebook = notebook;
+}
+
 NotebookPage::~NotebookPage() {
     MessageBox("NotebookPage","DESTRUCTOR");
+}
+
+int     NotebookPage::init(void) {
+    MessageBox("NotebookPage","init");
+    this->idResource = NB_PAGE_DEFAULT;
+    this->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
+    this->pageOrder = BKA_LAST;
+    this->tabTitle = "DEFAULT PAGE";
+    this->statusText = "THIS IS A DEFAULT PAGE";
+    this->hwndParent = this->notebook->hwndSelf;
+    this->dlgProc = NotebookPageHandler;
+
+    return 0;
+}
+
+int     NotebookPage::initItems(void) {
+    MessageBox("NotebookPage","initItems");
+
+    return 0;
 }
 
 int     NotebookPage::test123(void) {
@@ -59,9 +84,56 @@ int     NotebookPage::test123(void) {
     return 0;
 }
 
+///: ---------------------------------------------------------- [NotebookPage1]
+
+NotebookPage1::NotebookPage1(Notebook* notebook) {
+    this->debugMe();
+    MessageBox("NotebookPage1","CONSTRUCTOR");
+    this->notebook = notebook;
+}
+
+NotebookPage1::~NotebookPage1() {
+    MessageBox("NotebookPage1","DESTRUCTOR");
+}
+
+int     NotebookPage1::init(void) {
+
+    /* Call parent method to do default initialization */
+    this->NotebookPage::init();
+
+    MessageBox("NotebookPage1","init");
+
+    /* Initialize this page */
+    this->idResource = NB_PAGE_1;
+    this->tabTitle = "Page #1";
+    this->statusText = "This is the first page";
+
+    return 0;
+}
+
+int     NotebookPage1::initItems(void) {
+
+
+    MessageBox("NotebookPage1","initItems");
+
+    Button* but = new Button(this->hwndSelf, NB_PAGE_1_PB_1);
+
+    /* Wrap button, set text and unwrap it */
+    if (but) {
+        but->setText("Maximize");
+        delete but;
+    }
+    but = NULL;
+
+    return 0;
+}
+
 /* Handle Command Messages */
 MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     MRESULT mresReply = 0;
+
+    MessageBox("NotebookPage1","wmCommand");
+
     switch (SHORT1FROMMP(mp1)) {
 
         /* Test Button #1 */
@@ -118,41 +190,46 @@ MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     return (MRESULT) mresReply;
 }
 
-/* This one is not used -- active handler is in Notebook Class */
-MRESULT EXPENTRY NotebookPageHandler2(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+///: ---------------------------------------------------- [NotebookPageHandler]
 
+MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+
+    /* Locals */
+    BOOL    brc = FALSE;
     MRESULT mresReply = 0;
-    HWND    hwndNB = NULL;
+    CHAR    buf[512] = {0};
 
+    /*
+    // Get pointer to Class Instance.
+    // Can be NULL if WM_INITDLG has not been invoked yet.
+    // Using this pointer, messages can be deferred to member-functions.
+    */
+    NotebookPage*   pNbkPg = (NotebookPage*) WinQueryWindowPtr(hwnd, QWL_USER);
+
+    /* Message Switch */
     switch (msg) {
 
-        //!: Init dialog (Debug)
+        /* Initialize Dialog */
         case WM_INITDLG: {
-            hwndNB = WinWindowFromID(hwnd, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
-
+            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            pNbkPg = ((NotebookPage*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
+            brc =   WinSetWindowPtr(
+                        hwnd,
+                        QWL_USER,
+                        pNbkPg
+                    );
+            pNbkPg->test123();
             mresReply = FALSE;
             break;
         }
 
+        /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
-            switch (SHORT1FROMMP(mp1)) {
-
-                /* Close Button */
-                case 9003: {
-                    mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
-                    break;
-                }
-
-                /* Default */
-                default: {
-                    mresReply = 0;
-                    //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
-                    break;
-                }
-
-            } // switch
+            mresReply = pNbkPg ? pNbkPg->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookPageHandler","pNbkPg is NULL !!");
             break;
         }
+
         //~: Handle default message (debug dialog)
         default: {
             mresReply = 0;

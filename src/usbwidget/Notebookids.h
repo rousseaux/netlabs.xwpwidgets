@@ -36,7 +36,9 @@
 #define DLG_ID_WIDGETSETTINGS_CLOSEBUTTON   10101   // Close Button
 #define DLG_ID_WIDGETSETTINGS_NOTEBOOK      10900   // Notebook Control
 
-#define NB_PAGE_1                       10901   // Page #1 Dialog
+#define NB_PAGE_DEFAULT                 10999   // Default Page Dialog
+
+#define NB_PAGE_1                       10901   // Page #1 Page Dialog
 #define NB_PAGE_1_LB_1                      1   // Listbox #1
 #define NB_PAGE_1_PB_1                     11   // Button #1
 #define NB_PAGE_1_PB_2                     12   // Button #2
@@ -46,8 +48,8 @@
 #define NB_PAGE_1_PB_6                     16   // Button #6
 #define NB_PAGE_1_PB_7                     17   // Button #7
 
-#define NB_PAGE_2                       10902   // Page #2 Dialog
+#define NB_PAGE_2                       10902   // Page #2 Page Dialog
 #define NB_PAGE_2_LB_1                      1   // Listbox #1
 
-#define NB_PAGE_3                       10903   // Page #3 Dialog
+#define NB_PAGE_3                       10903   // Page #3 Page Dialog
 #define NB_PAGE_3_LB_1                      1   // Listbox #1

@@ -35,5 +35,12 @@ Button::Button() {
     this->debugMe();
 }
 
+Button::Button(unsigned parent, unsigned id) {
+    this->debugMe();
+    if (parent && id) {
+        this->hwndSelf = WinWindowFromID(parent, id);
+    }
+}
+
 Button::~Button() {
 }

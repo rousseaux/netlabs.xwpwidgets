@@ -27,6 +27,8 @@
  * This module contains the base monitor class.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Monitor;
 
 #ifndef     __MONITOR_HPP__
 #define     __MONITOR_HPP__

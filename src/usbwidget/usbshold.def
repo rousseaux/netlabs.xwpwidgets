@@ -9,7 +9,7 @@
 ;##############################################################################
 
 LIBRARY usbshold INITGLOBAL TERMGLOBAL
-Description 'NeoWPS * USB Widget [testbuild-20160919]'
+Description 'NeoWPS * USB Widget [testbuild-20160920]'
 PROTMODE
 
 DATA    MULTIPLE READWRITE LOADONCALL NONSHARED

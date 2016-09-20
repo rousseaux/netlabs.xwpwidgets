@@ -91,6 +91,22 @@ int     Window::maximize() {
     return this->hwndSelf;
 }
 
+int     Window::minimize() {
+    if (this->hwndSelf) {
+        WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_MINIMIZE|SWP_ZORDER);
+        WinShowWindow(this->hwndSelf, true);
+        WinSetFocus(HWND_DESKTOP, this->hwndSelf);
+    }
+    return this->hwndSelf;
+}
+
+int     Window::setText(char* text) {
+    if (this->hwndSelf && text) {
+        WinSetWindowText(this->hwndSelf, (PSZ) text);
+    }
+    return this->hwndSelf;
+}
+
 ulong   Window::getHandle() {
     return this->hwndSelf;
 }

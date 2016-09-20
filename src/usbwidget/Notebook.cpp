@@ -33,9 +33,8 @@
 #include    "Notebook.hpp"
 
 
-/*
-// Notebook
-*/
+///: --------------------------------------------------------------- [Notebook]
+
 Notebook::Notebook() {
     this->debugMe();
     MessageBox("Notebook","CONSTRUCTOR");
@@ -131,12 +130,12 @@ void    Notebook::appendPage(NotebookPage* page) {
         (MPARAM) page->statusText
     );
 
-    /* Load the page */
+    /* Load the page dialog */
     page->hwndSelf =    WinLoadDlg(
                             this->hwndSelf,
                             this->hwndSelf,
                             page->dlgProc,
-                            hmodMe,
+                            hmodMe,     //! FIXME: this is a global variable !
                             page->idResource,
                             &page->wci
                         );
@@ -148,6 +147,8 @@ void    Notebook::appendPage(NotebookPage* page) {
         MPFROMLONG(page->idPage),
         MPFROMHWND(page->hwndSelf)
     );
+
+    page->initItems();
 
     /* Append the page to the list */
     if (this->pages == NULL) {
@@ -173,45 +174,33 @@ void    Notebook::appendPages() {
 
     /* Create and insert pages */
     do {
-        nbp = new NotebookPage1();
-        if (nbp == NULL) break;
 
-        /* Insert first page */
-        nbp->idPage = 0;
-        nbp->idResource = NB_PAGE_1;
-        nbp->dlgProc = NotebookPageHandler;
-        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
-        nbp->pageOrder = BKA_LAST;
-        nbp->tabTitle = "Page #1";
-        nbp->statusText = "This is the first page";
-        nbp->hwndParent = this->hwndSelf;                         //
-        this->appendPage(nbp);
+        /* Create a new page */
+        nbp = new NotebookPage1(this);
 
-        nbp = new NotebookPage();
-        if (nbp == NULL) break;
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
 
-        /* Insert second page */
-        nbp->idPage = 0;
-        nbp->idResource = NB_PAGE_2;
-        nbp->dlgProc = NotebookPageHandler;
-        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
-        nbp->pageOrder = BKA_LAST;
-        nbp->tabTitle = "Page #2";
-        nbp->statusText = "This is the second page";
-        this->appendPage(nbp);
+        /* Create a new page */
+        nbp = new NotebookPage(this);
 
-        nbp = new NotebookPage();
-        if (nbp == NULL) break;
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
 
-        /* Insert third page */
-        nbp->idPage = 0;
-        nbp->idResource = NB_PAGE_3;
-        nbp->dlgProc = NotebookPageHandler;
-        nbp->pageStyle = BKA_MAJOR|BKA_STATUSTEXTON;
-        nbp->pageOrder = BKA_LAST;
-        nbp->tabTitle = "Page #3";
-        nbp->statusText = "This is the third page";
-        this->appendPage(nbp);
+        /* Create a new page */
+        nbp = new NotebookPage(this);
+
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
 
     } while (0);
 }
@@ -253,6 +242,8 @@ int     Notebook::test123(void) {
     return 0;
 }
 
+///: -------------------------------------------------------- [NotebookHandler]
+
 /* Probably obsolete because a Notebook is a Control */
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
@@ -289,54 +280,6 @@ MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         /* Defer Command Messages to Class Instance */
         case WM_COMMAND: {
             pNbk ? pNbk->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookHandler","pNbk is NULL !!");
-            break;
-        }
-
-        //~: Handle default message (debug dialog)
-        default: {
-            mresReply = 0;
-            mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
-        }
-    }
-    return mresReply;
-}
-
-
-MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
-
-    /* Locals */
-    BOOL    brc = FALSE;
-    MRESULT mresReply = 0;
-    CHAR    buf[512] = {0};
-
-    /*
-    // Get pointer to Class Instance.
-    // Can be NULL if WM_INITDLG has not been invoked yet.
-    // Using this pointer, messages can be deferred to member-functions.
-    */
-    NotebookPage*   pNbkPg = (NotebookPage*) WinQueryWindowPtr(hwnd, QWL_USER);
-
-    /* Message Switch */
-    switch (msg) {
-
-        /* Initialize Dialog */
-        case WM_INITDLG: {
-            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
-            pNbkPg = ((NotebookPage*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
-            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
-            brc =   WinSetWindowPtr(
-                        hwnd,
-                        QWL_USER,
-                        pNbkPg
-                    );
-            pNbkPg->test123();
-            mresReply = FALSE;
-            break;
-        }
-
-        /* Defer Command Messages to Class Instance */
-        case WM_COMMAND: {
-            mresReply = pNbkPg ? pNbkPg->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookPageHandler","pNbkPg is NULL !!");
             break;
         }
 

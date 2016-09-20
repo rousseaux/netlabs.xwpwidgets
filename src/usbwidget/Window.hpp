@@ -26,6 +26,8 @@
  * This module handles Windows.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Window;
 
 #ifndef     __WINDOW_HPP__
 #define     __WINDOW_HPP__
@@ -61,6 +63,8 @@ class   Window : public Object {
     virtual void    centerToOther(ulong toCenterTo);
     virtual int     hide();
     virtual int     maximize();
+    virtual int     minimize();
+    virtual int     setText(char* text);
     virtual ulong   getHandle();
 
     /* Public Message Handlers */

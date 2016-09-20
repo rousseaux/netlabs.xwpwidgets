@@ -26,6 +26,8 @@
  * This module handles Dialogs.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Dialog;
 
 #ifndef     __DIALOG_HPP__
 #define     __DIALOG_HPP__

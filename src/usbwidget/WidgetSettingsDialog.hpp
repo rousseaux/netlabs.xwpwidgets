@@ -31,6 +31,8 @@
 *
 */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   WidgetSettingsDialog;
 
 #ifndef     __WIDGETSETINGSDIALOG_HPP__
 #define     __WIDGETSETINGSDIALOG_HPP__

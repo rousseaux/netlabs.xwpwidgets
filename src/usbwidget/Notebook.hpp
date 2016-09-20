@@ -28,6 +28,8 @@
  * This module contains the Notebook Class Definition.
  */
 
+/* Always declare the class to resolve class dependencies */
+class   Notebook;
 
 #ifndef     __NOTEBOOK_HPP__
 #define     __NOTEBOOK_HPP__
@@ -39,13 +41,13 @@
 #include    "ModuleGlobals.hpp"
 #include    "ecomedia.h"
 
+#include    "Window.hpp"
 #include    "NotebookPage.hpp"
 
-#include    "Window.hpp"
 
 /* Prototypes */
 MRESULT EXPENTRY NotebookHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+//~ MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   Notebook : public Window {
 

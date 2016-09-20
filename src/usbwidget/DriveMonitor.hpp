@@ -27,6 +27,8 @@
  * This module monitors drive changes.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   DriveMonitor;
 
 #ifndef     __DRIVE_MONITOR_HPP__
 #define     __DRIVE_MONITOR_HPP__

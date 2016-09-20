@@ -27,6 +27,8 @@
  * This module handles Buttons.
  */
 
+/* Always declare the class(es) to resolve class dependencies */
+class   Button;
 
 #ifndef     __BUTTON_HPP__
 #define     __BUTTON_HPP__
@@ -39,9 +41,18 @@
 #include    "Window.hpp"
 
 class   Button : public Window {
+
     public:
+
+    /* Public Constructors and Destructors */
     Button();
+    Button(unsigned parent, unsigned id);
     virtual ~Button();
+
+    protected:
+
+    private:
+
 };
 
 #ifdef      __cplusplus
