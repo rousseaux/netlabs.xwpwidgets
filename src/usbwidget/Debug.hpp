@@ -42,6 +42,7 @@ extern  char    bldlevel[];
 
 /* Prototypes */
 void    CreateDebugDialog();
+void    ShowDebugDialog();
 void    DestroyDebugDialog();
 void    __debug(char* title, char* message, unsigned long flags);
 MRESULT EXPENTRY    DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);

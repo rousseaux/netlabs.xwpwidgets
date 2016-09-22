@@ -1844,13 +1844,7 @@ MRESULT MwgtCreate(HWND hwnd, PXCENTERWIDGET pWidget)
 
     __debug(NULL, "MwgtCreate::START", DBG_LBOX);
 
-#if     DEBUG
-    /* Create Debug Dialog */
-    CreateDebugDialog();
 
-    /* Show it */
-    brc = WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
-#endif
 
 
     __debug(NULL, "Loading Resources...", DBG_LBOX);
@@ -2740,18 +2734,7 @@ VOID MwgtDestroy(PXCENTERWIDGET pWidget)
     BOOL    brc = FALSE;
 
 
-    /* Create Debug Dialog */
-    /*
-    hdlgDebugDialog = WinLoadDlg(HWND_DESKTOP,
-                            HWND_DESKTOP,
-                            DebugDialogHandler,
-                            hmodMe,
-                            ID_DEBUG_DIALOG,
-                            NULL);
-    */
-
-    /* Show it */
-    brc = WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
+    ShowDebugDialog();
 
     /* Where are we ? */
     __debug(NULL, "MwgtDestroy", DBG_LBOX);
@@ -2885,6 +2868,16 @@ VOID MwgtDestroy(PXCENTERWIDGET pWidget)
     //ulReply = WinProcessDlg(hdlgDebugDialog);
     __debug(NULL, "Processed Destroy", DBG_LBOX);
 
+    __debug(NULL, "About to destroy Debug Dialog", DBG_LBOX);
+
+    // Returns immediately ??
+    //~ if (hdlgDebugDialog)
+    WinProcessDlg(hdlgDebugDialog);
+    WinProcessDlg(hdlgDebugDialog);
+    WinProcessDlg(hdlgDebugDialog);
+    __debug(NULL, "After WinProcessDlg", DBG_LBOX);
+
+    //~ DestroyDebugDialog();
 }
 
 
@@ -3101,10 +3094,6 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     }
 
                     mrc = 0;
-
-                    //~ WinShowWindow(hdlgDebugDialog, TRUE);
-                    //~ WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
-                    return 0;
                     break;
                 }
 
@@ -3117,7 +3106,7 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     mrc = 0;
 
                     //~ WinShowWindow(hdlgDebugDialog, TRUE);
-                    WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
+                    ShowDebugDialog();
                     return 0;
                     break;
                 }
@@ -4426,36 +4415,37 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     //!: Init Beep
     //~ DosBeep(4000, 20);
 
+    //~ MessageBox("usbimpl", "WgtInitModule");
+
 
 #if     DEBUG
 
-    __debug("WidgetInitModule", "START", DBG_AUX);
+    /* Create Debug Dialog */
+    CreateDebugDialog();
+
+    /* Show it */
+    ShowDebugDialog();
+
+    __debug("WidgetInitModule", "START", DBG_LBOX);
 
     //~ __debug("WidgetInitModule", "  >> Create Debug Dialog", DBG_AUX);
-    //~ CreateDebugDialog();
     //~ __debug("WidgetInitModule", "  >> Position Debug Dialog", DBG_AUX);
 
-    brc = WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
     //~ MessageBox("Message", "Debug Mode !");
 #else
     hdlgDebugDialog = NULL;
     //~ MessageBox("No Debug !", "Message");
 #endif
 
-    /* Show BLDLEVEL info in Debug Dialog */
-    __debug(NULL, bldlevel, DBG_MLE);
-
-    /* Where are we ? */
-    __debug(NULL, "WgtInitModule::START", DBG_MLE);
     //!: Start Beep
     //~ DosBeep(7000, 20);
     //~ __debug("After Debug Dialog Creation", NULL, DBG_POPUP);
 
-    __debug("WidgetInitModule", "  >> Create hevNeverPosted Event Semaphore", DBG_AUX);
+    __debug("WidgetInitModule", "  >> Create hevNeverPosted Event Semaphore", DBG_LBOX);
 
     ulrc = DosCreateEventSem(NULL, &hevNeverPosted, DC_SEM_SHARED, FALSE);
     sprintf(buf, "ulrc:%d", ulrc);
-    __debug("DosCreateEventSem(hevNeverPosted)", buf, DBG_MLE);
+    __debug("DosCreateEventSem(hevNeverPosted)", buf, DBG_LBOX);
 
     /*
     // Let's go OO if g_use_new_implementation is set.
@@ -4469,7 +4459,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
         //~ delete g_myUsbWidget;
     //~ }
 
-    __debug("WidgetInitModule", "  >> Query Module Name", DBG_AUX);
+    __debug("WidgetInitModule", "  >> Query Module Name", DBG_LBOX);
 
     /* Get the full pathname of the widget dll */
     ulrc = DosQueryModuleName(hmodMe, sizeof(buf2), buf2);
@@ -4510,7 +4500,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     __debug("Name of DFSVOS2    ", buf, DBG_MLE);
     //~ MessageBox("Module Name", buf2);
 
-    __debug("WidgetInitModule", "  >> Construct DAEMON name", DBG_AUX);
+    __debug("WidgetInitModule", "  >> Construct DAEMON name", DBG_LBOX);
 
     /* Construct DAEMON name */
     {
@@ -4524,9 +4514,9 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     }
 
     sprintf(buf, "%s", buf2);
-    __debug("Name of DAEMON     ", buf, DBG_MLE);
+    __debug("Name of DAEMON     ", buf, DBG_LBOX);
 
-    __debug("WidgetInitModule", "  >> Create Named wait4daemon Event Semaphore", DBG_AUX);
+    __debug("WidgetInitModule", "  >> Create Named wait4daemon Event Semaphore", DBG_LBOX);
 
     /*
     // Create a named shared semaphore and clear it.
@@ -4535,9 +4525,9 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     */
     ulrc = DosCreateEventSem(EVSEM_WAIT4DAEMON, &wait4daemon, DC_SEM_SHARED, FALSE);
     sprintf(buf, "ulrc:%d", ulrc);
-    __debug("DosCreateEventSem(wait4daemon)", buf, DBG_MLE);
+    __debug("DosCreateEventSem(wait4daemon)", buf, DBG_LBOX);
 
-    __debug("WidgetInitModule", "  >> Try connect to Named Shared Memory", DBG_AUX);
+    __debug("WidgetInitModule", "  >> Try connect to Named Shared Memory", DBG_LBOX);
 
     /* Try to connect to shared memory from daemon */
     ulrc = DosGetNamedSharedMem(&masterpool, SHMEM_NAME, PAG_READ | PAG_WRITE);
@@ -4547,17 +4537,17 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
 
     if (ulrc) {     // ulrc != 0 -> shmem not found
 
-        __debug("WidgetInitModule", "  >> Start DAEMON", DBG_AUX);
+        __debug("WidgetInitModule", "  >> Start DAEMON", DBG_LBOX);
 
         //!: Start the Daemon
         ulrc = StartDaemon(buf2);
         //~ ulrc = StartDaemonAsSession(buf2);
         sprintf(buf, "ulrc: %d", ulrc);
-        __debug("StartDaemon", buf, DBG_MLE);
+        __debug("StartDaemon", buf, DBG_LBOX);
 
         if (ulrc) {
             // ERROR, COULD NOT START DAEMON !
-            __debug("WidgetInitModule", "  >> **ERROR** Could not start DAEMON", DBG_AUX);
+            __debug("WidgetInitModule", "  >> **ERROR** Could not start DAEMON", DBG_LBOX);
             /*
             // Cleanup the resources allocated until now.
             */
@@ -4600,12 +4590,12 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
         }
         else { // DAEMON STARTED
 
-            __debug("WidgetInitModule", "  >> Wait 2 secs on wait4daemon Event Semaphore", DBG_AUX);
+            __debug("WidgetInitModule", "  >> Wait 2 secs on wait4daemon Event Semaphore", DBG_LBOX);
 
             /* Wait 2 secs for the daemon */
             ulrc = DosWaitEventSem(wait4daemon, 2000);
 
-            __debug("WidgetInitModule", "  >> Get Shared Memory now DAEMON is started", DBG_AUX);
+            __debug("WidgetInitModule", "  >> Get Shared Memory now DAEMON is started", DBG_LBOX);
 
              //~ MessageBox("Master Pool :: Daemon Started", buf);
             //!: DosSleep weer unresolved external...
@@ -4613,30 +4603,30 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
             /* Again try to connect to shared memory from daemon */
             ulrc = DosGetNamedSharedMem(&masterpool, SHMEM_NAME, PAG_READ | PAG_WRITE);
             sprintf(buf, "masterpool: %08lX, poolsize: %d, ulrc: %d", masterpool, ((PMASTERMEMPOOL)masterpool)->poolsize, ulrc);
-            __debug("DosGetNamedSharedMem", buf, DBG_MLE);
+            __debug("DosGetNamedSharedMem", buf, DBG_LBOX);
 
             if (ulrc) { // ulrc !=0 -> shmem not found
-                __debug("WidgetInitModule", "  >> DAEMON possibly stared but no SHMEM", DBG_AUX);
+                __debug("WidgetInitModule", "  >> DAEMON possibly stared but no SHMEM", DBG_LBOX);
                 ulrc = -1;  // force failure for now
                 // ERROR, DAEMON STARTED BUT NO NAMED SHARED MEM
-                __debug("DAEMON but no SHMEM", NULL, DBG_MLE);
+                __debug("DAEMON but no SHMEM", NULL, DBG_LBOX);
             }
             else {
-                __debug("WidgetInitModule", "  >> Using SHMEM from DAEMON", DBG_AUX);
+                __debug("WidgetInitModule", "  >> Using SHMEM from DAEMON", DBG_LBOX);
                 // USING NAMED SHARED MEM FROM DAEMON
                 pmmp = (PMASTERMEMPOOL) masterpool;
                 sprintf(buf, "SHARED MEMORY FOUND AFTER STARTING DAEMON: Signature: %08lX", pmmp->signature);
-                __debug("DosGetNamedSharedMem", buf, DBG_MLE);
+                __debug("DosGetNamedSharedMem", buf, DBG_LBOX);
             }
         }
     }
     else {
-        __debug("WidgetInitModule", "  >> SHMEM found at first try", DBG_AUX);
+        __debug("WidgetInitModule", "  >> SHMEM found at first try", DBG_LBOX);
         // SHMEM FOUND RIGHT AWAY
         pmmp = (PMASTERMEMPOOL) masterpool;
         //~ MessageBox("Master Pool II", buf);
         sprintf(buf, "EXISTING SHARED MEMORY FOUND AT FIRST TRY: Signature: %08lX", pmmp->signature);
-        __debug("DosGetNamedSharedMem", buf, DBG_MLE);
+        __debug("DosGetNamedSharedMem", buf, DBG_LBOX);
 
         //~ MessageBox("Master Pool III", buf);
     }
@@ -4648,12 +4638,12 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
 
     /* If connected to named shared memory we have to attach to the submempool */
     if (pmmp->pooltype == PT_USE_NAMED) {
-        __debug("WidgetInitModule", "  >> Attaching to SubMemPool", DBG_AUX);
+        __debug("WidgetInitModule", "  >> Attaching to SubMemPool", DBG_LBOX);
         //~ __debug("XXa", "Attaching", DBG_POPUP);
         ulrc = DosSubSetMem(pmmp->submempool, 0, SHMEM_SIZE+sizeof(SUBMEMPOOL));
         sprintf(buf, "pmmp->submempool: %08lX, pooltype: %d, widgetstate: %08lX, ulrc: %d",
             pmmp->submempool, pmmp->pooltype, pmmp->pwidgetstate, ulrc);
-        __debug("DosSubSetMem(attach)", buf, DBG_MLE);
+        __debug("DosSubSetMem(attach)", buf, DBG_LBOX);
     }
     /* Otherwise it was initialized by allocate_master_pool */
     else {
@@ -4670,8 +4660,8 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     /* Allocate widget state if not allocated yet */
     //!: TEMP DISABLE RETAIN STATE !!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!pmmp->pwidgetstate) {
-        __debug("WidgetInitModule", "  >> Allocating Widget State", DBG_AUX);
-        __debug(NULL, "Allocating Widget State", DBG_MLE);
+        __debug("WidgetInitModule", "  >> Allocating Widget State", DBG_LBOX);
+        __debug(NULL, "Allocating Widget State", DBG_LBOX);
         pmmp->pwidgetstate = (PWIDGETSTATE) malloc(sizeof(WIDGETSTATE));
         //!: CHECKME: Check for failure here
         if (pws)
@@ -4695,7 +4685,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
         /* First entry is not used */
         pws->pdisks[0].usbid = -1;
 
-        __debug("WidgetInitModule", "  >> Initializing Disk Array", DBG_AUX);
+        __debug("WidgetInitModule", "  >> Initializing Disk Array", DBG_LBOX);
 
         /*
         // Clear the array of physical disks.
@@ -4703,7 +4693,6 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
         // Note that this array persists between widget delete and adds.
         */
         //~ for (i=0; i<=sizeof(pws->pdisks)/sizeof(PHYSICAL_DISK); i++) {
-        //!: BUUUHHH... OUT OF BOUNDS INITIALIZATION OVERWROTE CLIST POINTERS !!!
         //!: ------------------------------------------- [ Clear pdisks array ]
         for (i=0; i<sizeof(pws->pdisks)/sizeof(PHYSICAL_DISK); i++) {
             pws->pdisks[i].drivemap = 0;
@@ -4728,13 +4717,13 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
          * from the shared memory instead of the local heap.
          */
 
-        __debug("WidgetInitModule", "  >> Creating New Device Lists", DBG_AUX);
+        __debug("WidgetInitModule", "  >> Creating New Device Lists", DBG_LBOX);
         pws->currentUSBDevicesList  = new CList();  // List of current devices
         pws->previousUSBDevicesList = new CList();  // List of previous devices
         pws->removedUSBDevicesList  = new CList();  // List of removed devices
     }
     else {
-        __debug(__FUNCTION__, "WARM START", DBG_MLE | DBG_AUX);
+        __debug(__FUNCTION__, "WARM START", DBG_LBOX | DBG_AUX);
         warm_start = TRUE;
     }
 
@@ -4742,7 +4731,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
 
 
     sprintf(buf, "Widget State -- ulrc: %d, address: %08lX, pooltype: %d", ulrc, pws, ((PMASTERMEMPOOL)masterpool)->pooltype);
-    __debug(NULL, buf, DBG_MLE);
+    __debug(NULL, buf, DBG_LBOX);
 
 
     //ulrc = DosGetNamedSharedMem(&shmem, SHMEM_NAME, PAG_READ | PAG_WRITE);
@@ -4763,8 +4752,8 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
 
     //~ OpenPipe();
 
-    __debug("WidgetInitModule", "  >> Resolving Imports", DBG_AUX);
-    __debug(NULL, "Resolving Imports...", DBG_MLE);
+    __debug("WidgetInitModule", "  >> Resolving Imports", DBG_LBOX);
+    __debug(NULL, "Resolving Imports...", DBG_LBOX);
 
     //!: -------------------------------------------------- [ Resolve Imports ]
     /**
@@ -4789,7 +4778,7 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
 
     if (!fImportsFailed) {
 
-        __debug("WidgetInitModule", "  >> Registering Window Class", DBG_AUX);
+        __debug("WidgetInitModule", "  >> Registering Window Class", DBG_LBOX);
         /*
         // Register the widget class.
         */
@@ -4829,26 +4818,23 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
         }
     }
 
-    __debug("WidgetInitModule", "  >> Logging Device Lists", DBG_AUX);
-
-    /* Just a message, no check yet */
-    __debug(NULL, "OK.", DBG_MLE);
+    __debug("WidgetInitModule", "  >> Logging Device Lists", DBG_LBOX);
 
     //~ pws->currentUSBDevicesList  = &currentUSBDevicesList;
     sprintf(buf, "address: %08lX", pws->currentUSBDevicesList);
-    __debug("pws->currentUSBDevicesList ", buf, DBG_MLE);
+    __debug("pws->currentUSBDevicesList ", buf, DBG_LBOX);
 
 
     //~ pws->previousUSBDevicesList  = &previousUSBDevicesList;
     sprintf(buf, "address: %08lX", pws->previousUSBDevicesList);
-    __debug("pws->previousUSBDevicesList" , buf, DBG_MLE);
+    __debug("pws->previousUSBDevicesList" , buf, DBG_LBOX);
 
 
     //~ pws->removedUSBDevicesList  = &removedUSBDevicesList;
     sprintf(buf, "address: %08lX", pws->removedUSBDevicesList);
-    __debug("pws->removedUSBDevicesList " , buf, DBG_MLE);
+    __debug("pws->removedUSBDevicesList " , buf, DBG_LBOX);
 
-    __debug(NULL, "WgtInitModule::END", DBG_MLE);
+    __debug(NULL, "WgtInitModule::END", DBG_LBOX);
     __debug("WidgetInitModule", "END", DBG_AUX);
 
     /* Return number of Widget Classes handled by this DLL */
@@ -4876,8 +4862,11 @@ VOID EXPENTRY WgtUnInitModule()
     BOOL    brc         = TRUE;
     CHAR    buf[256]    = "\0";
 
+    //~ MessageBox("usbimpl", "WgtUnInitModule");
 
-    __debug("WidgetUninitModule", "START", DBG_AUX);
+    ShowDebugDialog();
+
+    __debug("WidgetUninitModule", "START", DBG_LBOX);
 
     // Detach from submempool and unlink from masterpool
     if (masterpool) {
@@ -4886,16 +4875,11 @@ VOID EXPENTRY WgtUnInitModule()
     }
 
 
-    /* Show Debug Dialog */
-    //!: CHECKME: Gaat hier nog iets niet goed (wps hangt bij restart)
 #if     DEBUG
     /* Show it */
-    brc = WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
     ulReply = WinProcessDlg(hdlgDebugDialog);
     ulReply = WinProcessDlg(hdlgDebugDialog);
     ulReply = WinProcessDlg(hdlgDebugDialog);
-
-
 
     /* Where are we ? */
     sprintf(buf, "masterpool:%08lX, ulrc:%d, ulrc2:%d, ulReply:%d", masterpool, ulrc, ulrc2, ulReply);
@@ -4903,12 +4887,7 @@ VOID EXPENTRY WgtUnInitModule()
     __debug(NULL, "WgtUnInitModule", DBG_LBOX);
     __debug(NULL, "Processed UnInit", DBG_LBOX);
 
-    brc = WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
-
 #endif
-
-
-
 
     /* Process */
     //ulReply = WinProcessDlg(hdlgDebugDialog);
@@ -4940,7 +4919,7 @@ VOID EXPENTRY WgtUnInitModule()
     MyDosSleep(2000);
     //~ DosBlock(10000);
 
-    __debug("WidgetUninitModule", "END", DBG_AUX);
+    __debug("WidgetUninitModule", "END", DBG_LBOX);
 
     if (hevNeverPosted)
         DosCloseEventSem(hevNeverPosted);
@@ -4950,10 +4929,10 @@ VOID EXPENTRY WgtUnInitModule()
 #endif  // DEBUG
 
     /* Destroy the global WidgetSettingsDialog */
-    if (g_WidgetSettingsDialog) {
-        delete g_WidgetSettingsDialog;
-        g_WidgetSettingsDialog = NULL;
-    }
+    //~ if (g_WidgetSettingsDialog) {
+        //~ delete g_WidgetSettingsDialog;
+        //~ g_WidgetSettingsDialog = NULL;
+    //~ }
 
 }
 
@@ -4985,11 +4964,15 @@ VOID EXPENTRY WgtQueryVersion(PULONG pulMajor,
     "::::::::::::::::::::::::::::::::::::::"\
     ;
 
+
+    //~ MessageBox2("usbimpl", "WgtQueryVersion");
+
+
     __debug(NULL, header, DBG_AUX);
     __debug(NULL, bldlevel, DBG_AUX);
     __debug(NULL, NULL, DBG_AUX);
 
-    __debug("WidgetQueryVersion", "START", DBG_AUX);
+    //~ __debug("WidgetQueryVersion", "START", DBG_AUX);
 
     // report 0.9.9
     *pulMajor = 0;

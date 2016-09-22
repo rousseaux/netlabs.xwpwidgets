@@ -7,6 +7,13 @@ D:	Daemon
 W:	Widget
 	nmake -nologo usb-widget
 }
+R:	Run Daemon
+{
+1:	Daemon start
+	nmake -nologo daemon-start
+2:	Daemon stop
+	nmake -nologo daemon-stop
+}
 D:	Distribute
 	nmake -nologo dist
 C:	Clean

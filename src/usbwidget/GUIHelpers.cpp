@@ -52,13 +52,35 @@ HBITMAP     hbmIconInfo;
 HBITMAP     hbmIconWarning;
 
 
-/*
-// MESSAGES
-*/
+/* Modal Message Box */
 ULONG   MessageBox(PSZ title, PSZ text) {
     ULONG   ulresp = -1;
 
-    ulresp = WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, text, title, NULL, MB_OK);
+    ulresp = WinMessageBox(HWND_DESKTOP, NULL, text, title, NULL, MB_OK);
+    return ulresp;
+}
+
+/* Non-modal Message Box */
+ULONG   MessageBox2(PSZ title, PSZ text) {
+    ULONG   ulresp = -1;
+    MB2INFO mb2info;
+    MB2D mb2d    = {"test", 999, BS_DEFAULT};
+
+    mb2info.cb = sizeof(MB2INFO);
+    mb2info.hIcon = NULL;
+    mb2info.cButtons = 1;
+    mb2info.flStyle = MB_NOICON|MB_NONMODAL;
+    memcpy (&mb2info.mb2d, &mb2d, sizeof(MB2D));
+
+
+    ulresp =    WinMessageBox2(
+                    HWND_DESKTOP,
+                    NULL,
+                    text,
+                    title,
+                    NULL,
+                    &mb2info
+                );
     return ulresp;
 }
 

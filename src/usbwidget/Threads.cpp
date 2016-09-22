@@ -339,7 +339,7 @@ void    _Optlink DriveMonitorThread(void* p) {
                 /* Reset the semaphore */
                 DosResetEventSem(hevDMthread, &post_count);
             }
-            __debug("DriveMonitorThread", "No Drives Changed", DBG_MLE | DBG_AUX);
+            __debug("DriveMonitorThread", "No Drives Changed", DBG_MLE2 | DBG_AUX);
             //~ brc = WinPeekMsg(hab_thread, &qmsg_thread, NULL, 0, 0, PM_NOREMOVE);
             //~ sprintf(buf, "brc:%d", brc);
             //~ __debug("DriveMonitorThread", buf, DBG_MLE | DBG_AUX);

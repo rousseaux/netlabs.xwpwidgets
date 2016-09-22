@@ -76,6 +76,7 @@ extern      HBITMAP     hbmIconWarning;
 void    GUIHelpers(void);
 
 ULONG   MessageBox(PSZ title, PSZ text);                // Simple wrapper around WinMessageBox
+ULONG   MessageBox2(PSZ title, PSZ text);               // Simple wrapper around WinMessageBox2
 void    LoadPictures(void);
 BOOL    CenterWindow(HWND toCenterTo, HWND thisWindow); // Grabed from PPSERIAL.CPP, replace with XWP-version later
 BOOL    OpenDriveView(char drive);

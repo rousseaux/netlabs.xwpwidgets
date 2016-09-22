@@ -45,16 +45,17 @@
 /// takes a *long* time for the dialog to be loaded. As soons as an
 /// app is running the delay vanishes.
 ///
-/// It is the WM_INITDLG2 custom message that causes the delay.
-/// This message initializes the controls, but even when returning 0,
-/// the delay stays.
-///
-/// It is the creation of the controls that take a long time.
-///
-/// Nope, it's just the creation of the dialog.
+/// It's the creation of the dialog that can take a long time.
 /// Why would that take a long time when no apps are running ?
+/// Message dispatching goes wrong somewhere ?
 ///
-/// Relocated creation to Widget Window Creation.
+/// Above mentioned delay resembles the usage of 'WinMessageBox' (MessageBox)
+/// in 'WgtQueryVersion', which besides causing a long delay, also seems to
+/// block messages, because the Properties Dialog is not functional anymore
+/// and removing the Widget only takes effect after the WPS is restarted.
+/// Requires further investigation -- low prio.
+/// The 'WinMessageBox' (MessageBox) in 'WgtQueryVersion' is caused by the
+/// modality pf the MessageBox.
 void    CreateDebugDialog() {
 
     /*
@@ -72,6 +73,10 @@ void    CreateDebugDialog() {
             NULL                    // Create Parameters
         );
     }
+}
+
+void    ShowDebugDialog() {
+    if (hdlgDebugDialog) WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
 }
 
 void    DestroyDebugDialog() {
@@ -136,37 +141,56 @@ void    __debug(char* title, char* message, unsigned long flags) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, buf, "Debug Popup", NULL, MB_OK);
         }
 
-        /* Output to ListBox of Debug Dialog */
-        if (lflags & DBG_LBOX) {
-            if (lflags & DBG_USE_POST) {
-                WinPostMsg(
-                    WinWindowFromID(hdlgDebugDialog, ID_LB_1),
-                    LM_INSERTITEM,
-                    (MPARAM) LIT_END,
-                    (MPARAM) buf
-                );
-                //~ strcat(buf," [posted]");
-                WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_SETTOPINDEX, (MPARAM) 32767, (MPARAM) 0);
-            }
-            else {
-                WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) buf);
-                WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_SETTOPINDEX, (MPARAM) 32767, (MPARAM) 0);
-            }
-        }
+        /* Only when DebugDialog is created */
+        if (hdlgDebugDialog) {
 
-        /* Output to MLE of Debug Dialog */
-        if (lflags & DBG_MLE) {
-            if (lflags & DBG_USE_POST) {
-                //~ strcat(buf, " [posted]");
-                WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
-                WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+            /* Output to ListBox of Debug Dialog */
+            if (lflags & DBG_LBOX) {
+                if (lflags & DBG_USE_POST) {
+                    WinPostMsg(
+                        WinWindowFromID(hdlgDebugDialog, ID_LB_1),
+                        LM_INSERTITEM,
+                        (MPARAM) LIT_END,
+                        (MPARAM) buf
+                    );
+                    //~ strcat(buf," [posted]");
+                    WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_SETTOPINDEX, (MPARAM) 32767, (MPARAM) 0);
+                }
+                else {
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) buf);
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_LB_1), LM_SETTOPINDEX, (MPARAM) 32767, (MPARAM) 0);
+                }
             }
-            else {
-                //~ strcat(buf, " [sent]");
-                WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
-                WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+
+            /* Output to MLE of Debug Dialog */
+            if (lflags & DBG_MLE) {
+                if (lflags & DBG_USE_POST) {
+                    //~ strcat(buf, " [posted]");
+                    WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
+                    WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+                }
+                else {
+                    //~ strcat(buf, " [sent]");
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_1), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+                }
+                /// scroll to end message must come here
             }
-            /// scroll to end message must come here
+
+            /* Output to MLE2 of Debug Dialog */
+            if (lflags & DBG_MLE2) {
+                if (lflags & DBG_USE_POST) {
+                    //~ strcat(buf, " [posted]");
+                    WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_2), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
+                    WinPostMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_2), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+                }
+                else {
+                    //~ strcat(buf, " [sent]");
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_2), MLM_INSERT, (MPARAM) buf, (MPARAM) NULL);
+                    WinSendMsg(WinWindowFromID(hdlgDebugDialog, ID_MLE_2), MLM_INSERT, (MPARAM) "\n", (MPARAM) NULL);
+                }
+                /// scroll to end message must come here
+            }
         }
 
         /* Output to Debug Pipe */
@@ -246,7 +270,8 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
         // like adding controls, to a second stage.
         */
         case WM_INITDLG: {                                      // 0x003b
-
+    /* Show BLDLEVEL info in Debug Dialog */
+            WinSendMsg(hwndListBox, LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) bldlevel);
             WinSendMsg(hwndListBox, LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) "WM_INITDLG START");
             hdlgDebugDialog = hwnd;
             sprintf(buf, "%08X", hwnd);

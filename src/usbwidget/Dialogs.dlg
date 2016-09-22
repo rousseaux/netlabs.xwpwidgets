@@ -195,9 +195,9 @@ BEGIN
             FCF_TITLEBAR
             PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
     BEGIN
-        PUSHBUTTON      "Close", ID_ICO_USB_WIDGET, 419, 8, 40, 14
+        PUSHBUTTON      "Close", DID_OK, 419, 8, 40, 14
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C00000L
-        LISTBOX         ID_LB_1, 4, 115, 403, 130, LS_HORZSCROLL
+        LISTBOX         ID_LB_1, 4, 126, 403, 120, LS_HORZSCROLL
                         PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"
         PUSHBUTTON      "Action #1", ID_ACTION_1, 412, 247, 50, 8,
                         BS_NOBORDER
@@ -282,7 +282,11 @@ BEGIN
         PUSHBUTTON      "Action #27", ID_ACTION_27, 96, 247, 50, 8,
                         BS_NOBORDER
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
-        MLE             "", ID_MLE_1, 4, 3, 405, 109, MLS_HSCROLL |
+        MLE             "", ID_MLE_1, 4, 54, 405, 70, MLS_HSCROLL |
+                        MLS_VSCROLL | WS_GROUP
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000080L
+                        PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"
+        MLE             "", ID_MLE_2, 4, 2, 405, 50, MLS_HSCROLL |
                         MLS_VSCROLL | WS_GROUP
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000080L
                         PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"

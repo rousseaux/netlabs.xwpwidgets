@@ -34,9 +34,10 @@
 #define     DBG_POPUP       0x00000008
 #define     DBG_LBOX        0x00000010
 #define     DBG_MLE         0x00000020
-#define     DBG_PIPE        0x00000040
-#define     DBG_FILE        0x00000080
-#define     DBG_AUX         0x00000100
+#define     DBG_MLE2        0x00000040
+#define     DBG_PIPE        0x00000080
+#define     DBG_FILE        0x00000100
+#define     DBG_AUX         0x00000200
 #define     DBG_USE_POST    0x80000000
 #define     DBG_USE_SEND    0x7FFFFFFF  // Use & to clear
 

@@ -42,7 +42,6 @@
 */
 #include    "Debug.h"
 
-
 /*
 // Here we have some global definitions for use by all modules.
 */
@@ -51,6 +50,30 @@
 #define     null            0
 typedef     int             bool;
 typedef     unsigned long   ulong;
+
+/* Macros for use with console logging */
+#define __ctorb() printf("[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __ctore() printf("[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __mthdb() printf("[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __mthd()  printf("[%s]\t[%04d@%08X] =%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __mthde() printf("[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __dtorb() printf("[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __dtore() printf("[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __funcb() printf("[%s]\t+%s\n", __FILE__, __FUNCTION__)
+#define __func()  printf("[%s]\t=%s\n", __FILE__, __FUNCTION__)
+#define __funce() printf("[%s]\t-%s\n", __FILE__, __FUNCTION__)
+
+/* Macros for use with buffered logging */
+#define __vctorb(buf) vprintf(buf, "[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vctore(buf) vprintf(buf, "[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vmthdb(buf) vprintf(buf, "[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vmthd(buf)  vprintf(buf, "[%s]\t[%04d@%08X] =%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vmthde(buf) vprintf(buf, "[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vdtorb(buf) vprintf(buf, "[%s]\t[%04d@%08X] +%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vdtore(buf) vprintf(buf, "[%s]\t[%04d@%08X] -%s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__)
+#define __vfuncb(buf) vprintf(buf, "[%s]\t+%s\n", __FILE__, __FUNCTION__)
+#define __vfunc(buf)  vprintf(buf, "[%s]\t=%s\n", __FILE__, __FUNCTION__)
+#define __vfunce(buf) vprintf(buf, "[%s]\t-%s\n", __FILE__, __FUNCTION__)
 
 #define     TXFSDC_EJECT                    0x02    // eject removable
 

@@ -321,6 +321,18 @@ clean:
 #	vacbld -CL "$(BASENAME).icc"
 	@touch Bldvars.mif
 
+# Start Daemon (first build if needed)
+daemon-start: support-daemon
+	@echo.
+	@echo [$@]
+	usbshlpr.exe
+
+# Stop Daemon
+daemon-stop:
+	@echo.
+	@echo [$@]
+	usbshlpr.exe /stop
+
 # =============================================================================
 #                                                [ CPP TO OBJ INFERENCE RULES ]
 # =============================================================================
