@@ -28,7 +28,7 @@
  */
 
 /*
- *      Copyright (C) 1997-2006 Ulrich M”ller.
+ *      Copyright (C) 1997-2012 Ulrich M”ller.
  *
  *      This file is part of the XWorkplace source package.
  *      XWorkplace is free software; you can redistribute it and/or modify
@@ -1439,6 +1439,7 @@
     BOOL cmnDescribeKey(PSZ pszBuf,
                         USHORT usFlags,
                         USHORT usKeyCode,
+                        PCSZ pszDescription,
                         ULONG cbBuf);
 
     VOID cmnInsertSeparator(HWND hwndMenu,

@@ -6,7 +6,7 @@
  *      by both the XFolder code and the NLS resource DLLs.
  *
  *      This file is #include'd by the XFolder C code itself
- *      and all the .rc and .dlg files.
+ *      and all the .RC and .DLG files.
  *
  *      Changes for V0.9.0:
  *      -- lots of new IDs, of course, for all the new dialogs.
@@ -1679,7 +1679,7 @@
 
 // XFolder uses the following ID's for language-
 // dependent strings. These correspond to the
-// string definitions in the NLS .rc file.
+// string definitions in the NLS .RC file.
 // Note that XFolder also uses a message file
 // (.MSG) for messages which might turn out to
 // be longer than 256 characters.

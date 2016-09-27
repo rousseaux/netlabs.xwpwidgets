@@ -12,7 +12,7 @@
  */
 
 /*
- *      Copyright (C) 1997-2001 Ulrich M”ller.
+ *      Copyright (C) 1997-2011 Ulrich M”ller.
  *      This file is part of the "XWorkplace helpers" source package.
  *      This is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published
@@ -125,6 +125,8 @@ extern "C" {
         PSZ XWPENTRY nlsThousandsULong(PSZ pszTarget, ULONG ul, CHAR cThousands);
         typedef PSZ XWPENTRY NLSTHOUSANDSULONG(PSZ pszTarget, ULONG ul, CHAR cThousands);
         typedef NLSTHOUSANDSULONG *PNLSTHOUSANDSULONG;
+
+        PSZ XWPENTRY nlsThousandsLong(PSZ pszTarget, LONG l, CHAR cThousands);
 
         PSZ XWPENTRY nlsThousandsDouble(PSZ pszTarget, double dbl, CHAR cThousands);
 
