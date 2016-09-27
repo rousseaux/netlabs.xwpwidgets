@@ -6,9 +6,9 @@
 |     MODULE NAME:   WPSDEBUG.H
 |
 |
-|         $Author: umoeller $
-|       $Revision: 1.2 $
-|           $Date: 2001/03/03 10:58:48 $
+|         $Author$
+|       $Revision$
+|           $Date$
 |        $Logfile:   V:/SUEPVCS/SUPPORT/TEMPLATE.H_V  $
 |
 |     DESCRIPTION:   Note that any items that begin with an "I_" are for

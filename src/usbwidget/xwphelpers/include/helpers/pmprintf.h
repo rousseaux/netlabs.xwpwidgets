@@ -6,9 +6,9 @@
 |     MODULE NAME:   PMPRINTF.H
 |
 |
-|         $Author: umoeller $
-|       $Revision: 1.4 $
-|           $Date: 2002/07/05 09:22:37 $
+|         $Author$
+|       $Revision$
+|           $Date$
 |        $Logfile:   V:/SUEPVCS/SUPPORT/TEMPLATE.H_V  $
 |
 |     DESCRIPTION:
