@@ -33,27 +33,34 @@
 * usb-devices.
 *
 * The shared memory is initialized at the start with a custom structure which
-* also understood by the Widget. The rest is initialized by DosSetSubMem to
+* is also understood by the Widget. The rest is initialized by DosSetSubMem to
 * enable the use of DosSubAllocMem by the Widget. The Widget attaches to this
-*  named shared memory and has it's C malloc and free functions overridden to
+* named shared memory and has it's C malloc and free functions overridden to
 * use DosSubAllocMem. Also, the C++ new and delete operators are overloaded
 * to use the overridden malloc and free functions. This enables the Widget to
-*  retain it's state between WPS restarts.
+* retain it's state between WPS restarts.
 *
 */
 
 /*
-// Phantom Drives
-// --------------
-// When an usb-device with a drive mounted on it is removed without properly
-// ejecting it, the drive does not disappear. Ejecting the drive will make it
-// disappear, but only until the removable media are rescanned, after which it
-// will reappear. Such a drive is called a *phantom* drive. Because the backing
-// medium is missing, such a drive is of course not accessible. However,
-// reinserting the _exact_ same usb-device will make the drive functional
-// again. But, insering a _different_ usb-device will most probably cause a
-// crash in LVM. The widget is capable of recovering phantom drives when the
-// correct usb-device is interted again.
+// Window Procedures and C++ Instance Methods
+// ------------------------------------------
+// Normally, a Window Procedure is associated with a specific registered
+// Window Class. This means that every window created from that class uses the
+// same Window Procedure. To change the behavior at the instance level, the
+// complete window-procedure must be subclassed.
+//
+// Here, a different approach is taken.
+// A Window Class is wrapped in a C++ Class which contains methods to handle
+// messages. When a Window is created, a pointer to the C++ Object is passed.
+// This pointer is then used to delegate the messages to the member
+// functions of the C++ Object. Different behavior is obtained by regular
+// C++ inheritance, where methods can override the methods of the parent class.
+// Whe using composition instead of inheritance, method delegation is used.
+// With this method, functionality is closely related to the C++ Object and
+// can be changed with member-function granularity. This means that the
+// Window Procedure is now very generic, with its only function to capture the
+// pointer to the C++ Object and then delegate window messages to it.
 */
 
 
@@ -63,16 +70,42 @@
     extern "C" {
 #endif
 
+/* Defines */
+#define     DAEMON_CLI      0   // Start the daemon as a cli-program
+#define     DAEMON_GUI      1   // Start the daemon as a gui-program (/pm)
+
+/* System Includes */
 #include    <conio.h>
+
+/* Module Includes */
 #include    "Master.hpp"
 
+/* Component Includes */
+#include    "Object.hpp"
+#include    "Window.hpp"
+#include    "Dialog.hpp"
+
+/* IDs */
+#include    "usbshlpr.ids"
+
 /* Prototypes */
-//~ int     startd();
-//~ int     stopd();
+MRESULT EXPENTRY    GuiDaemonDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY    GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY    ClientWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY    FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+//! FIXME: Duplicated here because of ugly dependencies
+ULONG   MessageBox(PSZ title, PSZ text);
+ULONG   MessageBox2(PSZ title, PSZ text);
+BOOL    CenterWindow(HWND toCenterTo, HWND thisWindow);
+void    __debug(char* title, char* message, unsigned long flags);
 
 /* Class Declarations */
 class   Daemon;
 class   CliDaemon;
+class   GuiDaemon;
+class   DialogWindow;
+class   FrameWindow;
+class   ClientWindow;
 
 // ----------------------------------------------------------------------------
 // Daemon :: Kinda provides the interface with no real implementation
@@ -105,8 +138,8 @@ class   Daemon {
 // ----------------------------------------------------------------------------
 // CliDaemon :: Provides the implementation for the Daemon
 // ----------------------------------------------------------------------------
-// This class is used when the daemon is started from the command-line,
-// wether it is detached or not.
+// This class is used when the daemon is started without the /gui flag
+// If not started detached, messages will be output to stdout.
 // ----------------------------------------------------------------------------
 class   CliDaemon : public Daemon {
     public:
@@ -121,6 +154,184 @@ class   CliDaemon : public Daemon {
     char    buf[512];               // Work buffer
 };
 
+// ----------------------------------------------------------------------------
+// GuiDaemon :: Provides the implementation for the Daemon
+// ----------------------------------------------------------------------------
+// This class is used when the daemon is started witn the /pm flag.
+// It will present a GUI and do its work on a separate thread.
+// ----------------------------------------------------------------------------
+class   GuiDaemon : public Daemon {
+
+    public:
+
+    /* Public constructor(s) and destructor */
+    GuiDaemon(int argc, char* argv[]);
+    virtual ~GuiDaemon();
+
+    /* Public Methods */
+    virtual int     start();        // Override default implementation
+    virtual int     stop();         // Override default implemenation
+
+    /* Public Attributes */
+    PMASTERMEMPOOL  pmmp;           // Pointer to shared memory
+    HWND            hwndApp;        // Handle for thread1 Application Window
+    HAB             hab;            // Handle for thread1 Anchor Block
+    HMQ             hmq;            // Handle for thread1 Message Queue
+    QMSG            qmsg;           // Message Queue for thread1
+
+    protected:
+    virtual void    clear();                    // Clear instance attributes
+    virtual void    changeProcessTypeToPM();    // Enable PM usage
+    virtual int     enterMessageLoop();         // Returns WM_QUIT.mp1 value
+    virtual int     doAfterPeek();              // Peek and remove after WM_QUIT
+    virtual int     startAsDialog();            // Use WinLoadDlg()
+    virtual int     startAsFrameWindow();       // Use WinCreateWindow()
+
+    private:
+    char    buf[512];               // Work buffer
+};
+
+// ----------------------------------------------------------------------------
+// DialogWindow :: Presents the Application Window (as a dialog)
+// ----------------------------------------------------------------------------
+// For now we'll it a bit quick-n-dirty.
+// Later we'll morph to a proper AplicationWindow class.
+// ----------------------------------------------------------------------------
+class   DialogWindow: public Dialog {
+
+    public:
+
+    /* Public Constuctor(s) and Destructor */
+    DialogWindow();
+    virtual ~DialogWindow();
+
+    /* Public Methods */
+    virtual void    init(GuiDaemon* gd);
+    virtual int     create();
+    virtual int     destroy();
+    virtual void    dump();
+    virtual HWND    addButton(ULONG id, ULONG x, ULONG y, ULONG cx, ULONG cy);
+
+    /* Public Message Handlers */
+    virtual MRESULT wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDestroy(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    /* Public Attributes */
+    PSZ         pszTitle;       // Window Title
+    PFNWP       dlgProc;        // Dialog Procedure
+    GuiDaemon*  gd;             // C++ Daemon Object
+
+    protected:
+
+    /* Protected Methods */
+    virtual void    clear();
+
+    private:
+
+};
+
+// ----------------------------------------------------------------------------
+// FrameWindow :: Presents the Application Window (as a regular window)
+// ----------------------------------------------------------------------------
+// For now we'll it a bit quick-n-dirty.
+// Later we'll morph to a proper AplicationWindow class.
+// ----------------------------------------------------------------------------
+class   FrameWindow : public Window {
+
+    public:
+
+    /* Public Constuctor(s) and Destructor */
+    FrameWindow();
+    virtual ~FrameWindow();
+
+    /* Public Methods */
+    virtual void    init(GuiDaemon* gd);
+    virtual void    regclass();
+    virtual int     create();
+    virtual int     updateFrame(unsigned fids);
+    virtual int     destroy();
+    virtual void    dump();
+    virtual HWND    addButton(ULONG id, ULONG x, ULONG y, ULONG cx, ULONG cy);
+
+    /* Public Message Handlers */
+    virtual MRESULT wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDestroy(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    /* Public Attributes */
+    ULONG       flStyle;            // Style Flags
+    ULONG       flCreateFlags;      // Creation Flags
+    PSZ         pszClassFrame;      // Window Class Name
+    PSZ         pszTitle;           // Window Title
+    ULONG       flStyleClient;      // Style for Client Window
+    PFNWP       wndProc;            // Window Procedure
+    FRAMECDATA  fcd;                // Frame Control Data
+    GuiDaemon*  gd;                 // C++ Daemon Object
+
+    protected:
+
+    /* Protected Methods */
+    virtual void    clear();
+
+    /* Protected Attributes */
+    ClientWindow*   client;
+
+    private:
+
+};
+
+// ----------------------------------------------------------------------------
+// ClientWindow :: Wraps the Application Window
+// ----------------------------------------------------------------------------
+// For now we'll it a bit quick-n-dirty.
+// Later we'll morph to a proper AplicationWindow class.
+// ----------------------------------------------------------------------------
+class   ClientWindow : public Window {
+
+    public:
+
+    /* Public Constuctor(s) and Destructor */
+    ClientWindow();
+    virtual ~ClientWindow();
+
+    /* Public Methods */
+    virtual void    init();
+    virtual void    regclass();
+    virtual int     create();
+    virtual int     destroy();
+    virtual void    dump();
+    virtual HWND    addButton(ULONG id, ULONG x, ULONG y, ULONG cx, ULONG cy);
+
+    /* Public Message Handlers */
+    virtual MRESULT wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDestroy(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    /* Public Attributes */
+    ULONG   flStyle;            // Style Flags
+    PSZ     pszClassClient;     // Window Class Name
+    PSZ     pszTitle;           // Window Title
+    PFNWP   wndProc;            // Window Procedure
+    FrameWindow*    parent;     // C++ Parent (container)
+
+    protected:
+
+    /* Protected Methods */
+    virtual void    clear();
+
+    private:
+
+};
 
 #ifdef      __cplusplus
     }

@@ -1,0 +1,49 @@
+/*****************************************************************************\
+* usbshlpr.ids -- NeoWPS * USB Widget Daemon                                  *
+*                                                                             *
+* Copyright (c) RDP Engineering                                               *
+*                                                                             *
+* Author: Ben Rietbroek <rousseau.os2dev@gmx.com>                             *
+*                                                                             *
+*   This program is free software; you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License as published by      *
+*   the Free Software Foundation; either version 2 of the License, or         *
+*   (at your option) any later version.                                       *
+*                                                                             *
+*   This program is distributed in the hope that it will be useful,           *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+*   GNU General Public License for more details.                              *
+*                                                                             *
+*   You should have received a copy of the GNU General Public License         *
+*   along with this program; if not, write to the Free Software               *
+*   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,                *
+*   MA 02110-1301, USA.                                                       *
+*                                                                             *
+\*****************************************************************************/
+
+/* PMWIN.H from VAC3 does not define the close-button, so we do it here. */
+#ifndef FCF_CLOSEBUTTON
+    #define FCF_CLOSEBUTTON 0x04000000L
+#endif
+
+/* Generic IDs for submenu #1 */
+#define     IDM_SM1         11
+#define     IDM_SM1MI1      111
+#define     IDM_SM1MI2      112
+#define     IDM_SM1MI3      113
+
+/* Generic IDs for submenu #2 */
+#define     IDM_SM2         12
+#define     IDM_SM2MI1      121
+#define     IDM_SM2MI2      122
+#define     IDM_SM2MI3      123
+
+/* Generic IDs for submenu #3 */
+#define     IDM_SM3         13
+#define     IDM_SM3MI1      131
+#define     IDM_SM3MI2      132
+#define     IDM_SM3MI3      133
+
+/* ID for MenuItem Quit */
+#define     IDM_QUIT        999

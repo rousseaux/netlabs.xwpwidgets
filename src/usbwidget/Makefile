@@ -69,9 +69,22 @@ Master.hpp\
 ModuleGlobals.hpp\
 
 #
-# Daemon Modules
+# Daemon Modules -- FIXME: ugly dependencies
 #
-DEAMON_MODULES=
+DAEMON_MODULES2=\
+AllocMem@\
+CList@\
+Debug@\
+ModuleGlobals@\
+ProblemFixer@\
+Testing123@\
+Threads@\
+usbsimpl@\
+
+DAEMON_MODULES=\
+Object@\
+Window@\
+Dialog@\
 
 #
 # Class Modules
@@ -113,9 +126,9 @@ WIDGET_IMPL=\
 usbsimpl@\
 
 #
-# Resource Dependencies
+# Resource Dependencies for the Widget
 #
-RESDEPS=\
+WIDGET_RESDEPS=\
 Dialogs.rc\
 Dialogs.dlg\
 Images.rc\
@@ -123,6 +136,16 @@ Notebooks.rc\
 Notebooks.dlg\
 usbshold.rc\
 usbsimpl.rc\
+
+#
+# Resource Dependencies for the Daemon
+#
+DAEMON_RESDEPS=\
+usbshlpr.ids\
+usbshlpr.rc\
+usbshlpr.dlg\
+usbshlpr.mnu\
+#~ usbshlpr.wnd\
 
 #
 # Libraries to cluster some stuff
@@ -164,13 +187,15 @@ usb-widget:
 # =============================================================================
 #                                                          [ DAEMON EXECUTABLE]
 # =============================================================================
-usbshlpr.exe: $*.obj $(DAEMON_MODULES:@=.obj) $*.def
+usbshlpr.exe: $*.obj $(DAEMON_MODULES:@=.obj) $*.res $*.def
 	@echo.
 	@echo [$@]
 	@echo Reason: $?
 	@echo		## Linking modules ##
-	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.obj $(DAEMON_MODULES:@=.obj) $*.def
+	$(LNK) $(LNKFLAGS) -exe -out:$@ $*.obj $(DAEMON_MODULES:@=.obj) $(EXTLIBS) $*.def
 	@mapsym $*.map > nul
+	@echo		## Embedding Resources ##
+	$(RC) $(RCFLAGS) $*.res $@
 	@exehdr $*.exe > $*.exh
 # 2013-03-18 SHL
 # Suppress incorrect return value of EXEHDR -V (Version 4.01.003 Dec 11 2003)
@@ -193,11 +218,24 @@ usbshlpr.exe: $*.obj $(DAEMON_MODULES:@=.obj) $*.def
 # =============================================================================
 #                                                   [ MAIN MODULE OBJECT FILE ]
 # =============================================================================
-usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(GLOBDEPS)
+usbshlpr.obj: $*.cpp $*.hpp $*.lvl $(DAEMON_MODULES:@=.obj) $(GLOBDEPS)
 	@echo.
 	@echo [$@]
 	@echo Reason: $?
 	$(CC) $(CCFLAGS) -Ge+ -Fo$*.obj $*.cpp
+
+# =============================================================================
+#                                                 [ MAIN MODULE RESOURCE FILE ]
+# =============================================================================
+usbshlpr.res: $(DAEMON_RESDEPS) $(GLOBDEPS)
+	@echo.
+	@echo [$@]
+	@echo Reason: $?
+	@echo ## Compiling Resources ##
+!if "$(BLDENV)"=="vac3"
+	@set INCLUDE=$(RCINCLUDE)
+!endif
+	$(RC) $(RCFLAGS) -r $*.rc $@
 
 # =============================================================================
 #                                                                [ WIDGET DLL ]
@@ -210,7 +248,7 @@ usbshold.dll: $*.obj $(WIDGET_IMPL:@=.obj) $*.res $*.def
 	$(LNK) $(LNKFLAGS) -dll -out:$@ $*.obj $(WIDGET_IMPL:@=.obj) $(WIDGET_MODULES:@=.obj) $(LIBRARIES) $(EXTLIBS) $*.def
 	@mapsym $*.map > nul
 	@echo		## Embedding Resources ##
-	$(RC) $(RCFLAGS) $*.res $*.dll
+	$(RC) $(RCFLAGS) $*.res $@
 	@exehdr $*.DLL > $*.exh
 # 2013-03-18 SHL
 # Suppress incorrect return value of EXEHDR -V (Version 4.01.003 Dec 11 2003)
@@ -246,14 +284,17 @@ usbshold.obj: $*.cpp $*.hpp $*.lvl $(WIDGET_MODULES:@=.obj) $(LIBRARIES) $(GLOBD
 # =============================================================================
 #                                                 [ MAIN MODULE RESOURCE FILE ]
 # =============================================================================
-usbshold.res: $(RESDEPS) $(GLOBDEPS)
+usbshold.res: $(WIDGET_RESDEPS) $(GLOBDEPS)
+	@echo.
+	@echo [$@]
+	@echo Reason: $?
 	@echo ## Compiling Resources ##
 !if "$(BLDENV)"=="vac3"
 	@set INCLUDE=$(RCINCLUDE)
 !endif
-	$(RC) -r Dialogs.rc
-	$(RC) -r Notebooks.rc
-	$(RC) -r $*.rc $@
+	$(RC) $(RCFLAGS) -r Dialogs.rc
+	$(RC) $(RCFLAGS) -r Notebooks.rc
+	$(RC) $(RCFLAGS) -r $*.rc $@
 
 # =============================================================================
 #                              [ CLASS OBJECTS TO BUILD USING INFERENCE RULES ]
@@ -326,6 +367,12 @@ daemon-start: support-daemon
 	@echo.
 	@echo [$@]
 	usbshlpr.exe
+
+# Start Daemon as Gui (first build if needed)
+daemon-start-gui: support-daemon
+	@echo.
+	@echo [$@]
+	usbshlpr.exe /gui
 
 # Stop Daemon
 daemon-stop:

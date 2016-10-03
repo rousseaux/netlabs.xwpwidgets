@@ -9,8 +9,8 @@ W:	Widget
 }
 R:	Run Daemon
 {
-1:	Daemon start
-	nmake -nologo daemon-start
+1:	Daemon start (/gui)
+	nmake -nologo daemon-start-gui
 2:	Daemon stop
 	nmake -nologo daemon-stop
 }
@@ -27,6 +27,13 @@ L:	Git Log (last 5 commits)
 	git log -5
 S:	Git Status
 	git status
+W:	Workdir
+{
+I:	Reset to Index
+	git checkout-index -a -f
+R:	Reset Hard
+	git reset --hard
+}
 -:	-----------------------------
 T:	Touch Bldvars.mif
 	touch Bldvars.mif

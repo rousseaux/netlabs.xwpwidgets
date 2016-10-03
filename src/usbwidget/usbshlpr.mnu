@@ -1,0 +1,55 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+
+#include    "usbshlpr.ids"
+
+/* Menu for GuiDaemon DialogWindow version */
+MENU 1
+BEGIN
+    SUBMENU "Frame",                        IDM_SM1
+    BEGIN
+        MENUITEM "Item1 (111)",             IDM_SM1MI1
+        MENUITEM "Item2 (112)",             IDM_SM1MI2
+        MENUITEM "Item3 (113)",             IDM_SM1MI3
+        MENUITEM SEPARATOR
+        MENUITEM "Quit",                    IDM_QUIT
+    END
+    SUBMENU "View",                         IDM_SM2
+    BEGIN
+        MENUITEM "Item1 (121)",             IDM_SM2MI1
+        MENUITEM "Item2 (122)",             IDM_SM2MI2
+        MENUITEM "Item3 (123)",             IDM_SM2MI3
+    END
+    SUBMENU "Help",                         IDM_SM3
+    BEGIN
+        MENUITEM "Item1 (131)",             IDM_SM3MI1
+        MENUITEM "Item2 (132)",             IDM_SM3MI2
+        MENUITEM "Item3 (133)",             IDM_SM3MI3
+    END
+END
+
+/* Menu for GuiDaemon FrameWindow version */
+MENU 2
+BEGIN
+    SUBMENU "Dialog",                       11
+    BEGIN
+        MENUITEM "Item1 (111)",             IDM_SM1MI1
+        MENUITEM "Item2 (112)",             IDM_SM1MI2
+        MENUITEM "Item3 (113)",             IDM_SM1MI3
+        MENUITEM SEPARATOR
+        MENUITEM "Quit",                    IDM_QUIT
+    END
+    SUBMENU "View",                         IDM_SM2
+    BEGIN
+        MENUITEM "Item1 (121)",             IDM_SM2MI1
+        MENUITEM "Item2 (122)",             IDM_SM2MI2
+        MENUITEM "Item3 (123)",             IDM_SM2MI3
+    END
+    SUBMENU "Help",                         IDM_SM3
+    BEGIN
+        MENUITEM "Item1 (131)",             IDM_SM3MI1
+        MENUITEM "Item2 (132)",             IDM_SM3MI2
+        MENUITEM "Item3 (133)",             IDM_SM3MI3
+    END
+END
