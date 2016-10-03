@@ -35,6 +35,11 @@
 
 #include    "GUIHelpers.hpp"
 
+#include    "dlgids.h"
+#include    "setup.h"
+#include    "shared\center.h"       // Public eCenter interfaces
+#include    "shared\kernel.h"       // Public eCenter interfaces
+
 
 void    GUIHelpers(void) {
 }
@@ -47,6 +52,8 @@ void    GUIHelpers(void) {
 
 // ProblemFixerDialog members were here
 
+extern  PKRNPOSTTHREAD1OBJECTMSG        pkrnPostThread1ObjectMsg;
+
 HBITMAP     hbmUSBThumb;
 HBITMAP     hbmIconInfo;
 HBITMAP     hbmIconWarning;
@@ -56,7 +63,14 @@ HBITMAP     hbmIconWarning;
 ULONG   MessageBox(PSZ title, PSZ text) {
     ULONG   ulresp = -1;
 
-    ulresp = WinMessageBox(HWND_DESKTOP, NULL, text, title, NULL, MB_OK);
+    ulresp = WinMessageBox(
+        HWND_DESKTOP,
+        NULL,
+        text,
+        title,
+        NULL,
+        MB_OK
+    );
     return ulresp;
 }
 
@@ -72,15 +86,15 @@ ULONG   MessageBox2(PSZ title, PSZ text) {
     mb2info.flStyle = MB_NOICON|MB_NONMODAL;
     memcpy (&mb2info.mb2d, &mb2d, sizeof(MB2D));
 
+    ulresp = WinMessageBox2(
+        HWND_DESKTOP,
+        NULL,
+        text,
+        title,
+        NULL,
+        &mb2info
+    );
 
-    ulresp =    WinMessageBox2(
-                    HWND_DESKTOP,
-                    NULL,
-                    text,
-                    title,
-                    NULL,
-                    &mb2info
-                );
     return ulresp;
 }
 
@@ -309,4 +323,22 @@ BOOL    OpenDriveView(char drive) {
     return brc;
 
 
+}
+
+/*
+// To ensure message handling on thread 1 and also to avoid ID clashes,
+// XWorkplace handles messages using a separate ObjectWindow. This function
+// post a message to that ObjectWindow which results in displaying the
+// "Restart Desktop" dialog.
+*/
+BOOL    RestartWps() {
+    BOOL brc = FALSE;
+    brc =
+    //! FIXME: Dependency on usbsimpl !
+    pkrnPostThread1ObjectMsg(
+        T1M_INITIATEXSHUTDOWN,
+        (MPARAM) ID_CRMI_RESTARTWPS,
+        NULL
+    );
+    return brc;
 }

@@ -72,6 +72,7 @@ extern      HBITMAP     hbmUSBThumb;
 extern      HBITMAP     hbmIconInfo;
 extern      HBITMAP     hbmIconWarning;
 
+
 /* Prototypes */
 void    GUIHelpers(void);
 
@@ -80,8 +81,7 @@ ULONG   MessageBox2(PSZ title, PSZ text);               // Simple wrapper around
 void    LoadPictures(void);
 BOOL    CenterWindow(HWND toCenterTo, HWND thisWindow); // Grabed from PPSERIAL.CPP, replace with XWP-version later
 BOOL    OpenDriveView(char drive);
-
-
+BOOL    RestartWps();
 
 
 /*

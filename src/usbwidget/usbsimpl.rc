@@ -34,6 +34,10 @@
 #include    "Dialogids.h"
 #include    <os2.h>
 
+rcinclude   "dialogs.rc"
+rcinclude   "notebooks.rc"
+rcinclude   "images.rc"
+
 /* When UNIX-paths are accepted these are preferred */
 ICON    ID_ICO_USB_WIDGET   PRELOAD "icons/usb_01.ico"
 
@@ -56,6 +60,7 @@ BEGIN
 #if     DEBUG
     SUBMENU "Debug", ID_SUBMENU_DEBUG
     BEGIN
+        MENUITEM "Restart WPS",                 ID_SUBMENU_RESTART_WPS
         MENUITEM "Widget Settings",             ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK
         MENUITEM "Debug Dialog",                ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG
         MENUITEM SEPARATOR
@@ -88,8 +93,3 @@ BEGIN
 
 END
 
-
-
-rcinclude   "dialogs.rc"
-rcinclude   "notebooks.rc"
-rcinclude   "images.rc"

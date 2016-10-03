@@ -36,6 +36,19 @@
 *
 */
 
+/*
+// Phantom Drives
+// --------------
+// When an usb-device with a drive mounted on it is removed without properly
+// ejecting it, the drive does not disappear. Ejecting the drive will make it
+// disappear, but only until the removable media are rescanned, after which it
+// will reappear. Such a drive is called a *phantom* drive. Because the backing
+// medium is missing, such a drive is of course not accessible. However,
+// reinserting the _exact_ same usb-device will make the drive functional
+// again. But, insering a _different_ usb-device will most probably cause a
+// crash in LVM. The widget is capable of recovering phantom drives when the
+// correct usb-device is interted again.
+*/
 
 #ifndef     __USBSIMPL_HPP__
 #define     __USBSIMPL_HPP__
@@ -50,7 +63,9 @@
 //~ #include  "ModuleGlobals.hpp"
 //~ #include    "USBHelpers.hpp"
 
+#include    "setup.h"       // Public eCenter interfaces
 #include    "shared\center.h"       // Public eCenter interfaces
+#include    "shared\kernel.h"       // Public eCenter interfaces
 
 
 //#include  "setup.h"

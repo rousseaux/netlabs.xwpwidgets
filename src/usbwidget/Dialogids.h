@@ -89,7 +89,8 @@
 #define     ID_SUBMENU_DEBUG_SHOW_WINDOWS       283
 #define     ID_SUBMENU_DEBUG_HIDE_WINDOWS       284
 
-#define     ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK    291
+#define     ID_SUBMENU_RESTART_WPS                      291
+#define     ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK    295
 #define     ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG          299
 
 
@@ -223,7 +224,7 @@
 #define     ID_ACTION_15                        12315
 #define     ID_ACTION_16                        12316
 #define     ID_ACTION_17                        12317   // QueryDrive (old StartFireFoxAsSession)
-#define     ID_ACTION_18                        12318   // PutgeDrive (old StartFireFoxAsProgram)
+#define     ID_ACTION_18                        12318   // PurgeDrive (old StartFireFoxAsProgram)
 #define     ID_ACTION_19                        12319   // PhysOpen
 #define     ID_ACTION_20                        12320   // PhysClose
 #define     ID_ACTION_21                        12321   // DasdOpen
@@ -235,8 +236,6 @@
 
 #define     ID_ACTION_27                        12327   // DfsVOS2
 #define     ID_ACTION_28                        12328   // FixDialog
-#define     ID_ACTION_29                        12329
-
 
 
 #define     ID_CLEAR                            12330

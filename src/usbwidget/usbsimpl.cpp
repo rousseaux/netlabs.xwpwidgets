@@ -36,6 +36,20 @@
 *
 */
 
+/*
+// Phantom Drives
+// --------------
+// When an usb-device with a drive mounted on it is removed without properly
+// ejecting it, the drive does not disappear. Ejecting the drive will make it
+// disappear, but only until the removable media are rescanned, after which it
+// will reappear. Such a drive is called a *phantom* drive. Because the backing
+// medium is missing, such a drive is of course not accessible. However,
+// reinserting the _exact_ same usb-device will make the drive functional
+// again. But, insering a _different_ usb-device will most probably cause a
+// crash in LVM. The widget is capable of recovering phantom drives when the
+// correct usb-device is interted again.
+*/
+
 /**
  * USB Widget - Taken from miniwdgt.c
  *
@@ -320,6 +334,8 @@ PXSTRCAT                        pxstrcat                        = NULL;
 PXSTRCLEAR                      pxstrClear                      = NULL;
 PXSTRINIT                       pxstrInit                       = NULL;
 
+PKRNPOSTTHREAD1OBJECTMSG        pkrnPostThread1ObjectMsg        = NULL;
+
 
 //!: --------------------------------------------------- [ Imports to resolve ]
 RESOLVEFUNCTION G_aImports[] = {
@@ -343,7 +359,8 @@ RESOLVEFUNCTION G_aImports[] = {
     "winhSetWindowFont",            (PFN*)&pwinhSetWindowFont,
     "xstrcat",                      (PFN*)&pxstrcat,
     "xstrClear",                    (PFN*)&pxstrClear,
-    "xstrInit",                     (PFN*)&pxstrInit
+    "xstrInit",                     (PFN*)&pxstrInit,
+    "krnPostThread1ObjectMsg",      (PFN*)&pkrnPostThread1ObjectMsg
 };
 
 
@@ -1832,6 +1849,27 @@ MRESULT MwgtCreate(HWND hwnd, PXCENTERWIDGET pWidget)
 
 
 
+	//MessageBox("MwgtCreate","START");
+
+#if     DEBUG
+
+    /* Create Debug Dialog */
+    CreateDebugDialog();
+
+    /* Show it */
+    ShowDebugDialog();
+
+    __debug("WidgetInitModule", "START", DBG_LBOX);
+
+    //~ __debug("WidgetInitModule", "  >> Create Debug Dialog", DBG_AUX);
+    //~ __debug("WidgetInitModule", "  >> Position Debug Dialog", DBG_AUX);
+
+    //~ MessageBox("Message", "Debug Mode !");
+#else
+    hdlgDebugDialog = NULL;
+    //~ MessageBox("No Debug !", "Message");
+#endif
+
 
     /*
     g_myUSBWidget->startHandlingEvents();
@@ -2871,13 +2909,13 @@ VOID MwgtDestroy(PXCENTERWIDGET pWidget)
     __debug(NULL, "About to destroy Debug Dialog", DBG_LBOX);
 
     // Returns immediately ??
-    //~ if (hdlgDebugDialog)
-    WinProcessDlg(hdlgDebugDialog);
-    WinProcessDlg(hdlgDebugDialog);
-    WinProcessDlg(hdlgDebugDialog);
+    //~ WinProcessDlg(hdlgDebugDialog);
+    //~ WinProcessDlg(hdlgDebugDialog);
     __debug(NULL, "After WinProcessDlg", DBG_LBOX);
 
-    //~ DestroyDebugDialog();
+    if (hdlgDebugDialog) WinProcessDlg(hdlgDebugDialog);
+
+    DestroyDebugDialog();
 }
 
 
@@ -3070,6 +3108,13 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
                     mrc = 0;
                     HideWindows();
                     return 0;
+                    break;
+                }
+
+                //! Restart WPS
+                case ID_SUBMENU_RESTART_WPS: {
+                    BOOL    brc = FALSE;
+                    brc = RestartWps();
                     break;
                 }
 
@@ -4418,24 +4463,8 @@ ULONG EXPENTRY WgtInitModule(HAB hab,                            // XCenter's an
     //~ MessageBox("usbimpl", "WgtInitModule");
 
 
-#if     DEBUG
+    // Old CreateDebugDialog location
 
-    /* Create Debug Dialog */
-    CreateDebugDialog();
-
-    /* Show it */
-    ShowDebugDialog();
-
-    __debug("WidgetInitModule", "START", DBG_LBOX);
-
-    //~ __debug("WidgetInitModule", "  >> Create Debug Dialog", DBG_AUX);
-    //~ __debug("WidgetInitModule", "  >> Position Debug Dialog", DBG_AUX);
-
-    //~ MessageBox("Message", "Debug Mode !");
-#else
-    hdlgDebugDialog = NULL;
-    //~ MessageBox("No Debug !", "Message");
-#endif
 
     //!: Start Beep
     //~ DosBeep(7000, 20);
@@ -4864,7 +4893,7 @@ VOID EXPENTRY WgtUnInitModule()
 
     //~ MessageBox("usbimpl", "WgtUnInitModule");
 
-    ShowDebugDialog();
+    //~ ShowDebugDialog();
 
     __debug("WidgetUninitModule", "START", DBG_LBOX);
 
@@ -4877,15 +4906,15 @@ VOID EXPENTRY WgtUnInitModule()
 
 #if     DEBUG
     /* Show it */
-    ulReply = WinProcessDlg(hdlgDebugDialog);
-    ulReply = WinProcessDlg(hdlgDebugDialog);
-    ulReply = WinProcessDlg(hdlgDebugDialog);
+    //~ ulReply = WinProcessDlg(hdlgDebugDialog);
+    //~ ulReply = WinProcessDlg(hdlgDebugDialog);
+    //~ ulReply = WinProcessDlg(hdlgDebugDialog);
 
     /* Where are we ? */
-    sprintf(buf, "masterpool:%08lX, ulrc:%d, ulrc2:%d, ulReply:%d", masterpool, ulrc, ulrc2, ulReply);
-    __debug(NULL, buf, DBG_LBOX);
-    __debug(NULL, "WgtUnInitModule", DBG_LBOX);
-    __debug(NULL, "Processed UnInit", DBG_LBOX);
+    //~ sprintf(buf, "masterpool:%08lX, ulrc:%d, ulrc2:%d, ulReply:%d", masterpool, ulrc, ulrc2, ulReply);
+    //~ __debug(NULL, buf, DBG_LBOX);
+    //~ __debug(NULL, "WgtUnInitModule", DBG_LBOX);
+    //~ __debug(NULL, "Processed UnInit", DBG_LBOX);
 
 #endif
 
@@ -4907,7 +4936,8 @@ VOID EXPENTRY WgtUnInitModule()
 #if     DEBUG
     //~: Send WM_QUIT to debug dialog
     /// was post
-    WinSendMsg(hdlgDebugDialog, WM_QUIT, NULL, NULL);
+    //! Oops, no check on NULL handle
+    if (hdlgDebugDialog) WinSendMsg(hdlgDebugDialog, WM_QUIT, NULL, NULL);
 
     /*
     // Redirection naar doshSleep niet gevonden.
@@ -4916,7 +4946,7 @@ VOID EXPENTRY WgtUnInitModule()
     // Dus maar een eigen wrapper gemaakt.
     // Zit in APIHelpers.cpv.
     */
-    MyDosSleep(2000);
+    //~ MyDosSleep(2000);
     //~ DosBlock(10000);
 
     __debug("WidgetUninitModule", "END", DBG_LBOX);
@@ -4924,7 +4954,7 @@ VOID EXPENTRY WgtUnInitModule()
     if (hevNeverPosted)
         DosCloseEventSem(hevNeverPosted);
 
-    DestroyDebugDialog();
+    //~ DestroyDebugDialog();
 
 #endif  // DEBUG
 
@@ -4965,6 +4995,8 @@ VOID EXPENTRY WgtQueryVersion(PULONG pulMajor,
     ;
 
 
+    //! Normal MessageBox definitely breaks messaging !
+    //~ MessageBox("usbimpl", "WgtQueryVersion");
     //~ MessageBox2("usbimpl", "WgtQueryVersion");
 
 
