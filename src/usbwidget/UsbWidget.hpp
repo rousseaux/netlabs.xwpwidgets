@@ -39,11 +39,23 @@ class   UsbWidget;
 //~ #include    "Master.hpp"
 
 #include    "Object.hpp"
+#include    "Widget.hpp"
 
-class   UsbWidget : public Object {
+class   UsbWidget : public Widget {
+
     public:
+
+    /* Public constructor(s) and destructor */
     UsbWidget();
     virtual ~UsbWidget();
+
+    /* Public Methods */
+    virtual void    test123();
+
+    protected:
+
+    private:
+
 };
 
 #ifdef      __cplusplus

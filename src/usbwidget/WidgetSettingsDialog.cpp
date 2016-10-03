@@ -185,7 +185,7 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
     CHAR    buf[512] = {0};
 
     /*
-    // Get pointer to Class Instance.
+    // Get pointer to C++ Object.
     // Can be NULL if WM_INITDLG has not been invoked yet.
     // Using this pointer, messages can be deferred to member-functions.
     */
@@ -197,7 +197,7 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
         /* Initialize Dialog */
         case WM_INITDLG: {
             //~ MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
-            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            /* Get pointer to C++ Object from the CreateParams passed to WinLoadDlg() */
             pWsd = ((WidgetSettingsDialog*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
             /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
             brc =   WinSetWindowPtr(
@@ -210,7 +210,7 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
             break;
         }
 
-        /* Defer Command Messages to Class Instance */
+        /* Defer Command Messages to C++ Object */
         case WM_COMMAND: {
             mresReply = pWsd ? pWsd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DlgProcWidgetSettingsDialog","pWsd is NULL !!");
             break;

@@ -145,7 +145,7 @@ usbshlpr.ids\
 usbshlpr.rc\
 usbshlpr.dlg\
 usbshlpr.mnu\
-#~ usbshlpr.wnd\
+usbshlpr.wnd\
 
 #
 # Libraries to cluster some stuff

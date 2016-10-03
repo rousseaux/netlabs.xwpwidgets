@@ -33,17 +33,30 @@
 
 
 Window::Window() {
-    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    __ctorb();
     this->debugMe();
     this->hwndParent = NULL;
     this->hwndOwner = NULL;
     this->hwndSelf = NULL;
     this->wci.cb = sizeof(WND_CLASS_INSTANCE);
     this->wci.pvClassInstance = this;
+    memset(&this->wcs, 0, sizeof(CREATESTRUCT));
+    __ctore();
 }
 
 Window::~Window() {
+    __dtorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    __dtore();
+}
+
+void    Window::wrap(ulong hwnd) {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    if (hwnd && !this->hwndSelf) {
+        this->hwndSelf = hwnd;
+        this->hwndParent = WinQueryWindow(hwnd, QW_PARENT);
+        this->hwndParent = WinQueryWindow(hwnd, QW_OWNER);
+    }
 }
 
 int     Window::show() {

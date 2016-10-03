@@ -186,14 +186,14 @@ void    _Optlink WmQuitMonitorThread(void* p) {
 
     while (wmquit_monitor_thread_working) {
 
-        __debug("WmQuitMonitorThread", "WinGetMsg -- waiting", DBG_AUX);
+        __debug("WmQuitMonitorThread", "WinGetMsg -- waiting", DBG_MLE2 | DBG_AUX);
         //~ brc = WinGetMsg(hab_thread, &qmsg_thread, NULL, 0, 0);
         brc = WinPeekMsg(hab_thread, &qmsg_thread, NULL, 0, 0, PM_NOREMOVE);
         brc2 = WinPeekMsg(hab_thread, &qmsg_thread2, NULL, 0, 0, PM_NOREMOVE);
         brc3 = WinPeekMsg(hab_thread, &qmsg_thread3, NULL, 0, 0, PM_NOREMOVE);
 
         sprintf(buf, "brc:%d, brc2:%d, brc3:%d", brc, brc2, brc3);
-        __debug("WmQuitMonitorThread", buf, DBG_AUX);
+        __debug("WmQuitMonitorThread", buf, DBG_MLE2 | DBG_AUX);
         //~ __debug("WmQuitMonitorThread", "WinGetMsg -- got message", BND_MLE | DBG_AUX);
 
 
@@ -208,7 +208,7 @@ void    _Optlink WmQuitMonitorThread(void* p) {
 
     }
 
-    __debug("WmQuitMonitorThread", "**ENDING**", DBG_AUX);
+    __debug("WmQuitMonitorThread", "**ENDING**", DBG_MLE | DBG_AUX);
 
     /* Destroy the message-queue */
     brc = WinDestroyMsgQueue(hmq_thread);
@@ -1258,16 +1258,16 @@ void    StartThreads() {
          * This solves the EStyler ShutDown.
          */
 
-        wmquit_monitor_thread_working = TRUE;
-        tid_wmquit_monitor = _beginthread(
-            WmQuitMonitorThread,
-            NULL,
-            10000,
-            NULL
-        );
-        ulrc = DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 10, tid_wmquit_monitor);
-        sprintf(buf, "ulrc: %d", ulrc);
-        __debug("DosSetPriority(WmQuitMonitor-thread)[TC]", buf, DBG_MLE | DBG_AUX);
+        //~ wmquit_monitor_thread_working = TRUE;
+        //~ tid_wmquit_monitor = _beginthread(
+            //~ WmQuitMonitorThread,
+            //~ NULL,
+            //~ 10000,
+            //~ NULL
+        //~ );
+        //~ ulrc = DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 10, tid_wmquit_monitor);
+        //~ sprintf(buf, "ulrc: %d", ulrc);
+        //~ __debug("DosSetPriority(WmQuitMonitor-thread)[TC]", buf, DBG_MLE | DBG_AUX);
 
         //!: ----------------------------------------- [ Start LVM-thread ]
         /**

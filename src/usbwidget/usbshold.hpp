@@ -49,6 +49,12 @@ extern "C" {
 
 /* Prototypes */
 
+int     _CRT_init(void);
+void    __ctordtorInit(void);
+void    __ctordtorTerm(void);
+int     _CRT_term(void);
+unsigned long _System   _DLL_InitTerm(unsigned long hModule, unsigned long ulFlag);
+
 
 /* Module Initialization */
 ULONG EXPENTRY  UsbWgtInitModule(   HAB hab,

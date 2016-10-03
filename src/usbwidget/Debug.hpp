@@ -37,6 +37,7 @@
 
 #include    "ModuleGlobals.hpp"
 
+
 /* Declare external so we can show the BLDLEVEL in the Debug Dialog */
 extern  char    bldlevel[];
 

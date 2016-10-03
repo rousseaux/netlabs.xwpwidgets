@@ -206,7 +206,7 @@ MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp
     CHAR    buf[512] = {0};
 
     /*
-    // Get pointer to Class Instance.
+    // Get pointer to C++ Object.
     // Can be NULL if WM_INITDLG has not been invoked yet.
     // Using this pointer, messages can be deferred to member-functions.
     */
@@ -217,7 +217,7 @@ MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp
 
         /* Initialize Dialog */
         case WM_INITDLG: {
-            /* Get pointer to Class Instance from the CreateParams passed to WinLoadDlg() */
+            /* Get pointer to C++ Object from the CreateParams passed to WinLoadDlg() */
             pNbkPg = ((NotebookPage*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
             /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
             brc =   WinSetWindowPtr(
@@ -230,7 +230,7 @@ MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp
             break;
         }
 
-        /* Defer Command Messages to Class Instance */
+        /* Defer Command Messages to C++ Object */
         case WM_COMMAND: {
             mresReply = pNbkPg ? pNbkPg->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("NotebookPageHandler","pNbkPg is NULL !!");
             break;

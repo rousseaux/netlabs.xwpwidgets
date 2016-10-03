@@ -43,13 +43,13 @@ class   Window;
 // According to the documentation, CtlData for Windows and CreateParams for
 // Dialogs needs to point to a structure with the 1st USHORT holding its size.
 // This structure is used by WM_INIT or WM_INITDLG to associate the
-// Class Instance to the Window or Dialog Procedure. This makes it possible to
+// C++ Object to the Window or Dialog Procedure. This makes it possible to
 // defer messages to instance members and allow for overrides with member
 // granularity, instead of subclassing the whole Dialog or Window Procedure.
 */
 typedef struct {
     USHORT  cb;                 // Size of this structure
-    PVOID   pvClassInstance;    // Pointer to Class Instance
+    PVOID   pvClassInstance;    // Pointer to C++ Object
 } WND_CLASS_INSTANCE;
 
 class   Window : public Object {
@@ -57,6 +57,7 @@ class   Window : public Object {
     public:
     Window();
     virtual ~Window();
+    virtual void    wrap(ulong hwnd);
     virtual int     show();
     virtual void    center();
     virtual void    centerToDesktop();
@@ -77,6 +78,7 @@ class   Window : public Object {
     HWND    hwndParent;         // public for now
     HWND    hwndOwner;          // public for now
     HWND    hwndSelf;           // public for now
+    CREATESTRUCT        wcs;    // public for now
     WND_CLASS_INSTANCE  wci;    // public for now
 
     protected:

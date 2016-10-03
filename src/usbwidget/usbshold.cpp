@@ -35,6 +35,10 @@
 *
 */
 
+#include    "GUIHelpers.hpp"
+
+#include    "UsbWidget.hpp"
+
 /* Implementation Header */
 #include    "usbsimpl.hpp"
 
@@ -43,6 +47,46 @@
 
 /* BLDLEVEL Information */
 #include    "usbshold.lvl"
+
+
+Widget*     ThisWidget  = NULL;
+
+
+
+
+unsigned long _System   _DLL_InitTerm(unsigned long hModule, unsigned long ulFlag) {
+
+
+    switch (ulFlag) {
+        case 0: {
+            int     rc = -88;
+            char    buf[256];
+            rc = _CRT_init();
+            __ctordtorInit();
+            sprintf(buf, "ATTACH: _CRT_init: %d", rc);
+            //! Normal MessageBox definitely breaks messaging !
+            //~ MessageBox("DLL_INIT", buf);
+            return 1;
+            break;
+        }
+        case 1: {
+            //~ MessageBox("DLL_INIT", "DETACH");
+            //~ MessageBox2("DLL_INIT", "DETACH");
+            __ctordtorTerm();
+            _CRT_term();
+            return 1;
+            break;
+        }
+        default: {
+            //~ MessageBox2("DLL_INIT", "**UNKNOWN**");
+            return 0;
+            break;
+        }
+    }
+
+    return 0;
+}
+
 
 /*****************************************************************************\
  *
@@ -58,6 +102,15 @@ ULONG EXPENTRY  UsbWgtInitModule(   HAB hab,                // XCenter's anchor 
                                     HMODULE hmodXFLDR,      // XFLDR.DLL module handle
                                     PXCENTERWIDGETCLASS *ppaClasses,
                                     PSZ pszErrorMsg ){
+
+    g_use_new_implementation = true;
+
+    //~ if (g_use_new_implementation) {
+        //~ ThisWidget = new UsbWidget();
+        //~ ThisWidget->test123();
+        //~ delete ThisWidget;
+        //~ ThisWidget = NULL;
+    //~ }
 
     /* Call the function that does the actual module initialization */
     return  WgtInitModule(

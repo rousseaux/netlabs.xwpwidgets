@@ -1,0 +1,42 @@
+#ifndef OS2_INCLUDED
+   #include <os2.h>
+#endif
+
+//~ WINDOWTEMPLATE 1 LOADONCALL MOVEABLE DISCARDABLE
+//~ BEGIN
+    //~ FRAME  "NeoWPS * USB Widget Daemon Window", 1, 82, 59, 320, 200,
+            //~ FCF_SIZEBORDER | FCF_SYSMENU | FCF_TITLEBAR | FCF_STANDARD | NOT FCF_MENU | NOT FCF_ICON | NOT FCF_ACCELTABLE
+            //~ PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    //~ BEGIN
+    //~ CTEXT           "NeoWPS * USB Widget Daemon", 999, 66, 80, 100, 8
+                        //~ PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
+                        //~ PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000AAL
+                        //~ PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans.Bold"
+        //~ PUSHBUTTON      "test123", 123, 50, 50, 50, 12
+                        //~ PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+    //~ END
+//~ END
+
+
+WINDOWTEMPLATE 1 LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    FRAME  "FrameWindow from Resource", 1, 0, 0, 320, 200, 0, FCF_STANDARD | NOT FCF_ICON | NOT FCF_ACCELTABLE
+    BEGIN
+        WINDOW "", FID_CLIENT, 0, 0, 320, 200, "MyWindow", WS_VISIBLE
+        BEGIN
+            PUSHBUTTON      "test123", 123, 50, 50, 50, 12
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            //~ CTLDATA MENU
+            //~ BEGIN
+                //~ MENUITEM "Item #1", 1
+                //~ MENUITEM "Item #2", 2
+                //~ MENUITEM "Item #3", 3
+            //~ END
+        END
+    END
+    //~ CTEXT           "NeoWPS * USB Widget Daemon", 999, 66, 80, 100, 8
+                    //~ PRESPARAMS PP_BACKGROUNDCOLORINDEX, 0xFFFFFFF3L
+                    //~ PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000AAL
+                    //~ PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans.Bold"
+END
+

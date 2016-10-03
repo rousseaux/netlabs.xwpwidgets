@@ -56,29 +56,39 @@
 /// Requires further investigation -- low prio.
 /// The 'WinMessageBox' (MessageBox) in 'WgtQueryVersion' is caused by the
 /// modality pf the MessageBox.
+
+/* Create the DebugDialog if it does not already exists */
 void    CreateDebugDialog() {
 
-    /*
-    ** Create the Debug Dialog if it does not exist yet.
-    ** It could exist because it is currently destroyed in Module Uninit.
-    ** So a widget delete will not destroy it.
-    */
     if (!hdlgDebugDialog) {
         hdlgDebugDialog = WinLoadDlg(
             HWND_DESKTOP,           // Parent
-            HWND_DESKTOP,           // Owner
+            NULL,                   // Owner
             DebugDialogHandler,     // Dialog Procedure
             hmodMe,                 // Module
             ID_DEBUG_DIALOG,        // Dialog ID
             NULL                    // Create Parameters
         );
     }
+
 }
 
+/* Show the DebugDialog if it exists */
 void    ShowDebugDialog() {
-    if (hdlgDebugDialog) WinSetWindowPos(hdlgDebugDialog, HWND_TOP, 0, 0, 0, 0, SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE);
+    if (hdlgDebugDialog) {
+        WinSetWindowPos(
+            hdlgDebugDialog,
+            HWND_TOP,
+            0,
+            0,
+            0,
+            0,
+            SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE
+        );
+    }
 }
 
+/* Destroy the DebugDialog if it exists */
 void    DestroyDebugDialog() {
     if (hdlgDebugDialog) {
         WinDestroyWindow(hdlgDebugDialog);
@@ -141,7 +151,7 @@ void    __debug(char* title, char* message, unsigned long flags) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, buf, "Debug Popup", NULL, MB_OK);
         }
 
-        /* Only when DebugDialog is created */
+        /* Only if DebugDialog is created */
         if (hdlgDebugDialog) {
 
             /* Output to ListBox of Debug Dialog */
@@ -270,7 +280,6 @@ MRESULT EXPENTRY DebugDialogHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
         // like adding controls, to a second stage.
         */
         case WM_INITDLG: {                                      // 0x003b
-    /* Show BLDLEVEL info in Debug Dialog */
             WinSendMsg(hwndListBox, LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) bldlevel);
             WinSendMsg(hwndListBox, LM_INSERTITEM, (MPARAM) LIT_END, (MPARAM) "WM_INITDLG START");
             hdlgDebugDialog = hwnd;

@@ -33,18 +33,22 @@
 
 
 Dialog::Dialog() {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __ctore();
 }
 
 Dialog::~Dialog() {
+    __dtorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __dtore();
 }
 
 /* Default WM_COMMAND implementation for Dialog */
 MRESULT Dialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    //~ __mthd();
     MRESULT mresReply = 0;
     MessageBox("Dialog","wmCommand");
     return (MRESULT) mresReply;
