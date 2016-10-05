@@ -4,7 +4,9 @@
 
 #include    "usbshlpr.ids"
 
-/* Menu for GuiDaemon DialogWindow version */
+//! TODO: Unify Menus
+
+/* Menu for GuiDaemon FrameWindow version */
 MENU 1
 BEGIN
     SUBMENU "Frame",                        IDM_SM1
@@ -20,6 +22,8 @@ BEGIN
         MENUITEM "Item1 (121)",             IDM_SM2MI1
         MENUITEM "Item2 (122)",             IDM_SM2MI2
         MENUITEM "Item3 (123)",             IDM_SM2MI3
+        MENUITEM SEPARATOR
+        MENUITEM "New Debug Dialog",        IDM_SM2NEWDD
     END
     SUBMENU "Help",                         IDM_SM3
     BEGIN
@@ -29,7 +33,7 @@ BEGIN
     END
 END
 
-/* Menu for GuiDaemon FrameWindow version */
+/* Menu for GuiDaemon DialogWindow version */
 MENU 2
 BEGIN
     SUBMENU "Dialog",                       11
@@ -45,6 +49,8 @@ BEGIN
         MENUITEM "Item1 (121)",             IDM_SM2MI1
         MENUITEM "Item2 (122)",             IDM_SM2MI2
         MENUITEM "Item3 (123)",             IDM_SM2MI3
+        MENUITEM SEPARATOR
+        MENUITEM "New Debug Dialog",        IDM_SM2NEWDD
     END
     SUBMENU "Help",                         IDM_SM3
     BEGIN

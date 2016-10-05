@@ -62,15 +62,14 @@ void    CreateDebugDialog() {
 
     if (!hdlgDebugDialog) {
         hdlgDebugDialog = WinLoadDlg(
-            HWND_DESKTOP,           // Parent
-            NULL,                   // Owner
-            DebugDialogHandler,     // Dialog Procedure
-            hmodMe,                 // Module
-            ID_DEBUG_DIALOG,        // Dialog ID
-            NULL                    // Create Parameters
+            HWND_DESKTOP,                       // Parent
+            NULL,                               // Owner
+            DebugDialogHandler,                 // Dialog Procedure
+            hmodMe,                             // Module
+            ID_DEBUG_DIALOG_NOTEBOOK_PAGE_1,    // Dialog ID
+            NULL                                // Create Parameters
         );
     }
-
 }
 
 /* Show the DebugDialog if it exists */

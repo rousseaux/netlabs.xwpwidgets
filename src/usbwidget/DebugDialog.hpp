@@ -38,26 +38,44 @@ class   debugDialog;
 
 #include    "Master.hpp"
 
+#include    "GUIHelpers.hpp"
+
 #include    "Dialog.hpp"
+#include    "Notebook.hpp"
+#include    "NotebookPage.hpp"
+
+/* Prototypes */
+MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 class   DebugDialog : public Dialog {
 
-    private:
-
     public:
+
+    /* Public Constructor(s) and Destructor */
     DebugDialog();
     virtual ~DebugDialog();
 
-    virtual ulong   create();
-    virtual ulong   destroy();
-    virtual ulong   redraw();
-    virtual ulong   msgInitDialog(ulong mp1, ulong mp2);
-    virtual ulong   msgCommand(ulong mp1, ulong mp2);
-    virtual ulong   commandDrawButton();
-    virtual ulong   commandDestroyButton();
+    /* Public Methods */
+    virtual int create(void);
+    virtual int process(void);
+    virtual int destroy(void);
+    virtual int test123(void);
 
-    //~ static ulong EXPENTRY DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
-    static ulong DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2);
+    /* Public Message Handlers */
+    virtual MRESULT wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDestroy(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+    virtual MRESULT wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    /* Public Attributes */
+    Notebook*   notebook;
+
+    protected:
+
+    private:
+
 };
 
 #ifdef      __cplusplus

@@ -28,6 +28,11 @@
  * uses the .dlg extension. This file is rcincluded by the main .rc file.
  */
 
+/* PMWIN.H from VAC3 does not define the close-button, so we do it here. */
+#ifndef FCF_CLOSEBUTTON
+    #define FCF_CLOSEBUTTON 0x04000000L
+#endif
+
 #include    "Bldvars.h"
 #include    "Dialogids.h"
 rcinclude   "Dialogs.dlg"

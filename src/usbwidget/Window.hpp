@@ -42,7 +42,7 @@ class   Window;
 /*
 // According to the documentation, CtlData for Windows and CreateParams for
 // Dialogs needs to point to a structure with the 1st USHORT holding its size.
-// This structure is used by WM_INIT or WM_INITDLG to associate the
+// This structure is used by WM_CREATE or WM_INITDLG to associate the
 // C++ Object to the Window or Dialog Procedure. This makes it possible to
 // defer messages to instance members and allow for overrides with member
 // granularity, instead of subclassing the whole Dialog or Window Procedure.

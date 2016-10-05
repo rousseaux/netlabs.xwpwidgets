@@ -95,6 +95,7 @@ extern "C" {
  */
 
 
+#include    "DebugDialog.hpp"
 #include    "WidgetSettingsDialog.hpp"
 
 
@@ -3144,6 +3145,31 @@ MRESULT EXPENTRY fnwpSampleWidget(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 
                 //! Debug Dialog
                 case ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG: {
+                    BOOL    brc = FALSE;
+                    ULONG   ulReply = NULL;
+                    HWND    hwndDebugDialog = NULL;
+                    DebugDialog* dbd = NULL;
+
+                    /* Test new DebugDialog */
+                    dbd = new DebugDialog;        // Debug Dialog
+                    //~ dbd = new DebugDialogEx;      // Extended Dialog to test overrides
+                    if (dbd) {
+                        dbd->create();
+                        dbd->center();
+                        dbd->show();
+                        dbd->process();
+                        dbd->hide();
+                        dbd->destroy();
+                        delete dbd;
+                        dbd = NULL;
+                    }
+
+                    mrc = 0;
+                    break;
+                }
+
+                //! Debug Dialog Old
+                case ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG_OLD: {
                     BOOL    brc = FALSE;
                     ULONG   ulReply = NULL;
                     HWND    hwndDialog = NULL;

@@ -63,6 +63,7 @@ BEGIN
         MENUITEM "Restart WPS",                 ID_SUBMENU_RESTART_WPS
         MENUITEM "Widget Settings",             ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK
         MENUITEM "Debug Dialog",                ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG
+        MENUITEM "Debug Dialog (Old)",          ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG_OLD
         MENUITEM SEPARATOR
         MENUITEM "Connect Pipe",                ID_SUBMENU_DEBUG_CONNECT_PIPE
         MENUITEM "DisConnect Pipe",             ID_SUBMENU_DEBUG_DISCONNECT_PIPE

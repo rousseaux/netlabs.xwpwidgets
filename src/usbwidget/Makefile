@@ -85,6 +85,7 @@ DAEMON_MODULES=\
 Object@\
 Window@\
 Dialog@\
+DebugDialog@\
 
 #
 # Class Modules
@@ -131,6 +132,7 @@ usbsimpl@\
 WIDGET_RESDEPS=\
 Dialogs.rc\
 Dialogs.dlg\
+DebugDialog.dlg\
 Images.rc\
 Notebooks.rc\
 Notebooks.dlg\
@@ -146,6 +148,7 @@ usbshlpr.rc\
 usbshlpr.dlg\
 usbshlpr.mnu\
 usbshlpr.wnd\
+DebugDialog.dlg\
 
 #
 # Libraries to cluster some stuff

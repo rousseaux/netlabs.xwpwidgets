@@ -68,6 +68,8 @@
 /* Stuff to manage the shared memory */
 #include    "AllocMem.hpp"
 
+#include    "DebugDialog.hpp"
+
 /* The public include file for this module */
 #include    "usbshlpr.hpp"
 
@@ -82,7 +84,10 @@
 //! ----------------------------------------------------------------- [globals]
 
 /* Pointer to this Daemon Application */
-Daemon*     g_daemon = NULL;
+Daemon*         g_daemon    =   NULL;
+DebugDialog*    g_dbd       =   NULL;
+//! FIXME: Get this one dynamically
+HMODULE hmodMe              = NULL;
 
 //! ------------------------------------------------------------------ [Daemon]
 
@@ -698,6 +703,21 @@ MRESULT DialogWindow::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         case IDM_QUIT:
             WinPostMsg(hwnd, WM_CLOSE, (MPARAM) NULL, (MPARAM) NULL);
             break;
+        case IDM_SM2NEWDD:
+            do {
+                if (!g_dbd) {
+                    g_dbd = new DebugDialog();
+                    g_dbd->create();
+                    g_dbd->center();
+                    g_dbd->show();
+                    //~ g_dbd->process();
+                }
+                else {
+                    g_dbd->center();
+                    g_dbd->show();
+                }
+            } while (0);
+            break;
     }
 
     return (MRESULT) 0;
@@ -1138,7 +1158,7 @@ MRESULT ClientWindow::wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
 MRESULT     GuiDaemonDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     BOOL        brc     = FALSE;
-    MRESULT     ulrc    = (MPARAM) 0;
+    MRESULT     mrc     = (MPARAM) 0;
 
     //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
     //~ printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
@@ -1155,73 +1175,73 @@ MRESULT     GuiDaemonDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 //~ break;
                 HWND hwndMenu = WinLoadMenu(hwnd, NULL, 2);
                 brc = WinSetWindowUShort(hwndMenu, QWS_ID, FID_MENU);
-                ulrc = WinSendMsg(hwnd, WM_UPDATEFRAME, (MPARAM) FCF_MENU, (MPARAM) NULL);
-                printf("hwndMenu:%08X, brc:%d, ulrc:%08X\n", hwndMenu, brc, ulrc);
-                ulrc = 0;
+                mrc = WinSendMsg(hwnd, WM_UPDATEFRAME, (MPARAM) FCF_MENU, (MPARAM) NULL);
+                printf("hwndMenu:%08X, brc:%d, mrc:%08X\n", hwndMenu, brc, mrc);
+                mrc = 0;
             } while (0);
-            //~ ulrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
+            //~ mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
             if (mp2)(((WND_CLASS_INSTANCE*)mp2)->cb)?WinSetWindowPtr(hwnd, QWL_USER, ((WND_CLASS_INSTANCE*)mp2)->pvClassInstance):NULL;
-            ulrc = (MRESULT) TRUE;
+            mrc = (MRESULT) TRUE;
             break;
         }
 
         /* Delegate the messages below */
         case WM_CLOSE:
-            ulrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_CLOSE","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_CLOSE","pWnd is NULL !!");
             break;
         case WM_DESTROY:
-            ulrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_DESTROY","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_DESTROY","pWnd is NULL !!");
             break;
         case WM_COMMAND:
-            ulrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_COMMAND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_COMMAND","pWnd is NULL !!");
             break;
         case WM_ERASEBACKGROUND:
             //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_ERASEBACKGROUND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_ERASEBACKGROUND","pWnd is NULL !!");
             break;
         case WM_PAINT:
             //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_PAINT","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DialogWindow::WM_PAINT","pWnd is NULL !!");
             break;
 
         /* Use WinDefDlgProc if the C++ Object pointer is not set yet */
         default: {
             if (pWnd) {
                 //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
-                ulrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
+                mrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
             }
             else {
                 //~ MessageBox("DialogWindow::WM_DEFAULT","pWnd is NULL !!");
-                ulrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
+                mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
             }
             break;
         }
     }
 
-    return ulrc;
+    return mrc;
 }
 
 MRESULT     GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     BOOL        brc     = FALSE;
-    MRESULT     ulrc    = (MPARAM) 0;
+    MRESULT     mrc     = (MPARAM) 0;
 
     switch (msg) {
 
         case WM_CREATE: {
             printf("WM_CREATE received (wnd)\n");
-            ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+            mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             break;
         }
 
         case WM_CLOSE: {
             printf("WM_CLOSE received (wnd)\n");
-            //~ ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+            //~ mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             break;
         }
 
         case WM_DESTROY: {
             printf("WM_DESTROY received (wnd)\n");
-            //~ ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+            //~ mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             break;
         }
 
@@ -1231,14 +1251,14 @@ MRESULT     GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 case 123: {
                     printf("123 (wnd)\n");
                     //~ brc = WinPostMsg(hwnd, WM_QUIT, NULL, NULL);
-                    ulrc = 0;
+                    mrc = 0;
                     break;
                 }
                 case 456: {
                     printf("456 (wnd)\n");
                     //~ WinDestroyWindow(hwnd);
                     //~ brc = WinPostMsg(hwnd, WM_QUIT, NULL, NULL);
-                    ulrc = 0;
+                    mrc = 0;
                     break;
                 }
             }
@@ -1246,7 +1266,7 @@ MRESULT     GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
         case WM_ERASEBACKGROUND: {
             printf("WM_ERASEBACKGROUND received (wnd)\n");
-            ulrc = (MRESULT) TRUE;
+            mrc = (MRESULT) TRUE;
             break;
         }
 
@@ -1257,17 +1277,17 @@ MRESULT     GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             //~ hps = WinBeginPaint(hwnd, NULL, &rcl);
             //~ brc = WinInvalidateRect(hwnd, &rcl, TRUE);
             //~ brc = WinEndPaint(hps);
-            //~ ulrc = 0;
+            //~ mrc = 0;
             //~ break;
         //~ }
 
         default: {
-            ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+            mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             break;
         }
     }
 
-    return ulrc;
+    return mrc;
 }
 
 
@@ -1276,7 +1296,7 @@ MRESULT     GuiDaemonWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 */
 MRESULT     ClientWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     BOOL            brc     = FALSE;
-    MRESULT         ulrc    = (MPARAM) -1;
+    MRESULT         mrc     = (MPARAM) -1;
 
     //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
     //~ printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
@@ -1292,44 +1312,44 @@ MRESULT     ClientWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             printf("mp1:%08X\n", mp1);
             printf("mp2:%08X\n", mp2);
             if (mp1)(((WND_CLASS_INSTANCE*)mp1)->cb)?WinSetWindowPtr(hwnd, QWL_USER, ((WND_CLASS_INSTANCE*)mp1)->pvClassInstance):NULL;
-            ulrc = FALSE;   // Continue window creation
+            mrc = FALSE;   // Continue window creation
             break;
         }
 
         /* Delegate the messages below */
         case WM_CLOSE:
-            ulrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_CLOSE","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_CLOSE","pWnd is NULL !!");
             break;
         case WM_DESTROY:
-            ulrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_DESTROY","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_DESTROY","pWnd is NULL !!");
             break;
         case WM_COMMAND:
-            ulrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_COMMAND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_COMMAND","pWnd is NULL !!");
             break;
         case WM_ERASEBACKGROUND:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_ERASEBACKGROUND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_ERASEBACKGROUND","pWnd is NULL !!");
             break;
         case WM_PAINT:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_PAINT","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("ClientWindow::WM_PAINT","pWnd is NULL !!");
             break;
 
         /* Use WinDefWindowProc if the C++ Object pointer is not set yet */
         default: {
             if (pWnd) {
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-                ulrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
+                mrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
             }
             else {
                 MessageBox("ClientWindow::WM_DEFAULT","pWnd is NULL !!");
-                ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+                mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             }
             break;
         }
     }
 
-    return ulrc;
+    return mrc;
 }
 
 /*
@@ -1337,7 +1357,7 @@ MRESULT     ClientWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 */
 MRESULT     FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     BOOL            brc     = FALSE;
-    MRESULT         ulrc    = (MPARAM) -1;
+    MRESULT         mrc     = (MPARAM) -1;
 
     //~ printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
 
@@ -1354,47 +1374,47 @@ MRESULT     FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             printf("flClassTyle:%08X, pfnWindowProc:%08X, cbWindowData:%08X\n", ci.flClassStyle, ci.pfnWindowProc, ci.cbWindowData);
             printf("mp1:%08X\n", mp1);
             printf("mp2:%08X\n", mp2);
-            ulrc = FALSE;   // Continue window creation
+            mrc = FALSE;   // Continue window creation
             break;
         }
 
         /* Delegate the messages below */
         case WM_CLOSE:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_CLOSE","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_CLOSE","pWnd is NULL !!");
             break;
         case WM_DESTROY:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_DESTROY","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_DESTROY","pWnd is NULL !!");
             break;
         case WM_COMMAND:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_COMMAND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_COMMAND","pWnd is NULL !!");
             break;
         case WM_ERASEBACKGROUND:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_ERASEACKGROUND","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_ERASEACKGROUND","pWnd is NULL !!");
             break;
         case WM_PAINT:
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-            ulrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_PAINT","pWnd is NULL !!");
+            mrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("FrameWindow::WM_PAINT","pWnd is NULL !!");
             break;
 
         /* Use WinDefWindowProc if the C++ Object pointer is not set yet */
         default: {
             if (pWnd) {
             //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-                ulrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
+                mrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
             }
             else {
                 MessageBox("ClientWindow::WM_DEFAULT","pWnd is NULL !!");
-                ulrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
+                mrc = WinDefWindowProc(hwnd, msg, mp1, mp2);
             }
             break;
         }
     }
 
-    return ulrc;
+    return mrc;
 }
 
 //! FIXME: Duplicated here because of ugly dependencies

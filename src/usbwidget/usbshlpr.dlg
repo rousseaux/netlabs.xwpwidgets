@@ -12,3 +12,5 @@ BEGIN
                         //~ PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
     END
 END
+
+rcinclude   "DebugDialog.dlg"

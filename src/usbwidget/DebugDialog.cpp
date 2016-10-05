@@ -37,157 +37,231 @@
 // Constructor
 */
 DebugDialog::DebugDialog() {
+    __ctorb();
     this->debugMe();
-    sprintf(this->buf, "DebugDialog() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
+    this->notebook = NULL;
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    __ctore();
 }
 
 /*
 // Destructor
 */
 DebugDialog::~DebugDialog() {
-    sprintf(this->buf, "~DebugDialog() : hdlg=%08X", this->hwndSelf);
-    __debug(NULL, this->buf, DBG_LBOX);
+    __dtorb();
+    //~ MessageBox("DebugDialog","DESTRUCTOR");
     this->destroy();
+    __dtore();
 }
 
 /*
 // create :: Create a new Dialog
 */
-ulong   DebugDialog::create() {
+int DebugDialog::create() {
+    __mthd();
 
-    /*
-    // This buffer contains a pointer to the instance of this Dialog.
-    // It is passed as a max-64KB buffer with the 16-bit word at offset 0 containing
-    // the length of the data.
-    */
-    char    myself[sizeof(short)+sizeof(Object*)];        // Allocate the buffer; all classes descend from Object.
+    /* Load dialog is not already loaded */
+    if (this->hwndSelf == NULL) {
 
-    /* Initialize it */
-    myself[0]               = (short) sizeof(myself);   // Size of the buffer as a 16-bit word at offset 0.
-    myself[sizeof(short)]   = (ulong) this;             // The pointer to this Dialog instance.
-
-    /* Load the Dialog */
-    this->hwndSelf =    WinLoadDlg(
-                            hdlgDebugDialog,                // parent
-                            hdlgDebugDialog,                // owner
-                            (PFNWP) classMessageHandler,    // handler
-                            //MyDialogHandler_3,
-                            hmodMe,                         // module; GLOBAL VAR!! CHANGE THIS !!
-                            ID_NOTIFICATION_DIALOG,         // id
-                            myself                          // parameters
-                        );
-
-    /* Show it */
-    this->show();
-
-    /* Debug Info */
-    if (this->debugMe()) {
-        sprintf(this->buf, "DebugDialog::create() : hdlg=%08X, myself=%08X", this->hwndSelf, myself);
-        __debug(NULL, this->buf, DBG_LBOX);
+        /* Load the WidgetSettings Dialog */
+        this->hwndSelf =    WinLoadDlg(
+                                HWND_DESKTOP,
+                                NULL,
+                                (PFNWP) DebugDialogProc,
+                                hmodMe,
+                                ID_DEBUG_DIALOG,
+                                &this->wci
+                            );
     }
 
-    /* Return the handle of the new Dialog */
-    return this->hwndSelf;
-}
-
-/*
-// detroy :: Destroy the Dialog and any resources it uses.
-*/
-ulong   DebugDialog::destroy() {
+    /* Show dialog if creation succeeded */
     if (this->hwndSelf) {
-        WinDestroyWindow(this->hwndSelf);
-        this->hwndSelf = NULL;
+        this->hwndParent = HWND_DESKTOP;
+        this->show();
+        //~ MessageBox("WinLoadDlg", "OK");
     }
-    return true;
+    /* Show message if creation failed */
+    else {
+        MessageBox("WinLoadDlg", "NULL");
+    }
+#if 0
+    /* Create a new Notebook to manage the Notebook Control */
+    if (this->notebook == NULL) this->notebook = new Notebook();
+
+    /* Populate the Notebook with Pages */
+    if (this->notebook) {
+
+        /* Initialize Notebook */
+        this->notebook->init(this->hwndSelf, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
+
+        /* Append the pages */
+        this->notebook->appendPages();
+    }
+    else {
+        MessageBox("Notebook", "NULL");
+    }
+#endif
+    return NULL;
 }
 
-/*
-// redraw :: Repaint the content of the Dialog.
-*/
-ulong   DebugDialog::redraw() {
-    return true;
+int DebugDialog::process() {
+    __mthd();
+    int reply = NULL;
+    reply = WinProcessDlg(this->hwndSelf);
+    return reply;
 }
 
-/*
-// msgInitDialog :: Handles the WM_INITDLG message sent on window-creation.
-*/
-ulong   DebugDialog::msgInitDialog(ulong mp1, ulong mp2) {
-    return true;
+int DebugDialog::destroy() {
+    __mthd();
+    if (this->notebook || this->hwndSelf) {
+        if (this->notebook) delete this->notebook;
+        this->notebook = NULL;
+        if (this->hwndSelf) WinDestroyWindow(this->hwndSelf);
+        this->hwndSelf = NULL;
+        this->hwndParent = NULL;
+    }
+
+    return NULL;
 }
 
-/*
-// msgCommand :: Handles the WM_COMMAND messages sent by controls.
-*/
-ulong   DebugDialog::msgCommand(ulong mp1, ulong mp2) {
-    return true;
+int DebugDialog::test123() {
+    __mthd();
+    return 0;
 }
 
-/*
-// commandDrawButton :: Handles a specific (user defined) command-message.
-*/
-ulong   DebugDialog::commandDrawButton() {
-    return true;
+MRESULT DebugDialog::wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    __mthd();
+    BOOL brc = FALSE;
+    /* Default processing dismisses the dialog but does not destroy it */
+    return this->wmDefault(hwnd, msg, mp1, mp2);
+    //~ return (MRESULT) 0;
 }
 
-/*
-// commandDestroyButton :: Handles a specific (user defined) command-message.
-*/
-ulong   DebugDialog::commandDestroyButton() {
-    return true;
+MRESULT DebugDialog::wmDestroy(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    __mthd();
+    return (MRESULT) 0;
 }
 
-
-/*
-// classMessageHandler :: Handles all messages.
-// This is the actual window-procedure which is invoked as a callback.
-// Therefore it's declaration is static because it get's called externally from the dialog-instance.
-// Also, it's the type EXPENTRY (_Pascal FAR) because it get's called from outside this module.
-// Note that FAR is void in 32-bit mode and FAR32 is used for 32-bit far pointers.
-// But we don't need that in flat 32-bit mode.
-// The parameter mp2 contains a structure with a pointer to the dialog-instance that invoked this handler
-// when the message WM_INITDLG is received.
-*/
-ulong   DebugDialog::classMessageHandler(ulong hwnd, ulong msg, ulong mp1, ulong mp2) {
-
-    //return MyDialogHandler_3(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
-
+/* Handle Command Messages */
+MRESULT DebugDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    __mthdb();
     MRESULT mresReply = 0;
+    switch (SHORT1FROMMP(mp1)) {
 
-    switch (msg) {
-
-        //!: Init dialog (Debug)
-        case WM_INITDLG: {
-            mresReply = FALSE;
+        /* Widget Settings Close Button */
+        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+            //~ MessageBox("WidgetSettingsDialog","Dismissing Dialog");
+            mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
         }
 
-        case WM_COMMAND: {
-            switch (SHORT1FROMMP(mp1)) {
-
-                /* Close Dialog */
-                case DID_OK: {
-                    mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
-                    break;
-                }
-
-                /* Default */
-                default: {
-                    mresReply = 0;
-                    //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
-                    break;
-                }
-
-            } // switch
-            break;
-        }
-        //~: Handle default message (debug dialog)
+        /* Default */
         default: {
             mresReply = 0;
-            mresReply = WinDefDlgProc(hwnd, msg, (MPARAM) mp1, (MPARAM) mp2);
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
         }
-    }
-    return (ulong) mresReply;
+
+    } // switch
+    __mthde();
+    return (MRESULT) mresReply;
 }
 
+MRESULT DebugDialog::wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    __mthd();
+    return (MRESULT) TRUE;
+}
+
+MRESULT DebugDialog::wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    //~ __mthd();
+    BOOL    brc = FALSE;
+    HPS     hps = NULL;
+    RECTL    rcl;
+
+    /* Invalidate the given rectangle */
+    do {
+        break;
+        hps = WinBeginPaint(hwnd, NULL, &rcl);
+        brc = WinEndPaint(hps);
+    } while (0);
+
+    return this->wmDefault(hwnd, msg, mp1, mp2);
+    //~ return NULL;
+}
+
+MRESULT DebugDialog::wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    //~ __mthd();
+    return (MRESULT) WinDefDlgProc(hwnd, msg, mp1, mp2);
+}
+
+MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+
+    /* Locals */
+    BOOL    brc = FALSE;
+    MRESULT mrc = 0;
+    CHAR    buf[512] = {0};
+
+    /*
+    // Get pointer to C++ Object.
+    // Can be NULL if WM_INITDLG has not been invoked yet.
+    // Using this pointer, messages can be deferred to member-functions.
+    */
+    DebugDialog*   pWnd = (DebugDialog*) WinQueryWindowPtr(hwnd, QWL_USER);
+
+    /* Message Switch */
+    switch (msg) {
+
+        /* Initialize Dialog */
+        case WM_INITDLG: {
+            printf("%s::%s WM_INITDLG: %08X, %08X, %08X, %08X\n", __FILE__, __FUNCTION__, hwnd, msg, mp1, mp2);
+            //~ MessageBox("DlgProcWidgetSettingsDialog","pWnd is NULL !!");
+            /* Get pointer to C++ Object from the CreateParams passed to WinLoadDlg() */
+            pWnd = ((DebugDialog*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
+            /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */
+            brc =   WinSetWindowPtr(
+                        hwnd,
+                        QWL_USER,
+                        pWnd
+                    );
+            pWnd->test123();
+            mrc = (MRESULT) TRUE;
+            break;
+        }
+
+        /* Delegate the messages below */
+        case WM_CLOSE:
+            mrc = pWnd ? pWnd->wmClose(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DebugDialog::WM_CLOSE","pWnd is NULL !!");
+            break;
+        case WM_DESTROY:
+            mrc = pWnd ? pWnd->wmDestroy(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DebugDialog::WM_DESTROY","pWnd is NULL !!");
+            break;
+        case WM_COMMAND:
+            mrc = pWnd ? pWnd->wmCommand(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DebugDialog::WM_COMMAND","pWnd is NULL !!");
+            break;
+        case WM_ERASEBACKGROUND:
+            //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
+            mrc = pWnd ? pWnd->wmEraseBackground(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DebugDialog::WM_ERASEBACKGROUND","pWnd is NULL !!");
+            break;
+        case WM_PAINT:
+            //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
+            mrc = pWnd ? pWnd->wmPaint(hwnd, msg, mp1, mp2) : (MRESULT) MessageBox("DebugDialog::WM_PAINT","pWnd is NULL !!");
+            break;
+
+        /* Use WinDefDlgProc if the C++ Object pointer is not set yet */
+        default: {
+            if (pWnd) {
+                //~ return WinDefDlgProc(hwnd, msg, mp1, mp2);
+                mrc = pWnd->wmDefault(hwnd, msg, mp1, mp2);
+            }
+            else {
+                //~ MessageBox("DialogWindow::WM_DEFAULT","pWnd is NULL !!");
+                mrc = WinDefDlgProc(hwnd, msg, mp1, mp2);
+            }
+            break;
+        }
+    }
+
+    return (MRESULT) mrc;
+}
 

@@ -38,6 +38,7 @@
 #define     IDM_SM2MI1      121
 #define     IDM_SM2MI2      122
 #define     IDM_SM2MI3      123
+#define     IDM_SM2NEWDD    124
 
 /* Generic IDs for submenu #3 */
 #define     IDM_SM3         13
@@ -47,3 +48,5 @@
 
 /* ID for MenuItem Quit */
 #define     IDM_QUIT        999
+
+#include    "Dialogids.h"

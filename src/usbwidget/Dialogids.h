@@ -64,6 +64,8 @@
 #define     ID_USB_WIDGET_DIALOG                100
 #define     ID_NOTIFICATION_DIALOG              101
 #define     ID_DEBUG_DIALOG                     102
+#define     ID_DEBUG_DIALOG_NOTEBOOK            15900
+#define     ID_DEBUG_DIALOG_NOTEBOOK_PAGE_1     15901
 #define     ID_FORCE_REMOVE_DIALOG              103
 
 #define     ID_WIDGET_UUID                      200
@@ -91,6 +93,7 @@
 
 #define     ID_SUBMENU_RESTART_WPS                      291
 #define     ID_SUBMENU_WIDGET_SETTINGS_SHOW_NOTEBOOK    295
+#define     ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG_OLD      298
 #define     ID_SUBMENU_DEBUG_SHOW_DEBUG_DIALOG          299
 
 

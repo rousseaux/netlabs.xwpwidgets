@@ -98,6 +98,7 @@ ULONG   MessageBox(PSZ title, PSZ text);
 ULONG   MessageBox2(PSZ title, PSZ text);
 BOOL    CenterWindow(HWND toCenterTo, HWND thisWindow);
 void    __debug(char* title, char* message, unsigned long flags);
+extern HMODULE hmodMe;
 
 /* Class Declarations */
 class   Daemon;
