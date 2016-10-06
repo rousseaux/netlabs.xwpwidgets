@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* usbshlpr.rc -- NeoWPS * USB Widget                                          *
+* WidgetSettingsDialog.ids -- NeoWPS * USB Widget                             *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -23,21 +23,34 @@
 \*****************************************************************************/
 
 
-/**
- * This file holds the resource definitions for the Daemon.
- */
+/*
+// These IDs are local to this resource.
+// This file is also included as a 'DLGINCLUDE' resource and it should not
+// do any '#include' statements, otherwise the Dialog Editor will not be
+// able to map the IDs. This resource is compiled to a '.res' only to enable
+// editing by the Dialog Editor. The main '.res' file is compiled and bound
+// when building the Widget DLL or Daemon EXE targets.
+*/
 
-/* Module Dialogs */
-rcinclude   "usbshlpr.dlg"
 
-/* Module Windows */
-//~ rcinclude   "usbshlpr.wnd"
 
-/* Module Menus */
-rcinclude   "usbshlpr.mnu"
+#define IDD_WIDGETSETTINGS                  10000   // Widget Settings Dialog
 
-/* Debug Dialog */
-rcinclude   "DebugDialog.dlg"
+#define IDB_WIDGETSETTINGS_CLOSE            10101   // Close Button
+#define IDNB_WIDGETSETTINGS                 10900   // Notebook Control
 
-/* Widget Settings Dialog */
-rcinclude   "WidgetSettingsDialog.dlg"
+#define IDD_WIDGETSETTINGS_NBP_1            10901   // Notebook Page #1 Dialog
+#define IDD_WIDGETSETTINGS_NBP_1_PB_1         111   // Button #1
+#define IDD_WIDGETSETTINGS_NBP_1_PB_2         112   // Button #2
+#define IDD_WIDGETSETTINGS_NBP_1_PB_3         113   // Button #3
+#define IDD_WIDGETSETTINGS_NBP_1_PB_4         114   // Button #4
+#define IDD_WIDGETSETTINGS_NBP_1_PB_5         115   // Button #5
+#define IDD_WIDGETSETTINGS_NBP_1_PB_6         116   // Button #6
+#define IDD_WIDGETSETTINGS_NBP_1_PB_7         117   // Button #7
+#define IDD_WIDGETSETTINGS_NBP_1_LB_1         121   // Listbox #1
+
+#define IDD_WIDGETSETTINGS_NBP_2            10902   // Notebook Page #2 Dialog
+#define IDD_WIDGETSETTINGS_NBP_2_LB_1         221   // Listbox #1
+
+#define IDD_WIDGETSETTINGS_NBP_3            10903   // Notebook Page #3 Dialog
+#define IDD_WIDGETSETTINGS_NBP_3_LB_1         321   // Listbox #1

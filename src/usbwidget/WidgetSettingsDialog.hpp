@@ -47,6 +47,9 @@ class   WidgetSettingsDialog;
 #include    "GUIHelpers.hpp"
 
 #include    "Notebook.hpp"
+#include    "NotebookPage.hpp"
+
+#include    "WidgetSettingsDialog.ids"
 
 /* Prototypes */
 MRESULT EXPENTRY DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
@@ -81,6 +84,46 @@ class   WidgetSettingsDialog : public Dialog {
 /* Derived Widget Settings Dialog with override method */
 class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
     public:
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+};
+
+
+
+
+class   Notebook1 : public Notebook {
+
+    public:
+
+    /* Public Contructor(s) and Destructor */
+    Notebook1::Notebook1();
+    virtual Notebook1::~Notebook1();
+
+    /* Public Methods */
+    virtual void    init(HWND parent, ULONG id);
+    virtual void    appendPage(NotebookPage*);
+    virtual void    appendPages();
+    virtual void    removePage(NotebookPage*);
+    virtual void    removePages();
+    virtual int     test123(void);
+
+    protected:
+
+    private:
+
+};
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// NotebookPage1
+///////////////////////////////////////////////////////////////////////////////
+class   NotebookPage1 : public NotebookPage {
+    public:
+    NotebookPage1(Notebook* notebook);
+    virtual ~NotebookPage1();
+    virtual init(void);
+    virtual initItems(void);
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
 

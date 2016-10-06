@@ -143,7 +143,7 @@ void    Notebook::appendPage(NotebookPage* page) {
                             &page->wci
                         );
 
-    page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
+    //~ page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
 
     /* Associate page-dialog with notebook-page */
     WinSendMsg(
@@ -182,7 +182,7 @@ void    Notebook::appendPages() {
     do {
 
         /* Create a new page */
-        nbp = new NotebookPage1(this);
+        nbp = new NotebookPage(this);
 
         /* Initialize the page and append it to the notebook */
         if (nbp) {

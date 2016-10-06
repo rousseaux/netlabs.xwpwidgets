@@ -65,8 +65,8 @@ int WidgetSettingsDialog::create() {
                                 //~ (PFNWP) MyDialogHandler_1,
                                 (PFNWP) DlgProcWidgetSettingsDialog,
                                 hmodMe,
-                                DLG_ID_WIDGETSETTINGS,
-                                //~ ID_DEBUG_DIALOG,
+                                IDD_WIDGETSETTINGS,
+                                //~ IDD_DEBUG,
                                 &this->wci
                             );
     }
@@ -83,13 +83,13 @@ int WidgetSettingsDialog::create() {
     }
 
     /* Create a new Notebook to manage the Notebook Control */
-    if (this->notebook == NULL) this->notebook = new Notebook();
+    if (this->notebook == NULL) this->notebook = new Notebook1();
 
     /* Populate the Notebook with Pages */
     if (this->notebook) {
 
         /* Initialize Notebook */
-        this->notebook->init(this->hwndSelf, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
+        this->notebook->init(this->hwndSelf, IDNB_WIDGETSETTINGS);
 
         /* Append the pages */
         this->notebook->appendPages();
@@ -135,7 +135,7 @@ MRESULT WidgetSettingsDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM
     switch (SHORT1FROMMP(mp1)) {
 
         /* Widget Settings Close Button */
-        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+        case IDB_WIDGETSETTINGS_CLOSE: {
             //~ MessageBox("WidgetSettingsDialog","Dismissing Dialog");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
@@ -159,7 +159,7 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
     switch (SHORT1FROMMP(mp1)) {
 
         /* Close Button */
-        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+        case IDB_WIDGETSETTINGS_CLOSE: {
             MessageBox("WidgetSettingsDialogEx","Dismissing Dialog -- wmCommand Override !!");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
@@ -176,6 +176,333 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
     return (MRESULT) mresReply;
 }
 
+///: -------------------------------------------------------------- [Notebook1]
+
+Notebook1::Notebook1() {
+    this->debugMe();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    this->idResource = NULL;
+    this->hwndParent = NULL;
+    this->hwndSelf = NULL;
+    this->pages = NULL;
+}
+
+Notebook1::~Notebook1() {
+    this->removePages();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+}
+
+void    Notebook1::init(HWND parent, ULONG id) {
+
+    /* Set some important attributes */
+    this->hwndParent = parent;
+    this->idResource = id;
+
+    /* Get the handle of the Notebook Control */
+    this->hwndSelf = WinWindowFromID(       // Handle of the Notebook Control
+                        this->hwndParent,   // Window or Dialog parent
+                        this->idResource    // ID of the Notebook Control
+                    );
+
+    /* Set dimensions of Major Tabs -- can resize Notebook */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETDIMENSIONS,
+        MPFROM2SHORT(80, 40),
+        MPFROMLONG(BKA_MAJORTAB)
+    );
+
+    /* Set dimensions of Minor Tabs -- can resize Notebook */
+    //~ WinSendMsg(
+        //~ this->hwndSelf,
+        //~ BKM_SETDIMENSIONS,
+        //~ MPFROM2SHORT(80, 25),
+        //~ MPFROMLONG(BKA_MINORTAB)
+    //~ );
+
+    /* Set dimensions of prev/next page button */
+    //~ WinSendMsg(
+        //~ this->hwndSelf,
+        //~ BKM_SETDIMENSIONS,
+        //~ MPFROM2SHORT(30, 30),
+        //~ MPFROMLONG(BKA_PAGEBUTTON)
+    //~ );
+
+
+    /* Set background color for page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETNOTEBOOKCOLORS,
+        MPFROMLONG(CLR_PALEGRAY),
+        MPFROMLONG(BKA_BACKGROUNDPAGECOLORINDEX)
+    );
+
+    /* Set background color for Major Tabs */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETNOTEBOOKCOLORS,
+        MPFROMLONG(CLR_PALEGRAY),
+        MPFROMLONG(BKA_BACKGROUNDMAJORCOLORINDEX)
+    );
+}
+
+void    Notebook1::appendPage(NotebookPage* page) {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+
+    /* Insert the page into the notebook */
+    page->idPage = (ULONG)   WinSendMsg(
+                                this->hwndSelf,
+                                BKM_INSERTPAGE,
+                                (MPARAM) NULL,
+                                MPFROM2SHORT(page->pageStyle, page->pageOrder)
+                            );
+
+    /* Set the tab-text for the page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETTABTEXT,
+        (MPARAM) page->idPage,
+        (MPARAM) page->tabTitle
+    );
+
+    /* Set the status-text for the page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETSTATUSLINETEXT,
+        (MPARAM) page->idPage,
+        (MPARAM) page->statusText
+    );
+
+    /* Load the page dialog */
+    page->hwndSelf =    WinLoadDlg(
+                            this->hwndSelf,
+                            this->hwndSelf,
+                            page->dlgProc,
+                            hmodMe,     //! FIXME: this is a global variable !
+                            page->idResource,
+                            &page->wci
+                        );
+
+    //~ page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
+
+    /* Associate page-dialog with notebook-page */
+    WinSendMsg(
+        this->hwndSelf,
+        BKM_SETPAGEWINDOWHWND,
+        MPFROMLONG(page->idPage),
+        MPFROMHWND(page->hwndSelf)
+    );
+
+    page->initItems();
+
+    /* Append the page to the list */
+    if (this->pages == NULL) {
+        page->prev = NULL;      // Is first page so there is no previous
+        page->next = NULL;      // Is first page so there is no next
+        this->pages = page;     // Link the first page
+    }
+    else {
+        NotebookPage*   tnbp = this->pages;     // Temporary ptr
+        while (tnbp->next) {                    // If there is a next page...
+            tnbp = tnbp->next;                  // point to it
+        }
+        /* Link the page */
+        tnbp->next = page;      // Create forward link on old last page
+        page->prev = tnbp;      // Create backward on new last page
+        page->next = NULL;      // Indicate last page
+    }
+}
+
+void    Notebook1::appendPages() {
+    NotebookPage*   nbp = NULL;
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+
+    /* Create and insert pages */
+    do {
+
+        /* Create a new page */
+        nbp = new NotebookPage1(this);
+
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
+
+        /* Create a new page */
+        nbp = new NotebookPage(this);
+
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
+
+        /* Create a new page */
+        nbp = new NotebookPage(this);
+
+        /* Initialize the page and append it to the notebook */
+        if (nbp) {
+            nbp->init();
+            this->appendPage(nbp);
+        }
+
+    } while (0);
+}
+
+void    Notebook1::removePage(NotebookPage* page) {
+    NotebookPage*   tnbp = this->pages;     // Temporary ptr
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+
+    /* Traverse linked list and delete page */
+    while (tnbp) {
+        if (tnbp == page) {                     // Found page
+            if (page->prev == NULL) {           // Is first page ?
+                this->pages = page->next;       // Unlink it
+            }
+            else {                              // Is not first page
+                page->prev->next = page->next;  // Unlink it
+            }
+            delete page;                        // Delete the page
+            tnbp = NULL;                        // Cause loop to end
+        }
+        else {
+            tnbp = tnbp->next;                  // Try next page
+        }
+    }
+}
+
+void    Notebook1::removePages() {
+    NotebookPage*   tnbp = this->pages;     // Temporary ptr
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    /* Traverse linked list and remove each page */
+    while (tnbp) {
+        this->removePage(tnbp);
+        tnbp = tnbp->next;
+    }
+}
+
+int     Notebook1::test123(void) {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    return 0;
+}
+
+
+
+///: ---------------------------------------------------------- [NotebookPage1]
+
+NotebookPage1::NotebookPage1(Notebook* notebook) {
+    this->debugMe();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    this->notebook = notebook;
+}
+
+NotebookPage1::~NotebookPage1() {
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+}
+
+int     NotebookPage1::init(void) {
+
+    /* Call parent method to do default initialization */
+    this->NotebookPage::init();
+
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+
+    /* Initialize this page */
+    this->idResource = IDD_WIDGETSETTINGS_NBP_1;
+    this->tabTitle = "Page #1";
+    this->statusText = "This is the first page";
+
+    return 0;
+}
+
+int     NotebookPage1::initItems(void) {
+
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_1, "Maximize");
+    Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_2, "Test123");
+    Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_3, "Test456");
+    Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_4, "Test789");
+    Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_7, "__debug");
+
+    return 0;
+}
+
+/* Handle Command Messages */
+MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+
+    //~ MessageBox("NotebookPage1","wmCommand");
+
+    switch (SHORT1FROMMP(mp1)) {
+
+        /* Test Button #1 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_1: {
+            MessageBox("NotebookPage1","Test Button #1");
+            this->maximize();
+            break;
+        }
+
+        /* Test Button #2 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_2: {
+            MessageBox("NotebookPage1","Test Button #2");
+            break;
+        }
+
+        /* Test Button #3 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_3: {
+            MessageBox("NotebookPage1","Test Button #3");
+            break;
+        }
+
+        /* Test Button #4 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_4: {
+            MessageBox("NotebookPage1","Test Button #4");
+            break;
+        }
+
+        /* Test Button #5 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_5: {
+            MessageBox("NotebookPage1","Test Button #5");
+            break;
+        }
+
+        /* Test Button #6 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_6: {
+            MessageBox("NotebookPage1","Test Button #6");
+            break;
+        }
+
+        /* Test Button #7 */
+        case IDD_WIDGETSETTINGS_NBP_1_PB_7: {
+            //~ MessageBox("NotebookPage1","Test Button #7");
+            _debug("_debug test");
+            break;
+        }
+
+        /* Default */
+        default: {
+            mresReply = 0;
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
+        }
+
+    } // switch
+    return (MRESULT) mresReply;
+}
+
+
 /* Redirect messages for the WidgetSettingsDialog */
 MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
@@ -183,6 +510,9 @@ MRESULT DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2
     BOOL    brc = FALSE;
     MRESULT mresReply = 0;
     CHAR    buf[512] = {0};
+
+    //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
+    printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
 
     /*
     // Get pointer to C++ Object.

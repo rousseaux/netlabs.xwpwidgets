@@ -2,6 +2,9 @@
    #include <os2.h>
 #endif
 
+#include    "usbshlpr.ids"
+DLGINCLUDE 1 "usbshlpr.ids"
+
 DLGTEMPLATE 1 LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
     DIALOG  "GuiDaemon :: Dialog Window", 1, 50, 50, 400, 200, FS_SIZEBORDER,
@@ -13,4 +16,3 @@ BEGIN
     END
 END
 
-rcinclude   "DebugDialog.dlg"

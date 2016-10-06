@@ -63,13 +63,12 @@
 /* Dialogs */
 #define     ID_USB_WIDGET_DIALOG                100
 #define     ID_NOTIFICATION_DIALOG              101
-#define     ID_DEBUG_DIALOG                     102
-#define     ID_DEBUG_DIALOG_NOTEBOOK            15900
-#define     ID_DEBUG_DIALOG_NOTEBOOK_PAGE_1     15901
 #define     ID_FORCE_REMOVE_DIALOG              103
 
 #define     ID_WIDGET_UUID                      200
 #define     ID_WIDGET_VERSION                   201
+#define     ID_BLD_INFO                         202
+#define     ID_BLD_VERSION                      203
 
 /* Extended Debug Menu */
 #define     ID_SUBMENU_DEBUG_CONNECT_PIPE       251
@@ -119,27 +118,11 @@
 
 
 /* Controls */
-#define     ID_CONTROL_BASE                     5700
+//~ #define     ID_CONTROL_BASE                     5700
 
-#define     ID_LB_1                             5701
-#define     ID_LB_2                             5702
-#define     ID_LB_3                             5703
-#define     ID_LB_4                             5704
 
-#define     ID_HWND_DLG                         5709
-#define     ID_BLDLEVEL                         5710
-
-#define     ID_MLE_1                            5711
-#define     ID_MLE_2                            5712
-#define     ID_MLE_3                            5713
-#define     ID_MLE_4                            5714
-
-#define     ID_DRIVE_LETTERS                    5801
-#define     ID_UNIT_NUMBERS                     5802
 
 #define     MSGSIZE                             128
-
-#define     ID_MEDEDELING                       401
 
 #define     ID_MENU_REDISCOVER                  500
 
@@ -209,44 +192,7 @@
 
 
 
-/* Actions */
-#define     ID_ACTION_1                         12301
-#define     ID_ACTION_2                         12302
-#define     ID_ACTION_3                         12303
-#define     ID_ACTION_4                         12304
-#define     ID_ACTION_5                         12305
-#define     ID_ACTION_6                         12306
-#define     ID_ACTION_7                         12307
-#define     ID_ACTION_8                         12308
-#define     ID_ACTION_9                         12309
-#define     ID_ACTION_10                        12310
-#define     ID_ACTION_11                        12311
-#define     ID_ACTION_12                        12312   // TermLVMthread
-#define     ID_ACTION_13                        12313
-#define     ID_ACTION_14                        12314
-#define     ID_ACTION_15                        12315
-#define     ID_ACTION_16                        12316
-#define     ID_ACTION_17                        12317   // QueryDrive (old StartFireFoxAsSession)
-#define     ID_ACTION_18                        12318   // PurgeDrive (old StartFireFoxAsProgram)
-#define     ID_ACTION_19                        12319   // PhysOpen
-#define     ID_ACTION_20                        12320   // PhysClose
-#define     ID_ACTION_21                        12321   // DasdOpen
-#define     ID_ACTION_22                        12322   // DasdClose
-#define     ID_ACTION_23                        12323   // Create
-#define     ID_ACTION_24                        12324   // Show
-#define     ID_ACTION_25                        12325   // Hide
-#define     ID_ACTION_26                        12326   // Destroy
 
-#define     ID_ACTION_27                        12327   // DfsVOS2
-#define     ID_ACTION_28                        12328   // FixDialog
-
-
-#define     ID_CLEAR                            12330
-#define     ID_CLEAR1                           12331
-#define     ID_CLEAR2                           12332
-#define     ID_CLEAR3                           12333
-
-#define     ID_FOCUS_ME                         0
 
 /* Newly Added */
 #define DID_CLOSE                               89

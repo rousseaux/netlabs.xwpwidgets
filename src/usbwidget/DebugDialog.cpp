@@ -70,7 +70,7 @@ int DebugDialog::create() {
                                 NULL,
                                 (PFNWP) DebugDialogProc,
                                 hmodMe,
-                                ID_DEBUG_DIALOG,
+                                IDD_DEBUG,
                                 &this->wci
                             );
     }
@@ -85,7 +85,7 @@ int DebugDialog::create() {
     else {
         MessageBox("WinLoadDlg", "NULL");
     }
-#if 0
+
     /* Create a new Notebook to manage the Notebook Control */
     if (this->notebook == NULL) this->notebook = new Notebook();
 
@@ -93,7 +93,34 @@ int DebugDialog::create() {
     if (this->notebook) {
 
         /* Initialize Notebook */
-        this->notebook->init(this->hwndSelf, DLG_ID_WIDGETSETTINGS_NOTEBOOK);
+        this->notebook->init(this->hwndSelf, IDNB_DEBUG);
+
+        /* Maximize it */
+        //~ this->notebook->maximize();
+
+        do {
+            //~ break;
+            BOOL    brc = FALSE;
+            RECTL   rectl;
+            WPOINT  wpoint;
+
+            brc = WinQueryWindowRect(this->hwndSelf, &rectl);
+            brc = (BOOL) WinSendMsg(this->hwndSelf, WM_QUERYBORDERSIZE, (MPARAM) &wpoint, (MPARAM) NULL);
+            rectl.xLeft += wpoint.x;
+            rectl.yBottom += wpoint.y;
+            rectl.xRight -= 2 * wpoint.x;
+            rectl.yTop -= 2 * wpoint.y + WinQuerySysValue(HWND_DESKTOP, SV_CYTITLEBAR);
+            brc = WinSetWindowPos(
+                this->notebook->hwndSelf,
+                HWND_TOP,
+                rectl.xLeft,
+                rectl.yBottom,
+                rectl.xRight,
+                rectl.yTop,
+                SWP_MOVE |
+                SWP_SIZE
+            );
+        } while (0);
 
         /* Append the pages */
         this->notebook->appendPages();
@@ -101,7 +128,7 @@ int DebugDialog::create() {
     else {
         MessageBox("Notebook", "NULL");
     }
-#endif
+
     return NULL;
 }
 
@@ -150,7 +177,7 @@ MRESULT DebugDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     switch (SHORT1FROMMP(mp1)) {
 
         /* Widget Settings Close Button */
-        case DLG_ID_WIDGETSETTINGS_CLOSEBUTTON: {
+        case IDB_DEBUG_CLOSE: {
             //~ MessageBox("WidgetSettingsDialog","Dismissing Dialog");
             mresReply = (MRESULT) WinDismissDlg(hwnd, SHORT1FROMMP(mp1));
             break;
@@ -170,24 +197,31 @@ MRESULT DebugDialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
 MRESULT DebugDialog::wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     __mthd();
-    return (MRESULT) TRUE;
+    BOOL    brc = FALSE;
+    HPS     hps = (HPS) mp1;
+    PRECTL  prectl = (PRECTL) mp2;
+
+    brc = WinFillRect(hps, prectl, CLR_WHITE);
+
+    return (MRESULT) FALSE;
 }
 
 MRESULT DebugDialog::wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     //~ __mthd();
     BOOL    brc = FALSE;
     HPS     hps = NULL;
-    RECTL    rcl;
+    RECTL    rectl;
 
     /* Invalidate the given rectangle */
     do {
         break;
-        hps = WinBeginPaint(hwnd, NULL, &rcl);
+        hps = WinBeginPaint(hwnd, NULL, &rectl);
+        brc = WinFillRect(hps, &rectl, CLR_WHITE);
         brc = WinEndPaint(hps);
     } while (0);
 
     return this->wmDefault(hwnd, msg, mp1, mp2);
-    //~ return NULL;
+    //~ return (MRESULT) TRUE;
 }
 
 MRESULT DebugDialog::wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
@@ -201,6 +235,9 @@ MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     BOOL    brc = FALSE;
     MRESULT mrc = 0;
     CHAR    buf[512] = {0};
+
+    //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
+    printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
 
     /*
     // Get pointer to C++ Object.

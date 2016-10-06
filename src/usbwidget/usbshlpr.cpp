@@ -69,6 +69,8 @@
 #include    "AllocMem.hpp"
 
 #include    "DebugDialog.hpp"
+#include    "WidgetSettingsDialog.hpp"
+//~ #include    "ProblemFixerDialog.hpp"
 
 /* The public include file for this module */
 #include    "usbshlpr.hpp"
@@ -84,8 +86,10 @@
 //! ----------------------------------------------------------------- [globals]
 
 /* Pointer to this Daemon Application */
-Daemon*         g_daemon    =   NULL;
-DebugDialog*    g_dbd       =   NULL;
+Daemon*                 g_daemon    =   NULL;
+DebugDialog*            g_dbd       =   NULL;
+WidgetSettingsDialog*   g_wsd       =   NULL;
+ProblemFixerDialog*     g_pfd       =   NULL;
 //! FIXME: Get this one dynamically
 HMODULE hmodMe              = NULL;
 
@@ -703,7 +707,7 @@ MRESULT DialogWindow::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         case IDM_QUIT:
             WinPostMsg(hwnd, WM_CLOSE, (MPARAM) NULL, (MPARAM) NULL);
             break;
-        case IDM_SM2NEWDD:
+        case IDM_SM2NEWDBD:
             do {
                 if (!g_dbd) {
                     g_dbd = new DebugDialog();
@@ -715,6 +719,54 @@ MRESULT DialogWindow::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 else {
                     g_dbd->center();
                     g_dbd->show();
+                }
+            } while (0);
+            break;
+        case IDM_SM2NEWWSD:
+            do {
+                if (!g_wsd) {
+                    g_wsd = new WidgetSettingsDialog();
+                    g_wsd->create();
+                    g_wsd->center();
+                    g_wsd->show();
+                    //~ g_wsd->process();
+                }
+                else {
+                    g_wsd->center();
+                    g_wsd->show();
+                }
+            } while (0);
+            break;
+        //~ case IDM_SM2PFD:
+            //~ do {
+                //~ if (!g_pfd) {
+                    //~ g_pfd = new ProblemFixerDialog();
+                    //~ g_pfd->create();
+                    //~ g_pfd->center();
+                    //~ g_pfd->show();
+                    //~ g_pfd->process();
+                //~ }
+                //~ else {
+                    //~ g_pfd->center();
+                    //~ g_pfd->show();
+                //~ }
+            //~ } while (0);
+            //~ break;
+        case IDM_SM3DESTROYDBD:
+            do {
+                if (g_dbd) {
+                    g_dbd->destroy();
+                    delete g_dbd;
+                    g_dbd = NULL;
+                }
+            } while (0);
+            break;
+        case IDM_SM3DESTROYWSD:
+            do {
+                if (g_wsd) {
+                    g_wsd->destroy();
+                    delete g_wsd;
+                    g_wsd = NULL;
                 }
             } while (0);
             break;

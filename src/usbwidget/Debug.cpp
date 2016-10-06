@@ -34,6 +34,7 @@
 #include    "USBHelpers.hpp"
 #include    "ProblemFixer.hpp"
 #include    "ProblemFixerDialog.hpp"
+#include    "DebugDialog.hpp"
 #include    "WidgetSettingsDialog.hpp"
 
 #include    "Debug.hpp"
@@ -66,7 +67,7 @@ void    CreateDebugDialog() {
             NULL,                               // Owner
             DebugDialogHandler,                 // Dialog Procedure
             hmodMe,                             // Module
-            ID_DEBUG_DIALOG_NOTEBOOK_PAGE_1,    // Dialog ID
+            IDD_DEBUG_NBP_1,                    // Dialog ID
             NULL                                // Create Parameters
         );
     }

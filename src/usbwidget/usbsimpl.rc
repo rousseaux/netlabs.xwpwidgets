@@ -38,6 +38,12 @@ rcinclude   "dialogs.rc"
 rcinclude   "notebooks.rc"
 rcinclude   "images.rc"
 
+/* Debug Dialog */
+rcinclude   "DebugDialog.dlg"
+
+/* Widget Settings Dialog */
+rcinclude   "WidgetSettingsDialog.dlg"
+
 /* When UNIX-paths are accepted these are preferred */
 ICON    ID_ICO_USB_WIDGET   PRELOAD "icons/usb_01.ico"
 

@@ -44,6 +44,8 @@ class   debugDialog;
 #include    "Notebook.hpp"
 #include    "NotebookPage.hpp"
 
+#include    "DebugDialog.ids"
+
 /* Prototypes */
 MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 

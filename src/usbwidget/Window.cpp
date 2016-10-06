@@ -99,6 +99,7 @@ int     Window::hide() {
 }
 
 int     Window::maximize() {
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     if (this->hwndSelf) {
         WinSetWindowPos(this->hwndSelf, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE|SWP_ZORDER);

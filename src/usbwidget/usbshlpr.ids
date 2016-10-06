@@ -38,13 +38,54 @@
 #define     IDM_SM2MI1      121
 #define     IDM_SM2MI2      122
 #define     IDM_SM2MI3      123
-#define     IDM_SM2NEWDD    124
+#define     IDM_SM2NEWDBD   124
+#define     IDM_SM2NEWWSD   125
+#define     IDM_SM2PFD      126
 
 /* Generic IDs for submenu #3 */
 #define     IDM_SM3         13
 #define     IDM_SM3MI1      131
 #define     IDM_SM3MI2      132
 #define     IDM_SM3MI3      133
+#define     IDM_SM3DESTROYDBD    134
+#define     IDM_SM3DESTROYWSD    135
+#define     IDM_SM3PFD      136
+
+/* Generic IDs for submenu #4 */
+#define     IDM_SM4         14
+#define     IDM_SM4MI1      141
+#define     IDM_SM4MI2      142
+#define     IDM_SM4MI3      143
+
+/* Generic IDs for submenu #5 */
+#define     IDM_SM5         15
+#define     IDM_SM5MI1      151
+#define     IDM_SM5MI2      152
+#define     IDM_SM5MI3      153
+
+/* Generic IDs for submenu #6 */
+#define     IDM_SM6         16
+#define     IDM_SM6MI1      161
+#define     IDM_SM6MI2      162
+#define     IDM_SM6MI3      163
+
+/* Generic IDs for submenu #7 */
+#define     IDM_SM7         17
+#define     IDM_SM7MI1      171
+#define     IDM_SM7MI2      172
+#define     IDM_SM7MI3      173
+
+/* Generic IDs for submenu #8 */
+#define     IDM_SM8         18
+#define     IDM_SM8MI1      181
+#define     IDM_SM8MI2      182
+#define     IDM_SM8MI3      183
+
+/* Generic IDs for submenu #9 */
+#define     IDM_SM9         19
+#define     IDM_SM9MI1      191
+#define     IDM_SM9MI2      192
+#define     IDM_SM9MI3      193
 
 /* ID for MenuItem Quit */
 #define     IDM_QUIT        999

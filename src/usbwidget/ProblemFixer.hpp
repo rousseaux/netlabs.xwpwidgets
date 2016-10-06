@@ -38,6 +38,8 @@
 #include    "ModuleGlobals.hpp"
 #include    "USBHelpers.hpp"
 
+#include    "DebugDialog.hpp"
+
 /* Masks for QueryDeviceSanity() */
 #define     DSKSTAT_VALID           0x80000000L     // 31
 #define     DSKSTAT_PRM             0x40000000L     // 30

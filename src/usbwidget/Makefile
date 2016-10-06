@@ -85,7 +85,10 @@ DAEMON_MODULES=\
 Object@\
 Window@\
 Dialog@\
+Notebook@\
+NotebookPage@\
 DebugDialog@\
+WidgetSettingsDialog@\
 
 #
 # Class Modules
@@ -136,6 +139,8 @@ DebugDialog.dlg\
 Images.rc\
 Notebooks.rc\
 Notebooks.dlg\
+DebugDialog.dlg\
+WidgetSettingsDialog.dlg\
 usbshold.rc\
 usbsimpl.rc\
 
@@ -149,6 +154,7 @@ usbshlpr.dlg\
 usbshlpr.mnu\
 usbshlpr.wnd\
 DebugDialog.dlg\
+WidgetSettingsDialog.dlg\
 
 #
 # Libraries to cluster some stuff
@@ -344,6 +350,12 @@ LVMHelpers.lib: $*.obj
 USBHelpers.lib: $*.obj
 
 # =============================================================================
+#                                  [ RESOURCES TO BUILD USING INFERENCE RULES ]
+# =============================================================================
+DebugDialog.res: $*.rc $*.ids $*.dlg
+WidgetSettingsDialog.res: $*.rc $*.ids $*.dlg
+
+# =============================================================================
 #                                                  [ DEPLOY TARGETS TO SYSTEM ]
 # =============================================================================
 dist:
@@ -408,6 +420,18 @@ daemon-stop:
 !error **** INVALID BUILD ENVIRONMENT ****
 !endif
 !endif
+
+# =============================================================================
+#                                                 [ RC TO RES INFERENCE RULES ]
+# =============================================================================
+.rc.res:
+	@echo.
+	@echo [$@]
+	@echo Reason: $?
+!if "$(BLDENV)"=="vac3"
+	@set INCLUDE=$(RCINCLUDE)
+!endif
+	$(RC) $(RCFLAGS) -r $*.rc
 
 # Include targets that generate files
 !include GenFiles.mif

@@ -39,6 +39,9 @@ class   ProblemFixerDialog;
 #include    "Master.hpp"
 
 #include    "Dialog.hpp"
+#include    "DebugDialog.hpp"
+
+#include    "ProblemFixerDialog.ids"
 
 #define     PF_FIX_SIZE     1
 #define     PF_FIX_HSECS    2

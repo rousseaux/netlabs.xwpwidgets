@@ -81,17 +81,6 @@ class   NotebookPage : public Dialog {
 
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// NotebookPage1
-///////////////////////////////////////////////////////////////////////////////
-class   NotebookPage1 : public NotebookPage {
-    public:
-    NotebookPage1(Notebook* notebook);
-    virtual ~NotebookPage1();
-    virtual init(void);
-    virtual initItems(void);
-    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-};
 #ifdef      __cplusplus
     }
 #endif

@@ -23,20 +23,30 @@ BEGIN
         MENUITEM "Item2 (122)",             IDM_SM2MI2
         MENUITEM "Item3 (123)",             IDM_SM2MI3
         MENUITEM SEPARATOR
-        MENUITEM "New Debug Dialog",        IDM_SM2NEWDD
+        MENUITEM "New Debug Dialog",        IDM_SM2NEWDBD
+        MENUITEM "New Settings Dialog",     IDM_SM2NEWWSD
     END
-    SUBMENU "Help",                         IDM_SM3
+    SUBMENU "Destroy",                      IDM_SM3
     BEGIN
         MENUITEM "Item1 (131)",             IDM_SM3MI1
         MENUITEM "Item2 (132)",             IDM_SM3MI2
         MENUITEM "Item3 (133)",             IDM_SM3MI3
+        MENUITEM SEPARATOR
+        MENUITEM "Destroy Debug Dialog",        IDM_SM3DESTROYDBD
+        MENUITEM "Destroy Settings Dialog",     IDM_SM3DESTROYWSD
+    END
+    SUBMENU "Help",                         IDM_SM9, MIS_BUTTONSEPARATOR
+    BEGIN
+        MENUITEM "Item1 (191)",             IDM_SM9MI1
+        MENUITEM "Item2 (192)",             IDM_SM9MI2
+        MENUITEM "Item3 (193)",             IDM_SM9MI3
     END
 END
 
 /* Menu for GuiDaemon DialogWindow version */
 MENU 2
 BEGIN
-    SUBMENU "Dialog",                       11
+    SUBMENU "Dialog",                       IDM_SM1
     BEGIN
         MENUITEM "Item1 (111)",             IDM_SM1MI1
         MENUITEM "Item2 (112)",             IDM_SM1MI2
@@ -50,12 +60,22 @@ BEGIN
         MENUITEM "Item2 (122)",             IDM_SM2MI2
         MENUITEM "Item3 (123)",             IDM_SM2MI3
         MENUITEM SEPARATOR
-        MENUITEM "New Debug Dialog",        IDM_SM2NEWDD
+        MENUITEM "New Debug Dialog",        IDM_SM2NEWDBD
+        MENUITEM "New Settings Dialog",     IDM_SM2NEWWSD
     END
-    SUBMENU "Help",                         IDM_SM3
+    SUBMENU "Destroy",                      IDM_SM3
     BEGIN
         MENUITEM "Item1 (131)",             IDM_SM3MI1
         MENUITEM "Item2 (132)",             IDM_SM3MI2
         MENUITEM "Item3 (133)",             IDM_SM3MI3
+        MENUITEM SEPARATOR
+        MENUITEM "Destroy Debug Dialog",        IDM_SM3DESTROYDBD
+        MENUITEM "Destroy Settings Dialog",     IDM_SM3DESTROYWSD
+    END
+    SUBMENU "Help",                         IDM_SM9, MIS_BUTTONSEPARATOR
+    BEGIN
+        MENUITEM "Item1 (191)",             IDM_SM9MI1
+        MENUITEM "Item2 (192)",             IDM_SM9MI2
+        MENUITEM "Item3 (193)",             IDM_SM9MI3
     END
 END

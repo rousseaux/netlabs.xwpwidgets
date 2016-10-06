@@ -1,5 +1,5 @@
 /*****************************************************************************\
-* usbshlpr.rc -- NeoWPS * USB Widget                                          *
+* DebugDialog.rc -- NeoWPS * USB Widget                                       *
 *                                                                             *
 * Copyright (c) RDP Engineering                                               *
 *                                                                             *
@@ -24,20 +24,8 @@
 
 
 /**
- * This file holds the resource definitions for the Daemon.
+ * This file encapsulates the id's and dialogs because the dialog editor
+ * uses the .dlg extension. This file is rcincluded by the main .rc file.
  */
 
-/* Module Dialogs */
-rcinclude   "usbshlpr.dlg"
-
-/* Module Windows */
-//~ rcinclude   "usbshlpr.wnd"
-
-/* Module Menus */
-rcinclude   "usbshlpr.mnu"
-
-/* Debug Dialog */
 rcinclude   "DebugDialog.dlg"
-
-/* Widget Settings Dialog */
-rcinclude   "WidgetSettingsDialog.dlg"
