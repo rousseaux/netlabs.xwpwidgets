@@ -33,6 +33,8 @@
 
 /* Always declare the class(es) to resolve class dependencies */
 class   WidgetSettingsDialog;
+class   WidgetSettingsDialogEx;
+class   WidgetSettingsNotebook;
 
 #ifndef     __WIDGETSETINGSDIALOG_HPP__
 #define     __WIDGETSETINGSDIALOG_HPP__
@@ -54,7 +56,9 @@ class   WidgetSettingsDialog;
 /* Prototypes */
 MRESULT EXPENTRY DlgProcWidgetSettingsDialog(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-/* Widget Settings Dialog */
+///////////////////////////////////////////////////////////////////////////////
+// WidgetSettingsDialog
+///////////////////////////////////////////////////////////////////////////////
 class   WidgetSettingsDialog : public Dialog {
 
     public:
@@ -81,22 +85,34 @@ class   WidgetSettingsDialog : public Dialog {
 
 };
 
-/* Derived Widget Settings Dialog with override method */
+///////////////////////////////////////////////////////////////////////////////
+// WidgetSettingsDialogEx
+// ----------------------------------------------------------------------------
+// Derived Widget Settings Dialog with override method
+///////////////////////////////////////////////////////////////////////////////
 class   WidgetSettingsDialogEx : public WidgetSettingsDialog {
+
     public:
+
+    /* Public Overrides */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    protected:
+
+    private:
+
 };
 
-
-
-
-class   Notebook1 : public Notebook {
+///////////////////////////////////////////////////////////////////////////////
+// WidgetSettingsNotebook
+///////////////////////////////////////////////////////////////////////////////
+class   WidgetSettingsNotebook : public Notebook {
 
     public:
 
     /* Public Contructor(s) and Destructor */
-    Notebook1::Notebook1();
-    virtual Notebook1::~Notebook1();
+    WidgetSettingsNotebook::WidgetSettingsNotebook();
+    virtual WidgetSettingsNotebook::~WidgetSettingsNotebook();
 
     /* Public Methods */
     virtual void    init(HWND parent, ULONG id);
@@ -112,21 +128,22 @@ class   Notebook1 : public Notebook {
 
 };
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
-// NotebookPage1
+// WidgetSettingsNotebookPage1
 ///////////////////////////////////////////////////////////////////////////////
-class   NotebookPage1 : public NotebookPage {
+class   WidgetSettingsNotebookPage1 : public NotebookPage {
+
     public:
-    NotebookPage1(Notebook* notebook);
-    virtual ~NotebookPage1();
+
+    /* Public Contructor(s) and Destructor */
+    WidgetSettingsNotebookPage1(Notebook* notebook);
+    virtual ~WidgetSettingsNotebookPage1();
+
+    /* Public Methods */
     virtual init(void);
     virtual initItems(void);
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
-
 
 #ifdef      __cplusplus
     }

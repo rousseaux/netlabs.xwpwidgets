@@ -83,7 +83,7 @@ int WidgetSettingsDialog::create() {
     }
 
     /* Create a new Notebook to manage the Notebook Control */
-    if (this->notebook == NULL) this->notebook = new Notebook1();
+    if (this->notebook == NULL) this->notebook = new WidgetSettingsNotebook();
 
     /* Populate the Notebook with Pages */
     if (this->notebook) {
@@ -176,9 +176,9 @@ MRESULT WidgetSettingsDialogEx::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPAR
     return (MRESULT) mresReply;
 }
 
-///: -------------------------------------------------------------- [Notebook1]
+///: ------------------------------------------------- [WidgetSettingsNotebook]
 
-Notebook1::Notebook1() {
+WidgetSettingsNotebook::WidgetSettingsNotebook() {
     this->debugMe();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -188,13 +188,13 @@ Notebook1::Notebook1() {
     this->pages = NULL;
 }
 
-Notebook1::~Notebook1() {
+WidgetSettingsNotebook::~WidgetSettingsNotebook() {
     this->removePages();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 }
 
-void    Notebook1::init(HWND parent, ULONG id) {
+void    WidgetSettingsNotebook::init(HWND parent, ULONG id) {
 
     /* Set some important attributes */
     this->hwndParent = parent;
@@ -248,7 +248,7 @@ void    Notebook1::init(HWND parent, ULONG id) {
     );
 }
 
-void    Notebook1::appendPage(NotebookPage* page) {
+void    WidgetSettingsNotebook::appendPage(NotebookPage* page) {
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 
@@ -316,7 +316,7 @@ void    Notebook1::appendPage(NotebookPage* page) {
     }
 }
 
-void    Notebook1::appendPages() {
+void    WidgetSettingsNotebook::appendPages() {
     NotebookPage*   nbp = NULL;
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -325,7 +325,7 @@ void    Notebook1::appendPages() {
     do {
 
         /* Create a new page */
-        nbp = new NotebookPage1(this);
+        nbp = new WidgetSettingsNotebookPage1(this);
 
         /* Initialize the page and append it to the notebook */
         if (nbp) {
@@ -354,7 +354,7 @@ void    Notebook1::appendPages() {
     } while (0);
 }
 
-void    Notebook1::removePage(NotebookPage* page) {
+void    WidgetSettingsNotebook::removePage(NotebookPage* page) {
     NotebookPage*   tnbp = this->pages;     // Temporary ptr
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -377,7 +377,7 @@ void    Notebook1::removePage(NotebookPage* page) {
     }
 }
 
-void    Notebook1::removePages() {
+void    WidgetSettingsNotebook::removePages() {
     NotebookPage*   tnbp = this->pages;     // Temporary ptr
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -388,7 +388,7 @@ void    Notebook1::removePages() {
     }
 }
 
-int     Notebook1::test123(void) {
+int     WidgetSettingsNotebook::test123(void) {
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     return 0;
@@ -396,21 +396,21 @@ int     Notebook1::test123(void) {
 
 
 
-///: ---------------------------------------------------------- [NotebookPage1]
+///: -------------------------------------------- [WidgetSettingsNotebookPage1]
 
-NotebookPage1::NotebookPage1(Notebook* notebook) {
+WidgetSettingsNotebookPage1::WidgetSettingsNotebookPage1(Notebook* notebook) {
     this->debugMe();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->notebook = notebook;
 }
 
-NotebookPage1::~NotebookPage1() {
+WidgetSettingsNotebookPage1::~WidgetSettingsNotebookPage1() {
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 }
 
-int     NotebookPage1::init(void) {
+int     WidgetSettingsNotebookPage1::init(void) {
 
     /* Call parent method to do default initialization */
     this->NotebookPage::init();
@@ -426,7 +426,7 @@ int     NotebookPage1::init(void) {
     return 0;
 }
 
-int     NotebookPage1::initItems(void) {
+int     WidgetSettingsNotebookPage1::initItems(void) {
 
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -440,53 +440,53 @@ int     NotebookPage1::initItems(void) {
 }
 
 /* Handle Command Messages */
-MRESULT NotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+MRESULT WidgetSettingsNotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     MRESULT mresReply = 0;
 
-    //~ MessageBox("NotebookPage1","wmCommand");
+    //~ MessageBox("WidgetSettingsNotebookPage1","wmCommand");
 
     switch (SHORT1FROMMP(mp1)) {
 
         /* Test Button #1 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_1: {
-            MessageBox("NotebookPage1","Test Button #1");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #1");
             this->maximize();
             break;
         }
 
         /* Test Button #2 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_2: {
-            MessageBox("NotebookPage1","Test Button #2");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #2");
             break;
         }
 
         /* Test Button #3 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_3: {
-            MessageBox("NotebookPage1","Test Button #3");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #3");
             break;
         }
 
         /* Test Button #4 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_4: {
-            MessageBox("NotebookPage1","Test Button #4");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #4");
             break;
         }
 
         /* Test Button #5 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_5: {
-            MessageBox("NotebookPage1","Test Button #5");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #5");
             break;
         }
 
         /* Test Button #6 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_6: {
-            MessageBox("NotebookPage1","Test Button #6");
+            MessageBox("WidgetSettingsNotebookPage1","Test Button #6");
             break;
         }
 
         /* Test Button #7 */
         case IDD_WIDGETSETTINGS_NBP_1_PB_7: {
-            //~ MessageBox("NotebookPage1","Test Button #7");
+            //~ MessageBox("WidgetSettingsNotebookPage1","Test Button #7");
             _debug("_debug test");
             break;
         }
