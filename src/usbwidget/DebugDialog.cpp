@@ -96,31 +96,7 @@ int DebugDialog::create() {
         this->notebook->init(this->hwndSelf, IDNB_DEBUG);
 
         /* Maximize it */
-        //~ this->notebook->maximize();
-
-        do {
-            //~ break;
-            BOOL    brc = FALSE;
-            RECTL   rectl;
-            WPOINT  wpoint;
-
-            brc = WinQueryWindowRect(this->hwndSelf, &rectl);
-            brc = (BOOL) WinSendMsg(this->hwndSelf, WM_QUERYBORDERSIZE, (MPARAM) &wpoint, (MPARAM) NULL);
-            rectl.xLeft += wpoint.x;
-            rectl.yBottom += wpoint.y;
-            rectl.xRight -= 2 * wpoint.x;
-            rectl.yTop -= 2 * wpoint.y + WinQuerySysValue(HWND_DESKTOP, SV_CYTITLEBAR);
-            brc = WinSetWindowPos(
-                this->notebook->hwndSelf,
-                HWND_TOP,
-                rectl.xLeft,
-                rectl.yBottom,
-                rectl.xRight,
-                rectl.yTop,
-                SWP_MOVE |
-                SWP_SIZE
-            );
-        } while (0);
+        this->notebook->maximize();
 
         /* Append the pages */
         this->notebook->appendPages();

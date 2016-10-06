@@ -251,6 +251,41 @@ int     Notebook::test123(void) {
     return 0;
 }
 
+int     Notebook::maximize() {
+    __mthd();
+    BOOL    brc = FALSE;
+    RECTL   rectl;
+    WPOINT  wpoint;
+
+    if (this->hwndParent) {
+
+        /* Get window dimensions of parent */
+        brc = WinQueryWindowRect(this->hwndParent, &rectl);
+        brc = (BOOL) WinSendMsg(this->hwndParent, WM_QUERYBORDERSIZE, (MPARAM) &wpoint, (MPARAM) NULL);
+
+        /* Calculate rectangle minus borders and frame-controls */
+        //! TODO: More checks on parent (has frame-controls, has menubar, etc.)
+        rectl.xLeft += wpoint.x;
+        rectl.yBottom += wpoint.y;
+        rectl.xRight -= 2 * wpoint.x;
+        rectl.yTop -= 2 * wpoint.y + WinQuerySysValue(HWND_DESKTOP, SV_CYTITLEBAR);
+
+        /* Move and Size the Notebook */
+        brc = WinSetWindowPos(
+            this->hwndSelf,
+            HWND_TOP,
+            rectl.xLeft,
+            rectl.yBottom,
+            rectl.xRight,
+            rectl.yTop,
+            SWP_MOVE |
+            SWP_SIZE
+        );
+    }
+
+    return this->hwndSelf;
+}
+
 ///: -------------------------------------------------------- [NotebookHandler]
 
 /* Probably obsolete because a Notebook is a Control */

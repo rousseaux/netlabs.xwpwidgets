@@ -65,6 +65,9 @@ class   Notebook : public Window {
     virtual void    removePages();
     virtual int     test123(void);
 
+    /* Public Overrides */
+    virtual int     maximize();
+
     /* Public Attributes */
     ULONG           idResource;
     NotebookPage*   pages;
