@@ -28,7 +28,9 @@
  */
 
 /* Always declare the class(es) to resolve class dependencies */
-class   debugDialog;
+class   DebugDialog;
+class   DebugNotebook;
+class   DebugNotebookPage1;
 
 #ifndef     __DEBUGDIALOG_HPP__
 #define     __DEBUGDIALOG_HPP__
@@ -49,6 +51,9 @@ class   debugDialog;
 /* Prototypes */
 MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
+///////////////////////////////////////////////////////////////////////////////
+// DebugDialog
+///////////////////////////////////////////////////////////////////////////////
 class   DebugDialog : public Dialog {
 
     public:
@@ -78,6 +83,48 @@ class   DebugDialog : public Dialog {
 
     private:
 
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// DebugNotebook
+///////////////////////////////////////////////////////////////////////////////
+class   DebugNotebook : public Notebook {
+
+    public:
+
+    /* Public Contructor(s) and Destructor */
+    DebugNotebook::DebugNotebook();
+    virtual DebugNotebook::~DebugNotebook();
+
+    /* Public Methods */
+    virtual void    init(HWND parent, ULONG id);
+    virtual void    appendPage(NotebookPage*);
+    virtual void    appendPages();
+    virtual void    removePage(NotebookPage*);
+    virtual void    removePages();
+    virtual int     test123(void);
+
+    protected:
+
+    private:
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// DebugNotebookPage1
+///////////////////////////////////////////////////////////////////////////////
+class   DebugNotebookPage1 : public NotebookPage {
+
+    public:
+
+    /* Public Contructor(s) and Destructor */
+    DebugNotebookPage1(Notebook* notebook);
+    virtual ~DebugNotebookPage1();
+
+    /* Public Methods */
+    virtual init(void);
+    virtual initItems(void);
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
 
 #ifdef      __cplusplus
