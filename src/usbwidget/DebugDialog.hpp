@@ -67,6 +67,7 @@ class   DebugDialog : public Dialog {
     virtual int process(void);
     virtual int destroy(void);
     virtual int test123(void);
+    virtual int initItems(void);
 
     /* Public Message Handlers */
     virtual MRESULT wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
@@ -104,6 +105,9 @@ class   DebugNotebook : public Notebook {
     virtual void    removePages();
     virtual int     test123(void);
 
+    /* Public Overrides */
+    virtual int     maximize();
+
     protected:
 
     private:
@@ -122,9 +126,16 @@ class   DebugNotebookPage1 : public NotebookPage {
     virtual ~DebugNotebookPage1();
 
     /* Public Methods */
-    virtual init(void);
-    virtual initItems(void);
+    virtual int init(void);
+    virtual int initItems(void);
+
+    /* Public Message Handlers */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    protected:
+
+    private:
+
 };
 
 #ifdef      __cplusplus

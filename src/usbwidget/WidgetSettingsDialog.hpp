@@ -140,8 +140,10 @@ class   WidgetSettingsNotebookPage1 : public NotebookPage {
     virtual ~WidgetSettingsNotebookPage1();
 
     /* Public Methods */
-    virtual init(void);
-    virtual initItems(void);
+    virtual int init(void);
+    virtual int initItems(void);
+
+    /* Public Message Handlers */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 };
 

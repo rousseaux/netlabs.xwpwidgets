@@ -37,7 +37,7 @@
 #define     IDD_DEBUG                           15000
 #define     IDB_DEBUG_CLOSE                     15101
 #define     IDNB_DEBUG                          15900
-#define     IDD_DEBUG_NBP_1     15901
+#define     IDD_DEBUG_NBP_1                     15901
 
 
 
@@ -102,3 +102,4 @@
 
 #define     ID_FOCUS_ME                         0
 
+#define     IDB_MAXIMIZE                        12400

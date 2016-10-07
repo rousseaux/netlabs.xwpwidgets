@@ -64,7 +64,7 @@ int DebugDialog::create() {
     /* Load dialog is not already loaded */
     if (this->hwndSelf == NULL) {
 
-        /* Load the WidgetSettings Dialog */
+        /* Load the Debug Dialog */
         this->hwndSelf =    WinLoadDlg(
                                 HWND_DESKTOP,
                                 NULL,
@@ -78,6 +78,7 @@ int DebugDialog::create() {
     /* Show dialog if creation succeeded */
     if (this->hwndSelf) {
         this->hwndParent = HWND_DESKTOP;
+        this->initItems();
         this->show();
         //~ MessageBox("WinLoadDlg", "OK");
     }
@@ -133,6 +134,32 @@ int DebugDialog::test123() {
     return 0;
 }
 
+int DebugDialog::initItems() {
+    BOOL    brc = FALSE;
+
+    /* Align BLDLEVEL text to top */
+    do {
+        RECTL   rself;
+        RECTL   rctrl;
+        WPOINT  wpoint;
+        brc = WinSetDlgItemText(this->hwndSelf, ID_BLDLEVEL, bldlevel);
+        brc = (BOOL) WinSendMsg(this->hwndSelf, WM_QUERYBORDERSIZE, (MPARAM) &wpoint, (MPARAM) NULL);
+        brc = WinQueryWindowRect(this->hwndSelf, &rself);
+        brc = WinQueryWindowRect(WinWindowFromID(this->hwndSelf, ID_BLDLEVEL), &rctrl);
+        brc = WinSetWindowPos(
+            WinWindowFromID(this->hwndSelf, ID_BLDLEVEL),
+            HWND_TOP,
+            rctrl.xLeft,
+            rself.yTop - WinQuerySysValue(HWND_DESKTOP, SV_CYTITLEBAR) - (rctrl.yTop - rctrl.yBottom) - wpoint.y,
+            rself.xRight - rself.xLeft - wpoint.x,
+            rctrl.yTop - rctrl.yBottom,
+            SWP_MOVE | SWP_SIZE
+        );
+    } while (0);
+
+    return 0;
+}
+
 MRESULT DebugDialog::wmClose(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     __mthd();
     BOOL brc = FALSE;
@@ -177,9 +204,9 @@ MRESULT DebugDialog::wmEraseBackground(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM 
     HPS     hps = (HPS) mp1;
     PRECTL  prectl = (PRECTL) mp2;
 
-    brc = WinFillRect(hps, prectl, CLR_WHITE);
+    //~ brc = WinFillRect(hps, prectl, CLR_WHITE);
 
-    return (MRESULT) FALSE;
+    return (MRESULT) TRUE;
 }
 
 MRESULT DebugDialog::wmPaint(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
@@ -423,6 +450,40 @@ int     DebugNotebook::test123(void) {
     return 0;
 }
 
+int     DebugNotebook::maximize() {
+    __mthd();
+    BOOL    brc = FALSE;
+    RECTL   rectl;
+    WPOINT  wpoint;
+
+    if (this->hwndParent) {
+
+        /* Get window dimensions of parent */
+        brc = WinQueryWindowRect(this->hwndParent, &rectl);
+        brc = (BOOL) WinSendMsg(this->hwndParent, WM_QUERYBORDERSIZE, (MPARAM) &wpoint, (MPARAM) NULL);
+
+        /* Calculate rectangle minus borders and frame-controls */
+        //! TODO: More checks on parent (has frame-controls, has menubar, etc.)
+        rectl.xLeft += wpoint.x;
+        rectl.yBottom += wpoint.y;
+        rectl.xRight -= 2 * wpoint.x;
+        rectl.yTop -= 2 * wpoint.y + WinQuerySysValue(HWND_DESKTOP, SV_CYTITLEBAR) + 16;
+
+        /* Move and Size the Notebook */
+        brc = WinSetWindowPos(
+            this->hwndSelf,
+            HWND_TOP,
+            rectl.xLeft,
+            rectl.yBottom,
+            rectl.xRight,
+            rectl.yTop,
+            SWP_MOVE |
+            SWP_SIZE
+        );
+    }
+
+    return this->hwndSelf;
+}
 
 MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
@@ -432,7 +493,7 @@ MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     CHAR    buf[512] = {0};
 
     //~ return WinDefWindowProc(hwnd, msg, mp1, mp2);
-    printf("%s:%s hwnd:%08X, msg:%08X, mp1:%08X, mp1:%08X\n", __FILE__, __FUNCTION__, msg, mp1, mp2);
+    printf("%s::%s hwnd:%08X, msg:%08X, mp1:%08X, mp2:%08X\n", __FILE__, __FUNCTION__, hwnd, msg, mp1, mp2);
 
     /*
     // Get pointer to C++ Object.
@@ -446,7 +507,7 @@ MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
         /* Initialize Dialog */
         case WM_INITDLG: {
-            printf("%s::%s WM_INITDLG: %08X, %08X, %08X, %08X\n", __FILE__, __FUNCTION__, hwnd, msg, mp1, mp2);
+            printf("%s::%s WM_INITDLG: hwnd:%08X, msg:%08X, mp1:%08X, mp2:%08X\n", __FILE__, __FUNCTION__, hwnd, msg, mp1, mp2);
             //~ MessageBox("DlgProcWidgetSettingsDialog","pWnd is NULL !!");
             /* Get pointer to C++ Object from the CreateParams passed to WinLoadDlg() */
             pWnd = ((DebugDialog*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
@@ -515,14 +576,16 @@ int     DebugNotebookPage1::init(void) {
 
     /* Call parent method to do default initialization */
     this->NotebookPage::init();
+    //~ this->pageStyle &= ~BKA_STATUSTEXTON;
 
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 
     /* Initialize this page */
     this->idResource = IDD_DEBUG_NBP_1;
-    this->tabTitle = "Page #1";
-    this->statusText = "This is the first page";
+    //~ this->tabTitle = "Page #1";
+    this->tabTitle = "Actions";
+    this->statusText = "Actions on LVM and other thingies";
 
     return 0;
 }
@@ -547,6 +610,11 @@ MRESULT DebugNotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM m
     //~ MessageBox("DebugNotebookPage1","wmCommand");
 
     switch (SHORT1FROMMP(mp1)) {
+
+        case IDB_MAXIMIZE:
+            //~ WinSetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE|SWP_ZORDER);
+            this->maximize();
+            break;
 
         /* Default */
         default: {

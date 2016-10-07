@@ -43,6 +43,9 @@ class   Dialog : public Window {
     Dialog();
     virtual ~Dialog();
 
+    /* Public Methods */
+    virtual int initItems(void);
+
     /* Public Message Handlers */
     virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 

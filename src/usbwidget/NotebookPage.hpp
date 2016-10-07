@@ -59,9 +59,9 @@ class   NotebookPage : public Dialog {
     virtual ~NotebookPage();
 
     /* Public Methods */
-    virtual init(void);
-    virtual initItems(void);
-    virtual test123(void);
+    virtual int init(void);
+    virtual int initItems(void);
+    virtual int test123(void);
 
     /* Public Attributes */
     ULONG   idPage;

@@ -46,6 +46,11 @@ Dialog::~Dialog() {
     __dtore();
 }
 
+int     Dialog::initItems() {
+    return 0;
+}
+
+
 /* Default WM_COMMAND implementation for Dialog */
 MRESULT Dialog::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     //~ __mthd();

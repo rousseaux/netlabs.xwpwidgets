@@ -1,2 +1,2 @@
 /* Bldvars.rexx -- Build Info generated from Bldvars.mif */ 
-return "testbuild-20161006" 
+return "testbuild-20161007" 

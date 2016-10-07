@@ -111,6 +111,7 @@ MRESULT EXPENTRY NotebookPageHandler(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp
 
         /* Initialize Dialog */
         case WM_INITDLG: {
+            printf("%s::%s hwnd:%08X, msg:%08X, mp1:%08X, mp2:%08X\n", __FILE__, __FUNCTION__, hwnd, msg, mp1, mp2);
             /* Get pointer to C++ Object from the CreateParams passed to WinLoadDlg() */
             pNbkPg = ((NotebookPage*)((WND_CLASS_INSTANCE*)mp2)->pvClassInstance);
             /* Assign the pointer to QWL_USER so it can be retrieved in message-cases */

@@ -64,6 +64,7 @@
 #define     ID_USB_WIDGET_DIALOG                100
 #define     ID_NOTIFICATION_DIALOG              101
 #define     ID_FORCE_REMOVE_DIALOG              103
+#define     IDD_DEBUG_OLD                       104
 
 #define     ID_WIDGET_UUID                      200
 #define     ID_WIDGET_VERSION                   201
@@ -219,3 +220,4 @@
 #define ID_TEST_6                               19706
 #define ID_TEST_7                               19707
 
+#include    "DebugDialog.ids"

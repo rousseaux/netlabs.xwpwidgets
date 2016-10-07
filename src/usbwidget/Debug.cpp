@@ -67,7 +67,7 @@ void    CreateDebugDialog() {
             NULL,                               // Owner
             DebugDialogHandler,                 // Dialog Procedure
             hmodMe,                             // Module
-            IDD_DEBUG_NBP_1,                    // Dialog ID
+            IDD_DEBUG_OLD,                      // Dialog ID
             NULL                                // Create Parameters
         );
     }

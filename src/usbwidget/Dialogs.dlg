@@ -49,6 +49,112 @@ BEGIN
     END
 END
 
-
-
-
+DLGTEMPLATE IDD_DEBUG_OLD LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Old Debug Dialog", IDD_DEBUG_OLD, 45, 4, 468, 268, , FCF_SYSMENU |
+            FCF_TITLEBAR | FCF_NOBYTEALIGN
+            PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        PUSHBUTTON      "Close", DID_OK, 419, 8, 40, 14
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C00000L
+        LISTBOX         ID_LB_1, 4, 126, 403, 120, LS_HORZSCROLL
+                        PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"
+        PUSHBUTTON      "Action #1", ID_ACTION_1, 412, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #2", ID_ACTION_2, 354, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        PUSHBUTTON      "Action #3", ID_ACTION_3, 305, 247, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #4", ID_ACTION_4, 251, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #5", ID_ACTION_5, 201, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #6", ID_ACTION_6, 153, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00008000L
+        PUSHBUTTON      "Action #7", ID_ACTION_7, 413, 214, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #8", ID_ACTION_8, 413, 206, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #9", ID_ACTION_9, 413, 198, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #10", ID_ACTION_10, 413, 190, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #11", ID_ACTION_11, 413, 182, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #12", ID_ACTION_12, 413, 174, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x000000FFL
+        PUSHBUTTON      "Action #13", ID_ACTION_13, 413, 164, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #14", ID_ACTION_14, 413, 156, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #15", ID_ACTION_15, 413, 148, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #16", ID_ACTION_16, 413, 140, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Clear", ID_CLEAR, 418, 222, 40, 12
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00005000L
+        PUSHBUTTON      "FOCUS ME", ID_FOCUS_ME, 418, 236, 40, 10
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+                        PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        LTEXT           "00000000", ID_HWND_DLG, 4, 247, 37, 8, DT_VCENTER
+        CONTROL         "1", ID_UNIT_NUMBERS, 426, 73, 25, 63, WC_COMBOBOX,
+                        CBS_DROPDOWN | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+        CONTROL         "E:", ID_DRIVE_LETTERS, 426, 62, 25, 63, WC_COMBOBOX,
+                        CBS_DROPDOWN | WS_GROUP | WS_TABSTOP | WS_VISIBLE
+        PUSHBUTTON      "Action #17", ID_ACTION_17, 413, 108, 50, 8,
+                        BS_NOBORDER
+        PUSHBUTTON      "Action #18", ID_ACTION_18, 413, 100, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        PUSHBUTTON      "Action #19", ID_ACTION_19, 413, 86, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00008000L
+        PUSHBUTTON      "Action #20", ID_ACTION_20, 413, 78, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        PUSHBUTTON      "Action #21", ID_ACTION_21, 413, 70, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00008000L
+        PUSHBUTTON      "Action #22", ID_ACTION_22, 413, 62, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00008000L
+        PUSHBUTTON      "Action #23", ID_ACTION_23, 413, 50, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        PUSHBUTTON      "Action #24", ID_ACTION_24, 413, 42, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+        PUSHBUTTON      "Action #25", ID_ACTION_25, 413, 34, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+        PUSHBUTTON      "Action #26", ID_ACTION_26, 413, 26, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        PUSHBUTTON      "Action #27", ID_ACTION_27, 96, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        MLE             "", ID_MLE_1, 4, 54, 405, 70, MLS_HSCROLL |
+                        MLS_VSCROLL | WS_GROUP
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000080L
+                        PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"
+        MLE             "", ID_MLE_2, 4, 2, 405, 50, MLS_HSCROLL |
+                        MLS_VSCROLL | WS_GROUP
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000080L
+                        PRESPARAMS PP_FONTNAMESIZE, "10.System VIO"
+        PUSHBUTTON      "Action #28", ID_ACTION_28, 45, 247, 50, 8,
+                        BS_NOBORDER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+        CTEXT           "## BLDLEVEL ##", ID_BLDLEVEL, 18, 257, 410, 8,
+                        DT_VCENTER
+                        PRESPARAMS PP_FOREGROUNDCOLOR, 0x800000L
+    END
+END
