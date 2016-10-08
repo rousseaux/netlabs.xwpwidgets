@@ -111,8 +111,8 @@ class   WidgetSettingsNotebook : public Notebook {
     public:
 
     /* Public Contructor(s) and Destructor */
-    WidgetSettingsNotebook::WidgetSettingsNotebook();
-    virtual WidgetSettingsNotebook::~WidgetSettingsNotebook();
+    WidgetSettingsNotebook();
+    virtual ~WidgetSettingsNotebook();
 
     /* Public Methods */
     virtual void    init(HWND parent, ULONG id);

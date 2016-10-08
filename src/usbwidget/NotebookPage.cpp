@@ -34,7 +34,7 @@
 ///: ----------------------------------------------------------- [NotebookPage]
 
 NotebookPage::NotebookPage() {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->idPage = 0;
@@ -49,21 +49,26 @@ NotebookPage::NotebookPage() {
     this->notebook = NULL;
     this->prev = NULL;
     this->next = NULL;
+    __ctore();
 }
 
 NotebookPage::NotebookPage(Notebook* notebook) {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->notebook = notebook;
+    __ctore();
 }
 
 NotebookPage::~NotebookPage() {
+    __dtorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __dtore();
 }
 
 int     NotebookPage::init(void) {
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->idResource = NB_PAGE_DEFAULT;
@@ -78,6 +83,7 @@ int     NotebookPage::init(void) {
 }
 
 int     NotebookPage::initItems(void) {
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 

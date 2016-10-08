@@ -89,5 +89,3 @@
 
 /* ID for MenuItem Quit */
 #define     IDM_QUIT        999
-
-#include    "Dialogids.h"

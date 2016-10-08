@@ -235,23 +235,26 @@ MRESULT DebugDialog::wmDefault(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 ///: ---------------------------------------------------------- [DebugNotebook]
 
 DebugNotebook::DebugNotebook() {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->idResource = NULL;
     this->hwndParent = NULL;
     this->hwndSelf = NULL;
     this->pages = NULL;
+    __ctore();
 }
 
 DebugNotebook::~DebugNotebook() {
+    __dtorb();
     this->removePages();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __dtore();
 }
 
 void    DebugNotebook::init(HWND parent, ULONG id) {
-
+    __mthd();
     /* Set some important attributes */
     this->hwndParent = parent;
     this->idResource = id;
@@ -305,6 +308,7 @@ void    DebugNotebook::init(HWND parent, ULONG id) {
 }
 
 void    DebugNotebook::appendPage(NotebookPage* page) {
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 
@@ -342,8 +346,6 @@ void    DebugNotebook::appendPage(NotebookPage* page) {
                             &page->wci
                         );
 
-    //~ page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
-
     /* Associate page-dialog with notebook-page */
     WinSendMsg(
         this->hwndSelf,
@@ -373,6 +375,7 @@ void    DebugNotebook::appendPage(NotebookPage* page) {
 }
 
 void    DebugNotebook::appendPages() {
+    __mthd();
     NotebookPage*   nbp = NULL;
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
@@ -390,7 +393,7 @@ void    DebugNotebook::appendPages() {
         }
 
         /* Create a new page */
-        nbp = new NotebookPage(this);
+        nbp = new DebugNotebookPage2(this);
 
         /* Initialize the page and append it to the notebook */
         if (nbp) {
@@ -561,19 +564,22 @@ MRESULT EXPENTRY DebugDialogProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 ///: ----------------------------------------------------- [DebugNotebookPage1]
 
 DebugNotebookPage1::DebugNotebookPage1(Notebook* notebook) {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->notebook = notebook;
+    __ctore();
 }
 
 DebugNotebookPage1::~DebugNotebookPage1() {
+    __dtorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __dtore();
 }
 
 int     DebugNotebookPage1::init(void) {
-
+    __mthd();
     /* Call parent method to do default initialization */
     this->NotebookPage::init();
     //~ this->pageStyle &= ~BKA_STATUSTEXTON;
@@ -591,14 +597,9 @@ int     DebugNotebookPage1::init(void) {
 }
 
 int     DebugNotebookPage1::initItems(void) {
-
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
-    //~ Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_1, "Maximize");
-    //~ Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_2, "Test123");
-    //~ Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_3, "Test456");
-    //~ Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_4, "Test789");
-    //~ Button::setText(this->hwndSelf, IDD_WIDGETSETTINGS_NBP_1_PB_7, "__debug");
 
     return 0;
 }
@@ -627,3 +628,68 @@ MRESULT DebugNotebookPage1::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM m
     return (MRESULT) mresReply;
 }
 
+///: ----------------------------------------------------- [DebugNotebookPage2]
+
+DebugNotebookPage2::DebugNotebookPage2(Notebook* notebook) {
+    __ctorb();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    this->notebook = notebook;
+    __ctore();
+}
+
+DebugNotebookPage2::~DebugNotebookPage2() {
+    __dtorb();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    __dtore();
+}
+
+int     DebugNotebookPage2::init(void) {
+    __mthd();
+    /* Call parent method to do default initialization */
+    this->NotebookPage::init();
+    //~ this->pageStyle &= ~BKA_STATUSTEXTON;
+
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+
+    /* Initialize this page */
+    this->idResource = IDD_DEBUG_NBP_2;
+    //~ this->tabTitle = "Page #2";
+    this->tabTitle = "Testing";
+    this->statusText = "Testing Components and other thingies";
+
+    return 0;
+}
+
+int     DebugNotebookPage2::initItems(void) {
+    __mthd();
+    sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
+    _debug(this->buf);
+    return 0;
+}
+
+/* Handle Command Messages */
+MRESULT DebugNotebookPage2::wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
+    MRESULT mresReply = 0;
+
+    //~ MessageBox("DebugNotebookPage2","wmCommand");
+
+    switch (SHORT1FROMMP(mp1)) {
+
+        case IDB_MAXIMIZE:
+            //~ WinSetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE|SWP_ZORDER);
+            this->maximize();
+            break;
+
+        /* Default */
+        default: {
+            mresReply = 0;
+            //mresReply = WinDefDlgProc(hwnd, msg, mp1, mp2);           // NO DEFAULT HANDLING OF COMMANDS !!
+            break;
+        }
+
+    } // switch
+    return (MRESULT) mresReply;
+}

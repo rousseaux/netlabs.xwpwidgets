@@ -153,7 +153,11 @@ usbshlpr.rc\
 usbshlpr.dlg\
 usbshlpr.mnu\
 usbshlpr.wnd\
+DebugDialog.ids\
+DebugDialog.rc\
 DebugDialog.dlg\
+WidgetSettingsDialog.ids\
+WidgetSettingsDialog.rc\
 WidgetSettingsDialog.dlg\
 
 #

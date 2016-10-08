@@ -36,23 +36,26 @@
 ///: --------------------------------------------------------------- [Notebook]
 
 Notebook::Notebook() {
-    this->debugMe();
+    __ctorb();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
     this->idResource = NULL;
     this->hwndParent = NULL;
     this->hwndSelf = NULL;
     this->pages = NULL;
+    __ctore();
 }
 
 Notebook::~Notebook() {
+    __dtorb();
     this->removePages();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
+    __dtore();
 }
 
 void    Notebook::init(HWND parent, ULONG id) {
-
+    __mthd();
     /* Set some important attributes */
     this->hwndParent = parent;
     this->idResource = id;
@@ -106,6 +109,7 @@ void    Notebook::init(HWND parent, ULONG id) {
 }
 
 void    Notebook::appendPage(NotebookPage* page) {
+    __mthd();
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);
 
@@ -143,8 +147,6 @@ void    Notebook::appendPage(NotebookPage* page) {
                             &page->wci
                         );
 
-    //~ page->hwndDebugListbox = WinWindowFromID(page->hwndSelf, NB_PAGE_1_LB_1);
-
     /* Associate page-dialog with notebook-page */
     WinSendMsg(
         this->hwndSelf,
@@ -174,6 +176,7 @@ void    Notebook::appendPage(NotebookPage* page) {
 }
 
 void    Notebook::appendPages() {
+    __mthd();
     NotebookPage*   nbp = NULL;
     sprintf(this->buf, "[%s]\t[%04d@%08X] %s\n", __FILE__, sizeof(*this), (unsigned)this, __FUNCTION__);
     _debug(this->buf);

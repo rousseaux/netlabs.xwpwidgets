@@ -27,7 +27,7 @@ END
 
 DLGTEMPLATE IDD_DEBUG_NBP_1 LOADONCALL MOVEABLE DISCARDABLE
 BEGIN
-    DIALOG  "Debug Dialog Page1", IDD_DEBUG_NBP_1, 0, 0, 468, 268, NOT FS_BORDER, FCF_NOBYTEALIGN
+    DIALOG  "Debug Dialog Page1", IDD_DEBUG_NBP_1, 0, 0, 468, 268, FS_BORDER, FCF_NOBYTEALIGN
             PRESPARAMS PP_FONTNAMESIZE, "4.System VIO"
     BEGIN
         PUSHBUTTON      "Action #1", ID_ACTION_1, 400, 225, 50, 8,
@@ -125,5 +125,50 @@ BEGIN
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
         PUSHBUTTON      "Clear", ID_CLEAR, 405, 2, 40, 12
                         PRESPARAMS PP_FOREGROUNDCOLOR, 0x00005000L
+    END
+END
+
+DLGTEMPLATE IDD_DEBUG_NBP_2 LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+    DIALOG  "Debug Dialog Page2", IDD_DEBUG_NBP_2, 20, 20, 200, 200, FS_BORDER, FCF_NOBYTEALIGN
+            PRESPARAMS PP_FONTNAMESIZE, "4.System VIO"
+    BEGIN
+        //~ PUSHBUTTON      "Page #2", IDD_DEBUG_NBP_2, 20, 20, 40, 14
+        //~ PUSHBUTTON      "Maximize", IDB_MAXIMIZE, 20, 60, 40, 12
+                        //~ PRESPARAMS PP_FOREGROUNDCOLOR, 0x00000000L
+        WINDOW "xyz", 998, 50, 50, 58, 76, WC_FRAME, WS_VISIBLE, FCF_BORDER
+        //~ PRESPARAMS PP_BACKGROUNDCOLOR, 0x00800000L
+        BEGIN
+            PUSHBUTTON      "test.123", 123, 4, 60, 50, 12,    BS_NOPOINTERFOCUS
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            PUSHBUTTON      "test.456", 456, 4, 46, 50, 12,    BS_NOPOINTERFOCUS
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            PUSHBUTTON      "test.789", 789, 4, 32, 50, 12,    BS_NOPOINTERFOCUS
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            PUSHBUTTON      "test.abc", 0xabc, 4, 18, 50, 12,  BS_NOPOINTERFOCUS
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            PUSHBUTTON      "test.def", 0xdef, 4, 4, 50, 12,  BS_NOPOINTERFOCUS
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            //~ CTLDATA MENU
+            //~ BEGIN
+                //~ MENUITEM "Item #1", 1
+                //~ MENUITEM "Item #2", 2
+                //~ MENUITEM "Item #3", 3
+            //~ END
+        END
+        #if 0
+        FRAME "", 999, 100, 50, 100, 100, 0, FCF_BORDER
+        //~ PRESPARAMS PP_BACKGROUNDCOLOR, 0x00800000L
+        BEGIN
+            PUSHBUTTON      "test456", 456, 10, 10, 50, 12
+                            PRESPARAMS PP_FOREGROUNDCOLOR, 0x00800000L
+            //~ CTLDATA MENU
+            //~ BEGIN
+                //~ MENUITEM "Item #1", 1
+                //~ MENUITEM "Item #2", 2
+                //~ MENUITEM "Item #3", 3
+            //~ END
+        END
+        #endif
     END
 END

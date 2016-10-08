@@ -1,6 +1,11 @@
 #ifndef OS2_INCLUDED
    #include <os2.h>
 #endif
+
+#include    "Bldvars.h"
+#include    "Dialogids.h"
+#include    "DebugDialog.ids"   // Temporary until merged to NotebookPage
+
 DLGINCLUDE ID_USB_WIDGET_DIALOG "Dialogids.h"
 
 DLGTEMPLATE ID_USB_WIDGET_DIALOG LOADONCALL MOVEABLE DISCARDABLE

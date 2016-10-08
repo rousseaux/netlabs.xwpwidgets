@@ -27,17 +27,12 @@
  * This file holds the resource definitions for the Daemon.
  */
 
-/* Module Dialogs */
+/* Module Resources */
 rcinclude   "usbshlpr.dlg"
-
-/* Module Windows */
 //~ rcinclude   "usbshlpr.wnd"
-
-/* Module Menus */
 rcinclude   "usbshlpr.mnu"
 
-/* Debug Dialog */
+/* Component Resources */
 rcinclude   "DebugDialog.dlg"
-
-/* Widget Settings Dialog */
 rcinclude   "WidgetSettingsDialog.dlg"
+rcinclude   "Notebooks.dlg"

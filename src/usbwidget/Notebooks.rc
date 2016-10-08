@@ -29,5 +29,4 @@
  * uses the .dlg extension. This file is rcincluded by the main .rc file.
  */
 
-#include    "Notebookids.h"
 rcinclude   "Notebooks.dlg"

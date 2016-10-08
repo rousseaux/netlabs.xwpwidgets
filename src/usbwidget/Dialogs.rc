@@ -33,6 +33,4 @@
     #define FCF_CLOSEBUTTON 0x04000000L
 #endif
 
-#include    "Bldvars.h"
-#include    "Dialogids.h"
 rcinclude   "Dialogs.dlg"

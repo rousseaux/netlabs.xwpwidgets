@@ -38,6 +38,10 @@
 #define     IDB_DEBUG_CLOSE                     15101
 #define     IDNB_DEBUG                          15900
 #define     IDD_DEBUG_NBP_1                     15901
+#define     IDD_DEBUG_NBP_2                     15902
+#define     IDD_DEBUG_NBP_3                     15903
+#define     IDD_DEBUG_NBP_4                     15904
+#define     IDD_DEBUG_NBP_5                     15905
 
 
 

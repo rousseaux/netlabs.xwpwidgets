@@ -94,8 +94,8 @@ class   DebugNotebook : public Notebook {
     public:
 
     /* Public Contructor(s) and Destructor */
-    DebugNotebook::DebugNotebook();
-    virtual DebugNotebook::~DebugNotebook();
+    DebugNotebook();
+    virtual ~DebugNotebook();
 
     /* Public Methods */
     virtual void    init(HWND parent, ULONG id);
@@ -124,6 +124,30 @@ class   DebugNotebookPage1 : public NotebookPage {
     /* Public Contructor(s) and Destructor */
     DebugNotebookPage1(Notebook* notebook);
     virtual ~DebugNotebookPage1();
+
+    /* Public Methods */
+    virtual int init(void);
+    virtual int initItems(void);
+
+    /* Public Message Handlers */
+    virtual MRESULT wmCommand(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+    protected:
+
+    private:
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// DebugNotebookPage2
+///////////////////////////////////////////////////////////////////////////////
+class   DebugNotebookPage2 : public NotebookPage {
+
+    public:
+
+    /* Public Contructor(s) and Destructor */
+    DebugNotebookPage2(Notebook* notebook);
+    virtual ~DebugNotebookPage2();
 
     /* Public Methods */
     virtual int init(void);

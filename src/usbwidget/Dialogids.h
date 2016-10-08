@@ -219,5 +219,3 @@
 #define ID_TEST_5                               19705
 #define ID_TEST_6                               19706
 #define ID_TEST_7                               19707
-
-#include    "DebugDialog.ids"
